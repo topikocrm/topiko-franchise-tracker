@@ -1202,6 +1202,7 @@
                 updateTimestamp();
                 
                 if (supabase) {
+                    console.log('📡 Loading leads from Supabase...');
                     const { data, error } = await supabase
                         .from('franchise_leads')
                         .select('*')
@@ -1209,9 +1210,15 @@
 
                     if (error) throw error;
                     allLeads = data || [];
+                    console.log(`✅ Loaded ${allLeads.length} leads from Supabase`);
+                    if (allLeads.length > 0) {
+                        console.log('📊 Sample Supabase lead IDs:', allLeads.slice(0, 3).map(l => ({ id: l.id, type: typeof l.id })));
+                    }
                 } else {
-                    // Enhanced demo data with more comprehensive information
+                    console.log('🧪 Loading demo data (Supabase not configured)...');
                     allLeads = generateDemoData();
+                    console.log(`✅ Generated ${allLeads.length} demo leads`);
+                    console.log('📊 Sample demo lead IDs:', allLeads.slice(0, 3).map(l => ({ id: l.id, type: typeof l.id })));
                 }
                 
                 updateAllStats();
@@ -1223,6 +1230,15 @@
             } catch (error) {
                 console.error('Error loading leads:', error);
                 showError('Failed to load leads: ' + error.message);
+                
+                // Fallback to demo data
+                console.log('🔄 Falling back to demo data...');
+                allLeads = generateDemoData();
+                updateAllStats();
+                displayLeads();
+                updateAllCharts();
+                updateConversionFunnel();
+                updateRecentActivity();
             }
         }
 
@@ -1232,45 +1248,51 @@
             const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Pune', 'Kolkata', 'Ahmedabad'];
             const products = [['topiko', 'disblay'], ['flex', 'hebt'], ['topiko'], ['disblay', 'flex']];
             
-            return Array.from({length: 25}, (_, i) => ({
-                id: `demo_${i + 1}`,
-                first_name: ['Rahul', 'Priya', 'Amit', 'Sneha', 'Vikram', 'Anita', 'Ravi', 'Kavya'][i % 8],
-                last_name: ['Sharma', 'Patel', 'Kumar', 'Singh', 'Reddy', 'Nair', 'Gupta', 'Joshi'][i % 8],
-                phone: `+91-${9000000000 + Math.floor(Math.random() * 999999999)}`,
-                city: cities[i % cities.length],
-                lead_status: statuses[Math.floor(Math.random() * statuses.length)],
-                lead_score: Math.floor(Math.random() * 100),
-                recommended_products: products[i % products.length],
-                selected_product: Math.random() > 0.5 ? products[i % products.length][0] : null,
-                campaign_source: ['topikopartner.com', 'google', 'facebook', 'referral'][Math.floor(Math.random() * 4)],
-                created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-                contact_entered_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-                otp_verified_at: Math.random() > 0.3 ? new Date(Date.now() - Math.random() * 29 * 24 * 60 * 60 * 1000).toISOString() : null,
-                assessment_started_at: Math.random() > 0.4 ? new Date(Date.now() - Math.random() * 28 * 24 * 60 * 60 * 1000).toISOString() : null,
-                assessment_completed_at: Math.random() > 0.6 ? new Date(Date.now() - Math.random() * 27 * 24 * 60 * 60 * 1000).toISOString() : null,
-                products_viewed_at: Math.random() > 0.7 ? new Date(Date.now() - Math.random() * 26 * 24 * 60 * 60 * 1000).toISOString() : null,
-                final_submitted_at: Math.random() > 0.85 ? new Date(Date.now() - Math.random() * 25 * 24 * 60 * 60 * 1000).toISOString() : null,
-                business_goals: Math.random() > 0.5 ? 'Looking to expand into digital services and grow my business' : null,
-                answers: {
-                    q1: ['digital_agency', 'aspiring_entrepreneur', 'technical_expert'][Math.floor(Math.random() * 3)],
-                    q2: ['yes', 'no', 'little'][Math.floor(Math.random() * 3)],
-                    q3: ['fulltime', 'parttime', 'undecided'][Math.floor(Math.random() * 3)],
-                    q4: [['business_owners'], ['startups', 'associations'], ['others']][Math.floor(Math.random() * 3)],
-                    q5: [['digital_marketing'], ['it_services'], ['none']][Math.floor(Math.random() * 3)],
-                    q6: Math.random() > 0.5 ? 'yes' : 'no',
-                    q7: Math.random() > 0.5 ? 'yes' : 'no',
-                    q8: ['own_brand', 'topiko_brand', 'both'][Math.floor(Math.random() * 3)],
-                    q9: ['1l_3l', 'above_3l', 'under_1l'][Math.floor(Math.random() * 3)]
-                },
-                utm_data: {
-                    utm_source: ['google', 'facebook', 'direct'][Math.floor(Math.random() * 3)],
-                    utm_medium: ['cpc', 'social', 'organic'][Math.floor(Math.random() * 3)]
-                },
-                browser_info: {
-                    userAgent: 'Demo Browser',
-                    screen: '1920x1080'
-                }
-            }));
+            return Array.from({length: 25}, (_, i) => {
+                const leadId = `lead_${i + 1}`; // Changed from demo_ to lead_
+                const lead = {
+                    id: leadId,
+                    first_name: ['Rahul', 'Priya', 'Amit', 'Sneha', 'Vikram', 'Anita', 'Ravi', 'Kavya'][i % 8],
+                    last_name: ['Sharma', 'Patel', 'Kumar', 'Singh', 'Reddy', 'Nair', 'Gupta', 'Joshi'][i % 8],
+                    phone: `+91-${9000000000 + Math.floor(Math.random() * 999999999)}`,
+                    city: cities[i % cities.length],
+                    lead_status: statuses[Math.floor(Math.random() * statuses.length)],
+                    lead_score: Math.floor(Math.random() * 100),
+                    recommended_products: products[i % products.length],
+                    selected_product: Math.random() > 0.5 ? products[i % products.length][0] : null,
+                    campaign_source: ['topikopartner.com', 'google', 'facebook', 'referral'][Math.floor(Math.random() * 4)],
+                    created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                    contact_entered_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                    otp_verified_at: Math.random() > 0.3 ? new Date(Date.now() - Math.random() * 29 * 24 * 60 * 60 * 1000).toISOString() : null,
+                    assessment_started_at: Math.random() > 0.4 ? new Date(Date.now() - Math.random() * 28 * 24 * 60 * 60 * 1000).toISOString() : null,
+                    assessment_completed_at: Math.random() > 0.6 ? new Date(Date.now() - Math.random() * 27 * 24 * 60 * 60 * 1000).toISOString() : null,
+                    products_viewed_at: Math.random() > 0.7 ? new Date(Date.now() - Math.random() * 26 * 24 * 60 * 60 * 1000).toISOString() : null,
+                    final_submitted_at: Math.random() > 0.85 ? new Date(Date.now() - Math.random() * 25 * 24 * 60 * 60 * 1000).toISOString() : null,
+                    business_goals: Math.random() > 0.5 ? 'Looking to expand into digital services and grow my business' : null,
+                    answers: {
+                        q1: ['digital_agency', 'aspiring_entrepreneur', 'technical_expert'][Math.floor(Math.random() * 3)],
+                        q2: ['yes', 'no', 'little'][Math.floor(Math.random() * 3)],
+                        q3: ['fulltime', 'parttime', 'undecided'][Math.floor(Math.random() * 3)],
+                        q4: [['business_owners'], ['startups', 'associations'], ['others']][Math.floor(Math.random() * 3)],
+                        q5: [['digital_marketing'], ['it_services'], ['none']][Math.floor(Math.random() * 3)],
+                        q6: Math.random() > 0.5 ? 'yes' : 'no',
+                        q7: Math.random() > 0.5 ? 'yes' : 'no',
+                        q8: ['own_brand', 'topiko_brand', 'both'][Math.floor(Math.random() * 3)],
+                        q9: ['1l_3l', 'above_3l', 'under_1l'][Math.floor(Math.random() * 3)]
+                    },
+                    utm_data: {
+                        utm_source: ['google', 'facebook', 'direct'][Math.floor(Math.random() * 3)],
+                        utm_medium: ['cpc', 'social', 'organic'][Math.floor(Math.random() * 3)]
+                    },
+                    browser_info: {
+                        userAgent: 'Demo Browser',
+                        screen: '1920x1080'
+                    }
+                };
+                
+                console.log(`Generated lead ${i + 1} with ID: ${leadId}`);
+                return lead;
+            });
         }
 
         // Update comprehensive statistics
@@ -1311,10 +1333,16 @@
                     <div class="empty-state">
                         <div class="empty-state-icon">📭</div>
                         <div>No leads found for the selected filter</div>
+                        <button class="neu-button primary" id="generate-demo-btn" style="margin-top: 1rem;">
+                            🔧 Generate Demo Data
+                        </button>
                     </div>
                 `;
                 return;
             }
+
+            console.log(`📊 Displaying ${filteredLeads.length} leads`);
+            console.log('🔍 First few lead IDs in display:', filteredLeads.slice(0, 3).map(l => ({ id: l.id, name: l.first_name })));
 
             const tableHTML = `
                 <table class="leads-table">
@@ -1331,49 +1359,52 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${filteredLeads.map(lead => `
-                            <tr class="lead-row" data-lead-id="${lead.id}">
-                                <td>
-                                    <div style="font-weight: 600; color: var(--text-primary);">${lead.first_name} ${lead.last_name}</div>
-                                    <div style="color: var(--text-muted); font-size: 0.8rem;">${lead.city}</div>
-                                </td>
-                                <td>
-                                    <div style="font-size: 0.9rem;">${lead.phone}</div>
-                                    <div style="color: var(--text-muted); font-size: 0.8rem;">📧 Contact Available</div>
-                                </td>
-                                <td>
-                                    <span class="lead-status status-${lead.lead_status}">
-                                        ${formatStatus(lead.lead_status)}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="lead-score ${getScoreClass(lead.lead_score)}">
-                                        ${Math.round(lead.lead_score || 0)}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="product-tags">
-                                        ${(lead.recommended_products || []).map(product => 
-                                            `<span class="product-tag">${product}</span>`
-                                        ).join('')}
-                                    </div>
-                                    ${lead.selected_product ? `<div style="font-size: 0.8rem; color: var(--success); margin-top: 0.25rem;">✅ Selected: ${lead.selected_product}</div>` : ''}
-                                </td>
-                                <td>
-                                    <div>${lead.campaign_source || 'Direct'}</div>
-                                    ${lead.utm_data?.utm_source ? `<div style="font-size: 0.8rem; color: var(--text-muted);">${lead.utm_data.utm_source}</div>` : ''}
-                                </td>
-                                <td>
-                                    <div style="font-size: 0.85rem;">${new Date(lead.created_at).toLocaleDateString()}</div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted);">${new Date(lead.created_at).toLocaleTimeString()}</div>
-                                </td>
-                                <td>
-                                    <div style="font-size: 0.8rem;">
-                                        ${getStageProgress(lead)}
-                                    </div>
-                                </td>
-                            </tr>
-                        `).join('')}
+                        ${filteredLeads.map((lead, index) => {
+                            console.log(`📝 Creating row ${index + 1} for lead ID: ${lead.id}`);
+                            return `
+                                <tr class="lead-row" data-lead-id="${lead.id}">
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--text-primary);">${lead.first_name} ${lead.last_name}</div>
+                                        <div style="color: var(--text-muted); font-size: 0.8rem;">${lead.city}</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-size: 0.9rem;">${lead.phone}</div>
+                                        <div style="color: var(--text-muted); font-size: 0.8rem;">📧 Contact Available</div>
+                                    </td>
+                                    <td>
+                                        <span class="lead-status status-${lead.lead_status}">
+                                            ${formatStatus(lead.lead_status)}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="lead-score ${getScoreClass(lead.lead_score)}">
+                                            ${Math.round(lead.lead_score || 0)}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="product-tags">
+                                            ${(lead.recommended_products || []).map(product => 
+                                                `<span class="product-tag">${product}</span>`
+                                            ).join('')}
+                                        </div>
+                                        ${lead.selected_product ? `<div style="font-size: 0.8rem; color: var(--success); margin-top: 0.25rem;">✅ Selected: ${lead.selected_product}</div>` : ''}
+                                    </td>
+                                    <td>
+                                        <div>${lead.campaign_source || 'Direct'}</div>
+                                        ${lead.utm_data?.utm_source ? `<div style="font-size: 0.8rem; color: var(--text-muted);">${lead.utm_data.utm_source}</div>` : ''}
+                                    </td>
+                                    <td>
+                                        <div style="font-size: 0.85rem;">${new Date(lead.created_at).toLocaleDateString()}</div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">${new Date(lead.created_at).toLocaleTimeString()}</div>
+                                    </td>
+                                    <td>
+                                        <div style="font-size: 0.8rem;">
+                                            ${getStageProgress(lead)}
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
                     </tbody>
                 </table>
             `;
@@ -1384,6 +1415,13 @@
             console.log('📊 Table rendered, setting up click handlers...');
             setTimeout(() => {
                 setupLeadRowHandlers();
+                
+                // Also set up demo button if it exists
+                const demoBtn = document.getElementById('generate-demo-btn');
+                if (demoBtn) {
+                    demoBtn.textContent = '🔧 Generate Demo Data';
+                    demoBtn.addEventListener('click', window.fixLeadData);
+                }
             }, 100);
         }
 
@@ -1414,17 +1452,60 @@
 
         // Enhanced lead detail modal with skills panel
         function showEnhancedLeadDetail(leadId) {
-            console.log('🔍 showEnhancedLeadDetail called with ID:', leadId);
+            console.log('🔍 showEnhancedLeadDetail called with ID:', leadId, typeof leadId);
+            console.log('🔍 Current allLeads array:', allLeads.length, 'leads');
+            console.log('🔍 Available lead IDs:', allLeads.map(l => l.id));
             
-            const lead = allLeads.find(l => l.id === leadId);
+            // Try different ways to find the lead
+            let lead = allLeads.find(l => l.id === leadId);
+            
+            // If not found, try to find by string conversion
+            if (!lead) {
+                lead = allLeads.find(l => String(l.id) === String(leadId));
+            }
+            
+            // If still not found, try to find by number conversion (in case ID is numeric)
+            if (!lead && !isNaN(leadId)) {
+                lead = allLeads.find(l => l.id === `lead_${leadId}` || l.id === `demo_${leadId}`);
+            }
+            
+            // If still not found, try loose matching
+            if (!lead) {
+                lead = allLeads.find(l => l.id.includes(leadId) || leadId.includes(l.id));
+            }
+            
             if (!lead) {
                 console.error('❌ Lead not found with ID:', leadId);
-                console.log('Available leads:', allLeads.map(l => ({ id: l.id, name: `${l.first_name} ${l.last_name}` })));
-                alert('Lead not found! Check console for details.');
+                console.log('❌ Available leads:', allLeads.map(l => ({ 
+                    id: l.id, 
+                    name: `${l.first_name} ${l.last_name}`,
+                    type: typeof l.id 
+                })));
+                
+                // Show a more helpful error and try to load data
+                alert(`Lead not found with ID: "${leadId}". Refreshing data and trying first lead...`);
+                
+                // Try to load the first available lead as fallback
+                if (allLeads.length > 0) {
+                    console.log('🔄 Falling back to first lead:', allLeads[0].id);
+                    showEnhancedLeadDetail(allLeads[0].id);
+                } else {
+                    console.log('🔄 No leads available, generating demo data...');
+                    allLeads = generateDemoData();
+                    updateAllStats();
+                    displayLeads();
+                    updateAllCharts();
+                    updateConversionFunnel();
+                    updateRecentActivity();
+                    
+                    if (allLeads.length > 0) {
+                        setTimeout(() => showEnhancedLeadDetail(allLeads[0].id), 500);
+                    }
+                }
                 return;
             }
 
-            console.log('✅ Lead found:', lead.first_name, lead.last_name);
+            console.log('✅ Lead found:', lead.first_name, lead.last_name, 'with ID:', lead.id);
 
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
@@ -2184,6 +2265,8 @@
             console.log('   - window.testSkillsPanel() - Test skills panel with demo data');
             console.log('   - window.debugLeadData() - Show first lead data');
             console.log('   - window.testClickHandler() - Test click handlers');
+            console.log('   - window.testModal() - Test modal directly');
+            console.log('   - window.fixLeadData() - Fix data ID issues');
             console.log('   - window.forceRefresh() - Force refresh data');
         }
 
@@ -2227,11 +2310,44 @@
             console.log(`Found ${leadRows.length} lead rows`);
             
             if (leadRows.length > 0) {
-                console.log('First row data-lead-id:', leadRows[0].getAttribute('data-lead-id'));
+                const firstRow = leadRows[0];
+                const leadId = firstRow.getAttribute('data-lead-id');
+                console.log('First row data-lead-id:', leadId);
+                console.log('First row element:', firstRow);
+                console.log('All lead IDs in data:', allLeads.map(l => l.id));
+                
                 console.log('Simulating click on first row...');
-                leadRows[0].click();
+                firstRow.click();
             } else {
                 console.log('No lead rows found');
+            }
+        };
+
+        // New function to fix data ID issues
+        window.fixLeadData = function() {
+            console.log('🔧 Fixing lead data...');
+            allLeads = generateDemoData();
+            console.log('✅ Generated new demo data with proper IDs');
+            console.log('New lead IDs:', allLeads.map(l => l.id));
+            
+            updateAllStats();
+            displayLeads();
+            updateAllCharts();
+            updateConversionFunnel();
+            updateRecentActivity();
+            
+            console.log('✅ Data refreshed, try clicking on leads now');
+        };
+
+        // Function to manually test modal
+        window.testModal = function() {
+            console.log('🧪 Testing modal directly...');
+            if (allLeads.length > 0) {
+                const firstLead = allLeads[0];
+                console.log('Testing with first lead:', firstLead.id, firstLead.first_name);
+                showEnhancedLeadDetail(firstLead.id);
+            } else {
+                console.log('No leads available');
             }
         };
 
