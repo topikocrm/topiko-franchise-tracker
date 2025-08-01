@@ -422,9 +422,9 @@
         // Initialize dashboard
         async function init() {
             initializeSupabase();
+            setupCharts();
             await loadLeads();
             setupFilters();
-            setupCharts();
         }
 
         // Load leads from Supabase
