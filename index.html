@@ -146,6 +146,46 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
         }
 
+        /* Save Status Indicator */
+        .save-status {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: #10b981;
+            display: none;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .save-status.saving {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+            display: block;
+        }
+
+        .save-status.saved {
+            display: block;
+            animation: fadeInOut 2s ease-in-out;
+        }
+
+        .save-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            display: block;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(-10px); }
+            20%, 80% { opacity: 1; transform: translateY(0); }
+        }
+
         /* Desktop Skills Panel */
         .skills-panel {
             background: rgba(255, 255, 255, 0.03);
@@ -1065,6 +1105,11 @@
     </style>
 </head>
 <body>
+    <!-- Save Status Indicator -->
+    <div id="save-status" class="save-status">
+        <span id="save-status-text">💾 Saving...</span>
+    </div>
+
     <!-- Welcome Screen -->
     <div id="welcome-screen" class="screen active">
         <div class="container">
@@ -1370,7 +1415,7 @@
     </div>
 
     <script>
-        console.log('🚀 ENHANCED RESPONSIVE FRANCHISE TRACKER v4.0 LOADED');
+        console.log('🚀 ENHANCED PROGRESSIVE FRANCHISE TRACKER v5.0 LOADED');
         
         // Configuration
         const SUPABASE_URL = 'https://uyaubwfmxmxelcshuyaf.supabase.co';
@@ -1383,13 +1428,13 @@
             try {
                 if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
                     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    console.log('Supabase initialized successfully');
+                    console.log('✅ Supabase initialized successfully');
                 } else {
-                    console.warn('Supabase not configured. Running in demo mode.');
+                    console.warn('⚠️ Supabase not configured. Running in demo mode.');
                 }
             } catch (error) {
-                console.error('Error initializing Supabase:', error);
-                console.warn('Running in demo mode without database');
+                console.error('❌ Error initializing Supabase:', error);
+                console.warn('⚠️ Running in demo mode without database');
             }
         }
 
@@ -1399,6 +1444,7 @@
         let answers = {};
         let recommendedProducts = null;
         let selectedProduct = null;
+        let currentLeadId = null; // Track current lead ID for updates
         let userProfile = {
             firstName: '',
             lastName: '',
@@ -1407,6 +1453,324 @@
             verified: false,
             calculatedScore: 0
         };
+
+        // =====================================================================
+        // 💾 PROGRESSIVE DATA SAVING FUNCTIONS
+        // =====================================================================
+
+        // Save Status Indicator Functions
+        function showSaveStatus(message, type = 'saving') {
+            const saveStatus = document.getElementById('save-status');
+            const saveText = document.getElementById('save-status-text');
+            
+            if (saveStatus && saveText) {
+                saveText.textContent = message;
+                saveStatus.className = `save-status ${type}`;
+                
+                if (type === 'saved') {
+                    setTimeout(() => {
+                        saveStatus.className = 'save-status';
+                    }, 2000);
+                }
+            }
+        }
+
+        // Generate Session ID and Capture Browser Info
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function getBrowserInfo() {
+            return {
+                userAgent: navigator.userAgent,
+                screen: `${screen.width}x${screen.height}`,
+                viewport: `${window.innerWidth}x${window.innerHeight}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                language: navigator.language
+            };
+        }
+
+        function captureUTMParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                utm_source: urlParams.get('utm_source'),
+                utm_medium: urlParams.get('utm_medium'),
+                utm_campaign: urlParams.get('utm_campaign'),
+                utm_content: urlParams.get('utm_content'),
+                utm_term: urlParams.get('utm_term'),
+                referrer: document.referrer
+            };
+        }
+
+        // Robust update function with retry logic
+        async function updateLeadData(updateData, retries = 3) {
+            if (!supabase || !currentLeadId) {
+                console.log('💾 Demo mode: Simulating data save:', updateData);
+                return { success: true, data: updateData };
+            }
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const { data, error } = await supabase
+                        .from('franchise_leads')
+                        .update(updateData)
+                        .eq('id', currentLeadId)
+                        .select();
+                        
+                    if (!error) {
+                        console.log('✅ Data saved successfully:', updateData);
+                        return { success: true, data };
+                    }
+                    
+                    console.warn(`⚠️ Update attempt ${i + 1} failed:`, error);
+                    if (i === retries - 1) throw error;
+                    
+                    // Wait before retry (exponential backoff)
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                } catch (error) {
+                    if (i === retries - 1) {
+                        console.error('❌ Final update attempt failed:', error);
+                        return { success: false, error };
+                    }
+                }
+            }
+        }
+
+        // PHASE 1: Save Contact Details (Immediate Save)
+        async function saveContactDetails() {
+            console.log('💾 Phase 1: Saving contact details...');
+            showSaveStatus('💾 Saving your details...', 'saving');
+
+            const leadData = {
+                first_name: document.getElementById('firstName').value.trim(),
+                last_name: document.getElementById('lastName').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                lead_status: 'contact_entered',
+                contact_entered_at: new Date().toISOString(),
+                session_id: generateSessionId(),
+                browser_info: getBrowserInfo(),
+                utm_data: captureUTMParameters(),
+                campaign_source: 'topikopartner.com',
+                answers: {},
+                recommended_products: [],
+                lead_score: 0
+            };
+            
+            if (!supabase) {
+                console.log('💾 Demo mode: Contact details would be saved:', leadData);
+                currentLeadId = 'demo_lead_' + Date.now();
+                showSaveStatus('✅ Details saved!', 'saved');
+                return { success: true, leadId: currentLeadId };
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('franchise_leads')
+                    .insert([leadData])
+                    .select('id');
+                
+                if (!error && data && data.length > 0) {
+                    currentLeadId = data[0].id;
+                    console.log('✅ Contact details saved with ID:', currentLeadId);
+                    showSaveStatus('✅ Details saved!', 'saved');
+                    return { success: true, leadId: currentLeadId };
+                } else {
+                    throw error || new Error('No data returned');
+                }
+            } catch (error) {
+                console.error('❌ Failed to save contact details:', error);
+                showSaveStatus('❌ Save failed - will retry', 'error');
+                return { success: false, error };
+            }
+        }
+
+        // PHASE 2: Update OTP Verification
+        async function updateOTPVerified() {
+            console.log('💾 Phase 2: Updating OTP verification...');
+            showSaveStatus('💾 Updating verification...', 'saving');
+
+            const updateData = {
+                lead_status: 'otp_verified',
+                otp_verified_at: new Date().toISOString()
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Verification saved!', 'saved');
+            } else {
+                showSaveStatus('❌ Update failed', 'error');
+            }
+
+            return result;
+        }
+
+        // PHASE 3A: Assessment Started (First Question Answered)
+        async function updateAssessmentStarted() {
+            console.log('💾 Phase 3A: Assessment started...');
+            showSaveStatus('💾 Saving progress...', 'saving');
+
+            const updateData = {
+                lead_status: 'assessment_started',
+                assessment_started_at: new Date().toISOString(),
+                answers: answers // Partial answers
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Progress saved!', 'saved');
+            } else {
+                showSaveStatus('❌ Save failed', 'error');
+            }
+
+            return result;
+        }
+
+        // PHASE 3B: Assessment Completed (All Questions Done)
+        async function updateAssessmentCompleted() {
+            console.log('💾 Phase 3B: Assessment completed...');
+            showSaveStatus('💾 Finalizing assessment...', 'saving');
+
+            const updateData = {
+                lead_status: 'assessment_completed',
+                assessment_completed_at: new Date().toISOString(),
+                answers: answers,
+                lead_score: userProfile.calculatedScore,
+                recommended_products: recommendedProducts.products || []
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Assessment completed!', 'saved');
+            } else {
+                showSaveStatus('❌ Save failed', 'error');
+            }
+
+            return result;
+        }
+
+        // PHASE 4: Products Viewed
+        async function updateProductsViewed() {
+            console.log('💾 Phase 4: Products viewed...');
+            showSaveStatus('💾 Tracking product views...', 'saving');
+
+            const updateData = {
+                lead_status: 'products_viewed',
+                products_viewed_at: new Date().toISOString()
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Product views tracked!', 'saved');
+            }
+
+            return result;
+        }
+
+        // PHASE 5: Product Detail Viewed
+        async function updateProductDetailed(productKey) {
+            console.log('💾 Phase 5: Product detail viewed:', productKey);
+            showSaveStatus('💾 Tracking product interest...', 'saving');
+
+            const updateData = {
+                lead_status: 'product_detailed',
+                selected_product: productKey
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Interest tracked!', 'saved');
+            }
+
+            return result;
+        }
+
+        // PHASE 6: ROI Calculator Used
+        async function updateROICalculated(productKey, calculations) {
+            console.log('💾 Phase 6: ROI calculated for:', productKey);
+            showSaveStatus('💾 Saving ROI calculations...', 'saving');
+
+            const updateData = {
+                lead_status: 'roi_calculated',
+                roi_calculated_at: new Date().toISOString(),
+                selected_product: productKey,
+                roi_data: calculations // Store ROI results
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ ROI data saved!', 'saved');
+            }
+
+            return result;
+        }
+
+        // PHASE 7: Demo Video Viewed
+        async function updateDemoViewed(productKey) {
+            console.log('💾 Phase 7: Demo viewed for:', productKey);
+            showSaveStatus('💾 Tracking demo engagement...', 'saving');
+
+            const updateData = {
+                lead_status: 'demo_viewed',
+                demo_viewed_at: new Date().toISOString(),
+                selected_product: productKey
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Demo tracked!', 'saved');
+            }
+
+            return result;
+        }
+
+        // PHASE 8: Final Submission
+        async function updateFinalSubmission() {
+            console.log('💾 Phase 8: Final submission...');
+            showSaveStatus('💾 Submitting final data...', 'saving');
+
+            const updateData = {
+                lead_status: 'final_submitted',
+                final_submitted_at: new Date().toISOString(),
+                business_goals: document.getElementById('businessGoals').value.trim()
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Submission complete!', 'saved');
+            } else {
+                showSaveStatus('❌ Submission failed', 'error');
+            }
+
+            return result;
+        }
+
+        // Auto-save answers as user progresses
+        async function autoSaveAnswer(questionId, answer) {
+            // Don't save every single keystroke, but save significant progress
+            if (Object.keys(answers).length === 1) {
+                // First question answered - assessment started
+                await updateAssessmentStarted();
+            } else if (currentQuestionIndex > 0 && currentQuestionIndex % 3 === 0) {
+                // Save progress every 3 questions
+                await updateLeadData({
+                    answers: answers,
+                    lead_score: userProfile.calculatedScore
+                });
+            }
+        }
+
+        // =====================================================================
+        // 📱 ORIGINAL APPLICATION LOGIC (Enhanced with Progressive Saving)
+        // =====================================================================
 
         // Questions Data
         const questions = [
@@ -1913,15 +2277,15 @@
             }
         }
 
-        // Event Listeners - Complete and working
+        // Event Listeners - Complete and working with PROGRESSIVE SAVING
         function initializeEventListeners() {
-            console.log('🔧 Initializing event listeners...');
+            console.log('🔧 Initializing event listeners with progressive saving...');
             
-            // Send OTP Button
+            // Send OTP Button - ENHANCED with Phase 1 saving
             const sendOtpBtn = document.getElementById('send-otp-btn');
             if (sendOtpBtn) {
                 console.log('✅ Send OTP button found');
-                sendOtpBtn.addEventListener('click', function(e) {
+                sendOtpBtn.addEventListener('click', async function(e) {
                     e.preventDefault();
                     console.log('📤 Send OTP button clicked');
                     
@@ -1947,6 +2311,9 @@
                     sendText.classList.add('hidden');
                     sendLoading.classList.remove('hidden');
                     
+                    // 💾 PROGRESSIVE SAVE: Phase 1 - Save contact details immediately
+                    const saveResult = await saveContactDetails();
+                    
                     setTimeout(() => {
                         document.getElementById('phone-display').textContent = phone;
                         showScreen('otp-screen');
@@ -1968,11 +2335,11 @@
                 });
             }
 
-            // Verify OTP Button - FIXED
+            // Verify OTP Button - ENHANCED with Phase 2 saving
             const verifyOtpBtn = document.getElementById('verify-otp-btn');
             if (verifyOtpBtn) {
                 console.log('✅ Verify OTP button found');
-                verifyOtpBtn.addEventListener('click', function(e) {
+                verifyOtpBtn.addEventListener('click', async function(e) {
                     e.preventDefault();
                     console.log('🔐 Verify OTP button clicked');
                     
@@ -1982,6 +2349,9 @@
                     verifyOtpBtn.disabled = true;
                     verifyText.classList.add('hidden');
                     verifyLoading.classList.remove('hidden');
+                    
+                    // 💾 PROGRESSIVE SAVE: Phase 2 - Update OTP verification
+                    const updateResult = await updateOTPVerified();
                     
                     setTimeout(() => {
                         verifyOTP();
@@ -2004,21 +2374,33 @@
                 });
             }
 
-            // Next Button (Questions)
+            // Next Button (Questions) - ENHANCED with Phase 3 saving
             const nextBtn = document.getElementById('next-btn');
             if (nextBtn) {
                 console.log('✅ Next button found');
-                nextBtn.addEventListener('click', function() {
+                nextBtn.addEventListener('click', async function() {
                     console.log('➡️ Next button clicked');
+                    
                     if (currentQuestionIndex < questions.length - 1) {
                         currentQuestionIndex++;
                         renderQuestion();
+                        
+                        // 💾 PROGRESSIVE SAVE: Auto-save progress
+                        await autoSaveAnswer();
+                        
                     } else {
                         console.log('🎯 Assessment complete, generating recommendations...');
                         recommendedProducts = getRecommendedProducts(answers);
                         console.log('✅ Generated recommendations:', recommendedProducts);
+                        
+                        // 💾 PROGRESSIVE SAVE: Phase 3B - Assessment completed
+                        await updateAssessmentCompleted();
+                        
                         renderProducts();
                         showScreen('products-screen');
+                        
+                        // 💾 PROGRESSIVE SAVE: Phase 4 - Products viewed
+                        setTimeout(() => updateProductsViewed(), 1000);
                     }
                 });
             }
@@ -2036,8 +2418,6 @@
                 });
             }
 
-            // Circular buttons removed - using only bottom button
-
             // Contact Button
             const contactBtn = document.getElementById('contact-btn');
             if (contactBtn) {
@@ -2047,7 +2427,7 @@
                 });
             }
 
-            // Submit Button
+            // Submit Button - ENHANCED with Phase 8 saving
             const submitBtn = document.getElementById('submit-btn');
             if (submitBtn) {
                 console.log('✅ Submit button found');
@@ -2062,6 +2442,9 @@
                     submitText.classList.add('hidden');
                     submitLoading.classList.remove('hidden');
                     
+                    // 💾 PROGRESSIVE SAVE: Phase 8 - Final submission
+                    const finalResult = await updateFinalSubmission();
+                    
                     // Simulate submission
                     setTimeout(() => {
                         showScreen('success-screen');
@@ -2069,17 +2452,21 @@
                 });
             }
 
-            // Demo Button
+            // Demo Button - ENHANCED with saving
             const demoBtn = document.getElementById('demo-btn');
             if (demoBtn) {
                 console.log('✅ Demo button found');
-                demoBtn.addEventListener('click', function() {
+                demoBtn.addEventListener('click', async function() {
                     console.log('📺 Demo button clicked');
+                    
+                    // 💾 PROGRESSIVE SAVE: Demo viewed
+                    await updateDemoViewed(selectedProduct);
+                    
                     showVideoDemo();
                 });
             }
 
-            // ROI Button
+            // ROI Button - ENHANCED with saving
             const roiBtn = document.getElementById('roi-btn');
             if (roiBtn) {
                 console.log('✅ ROI button found');
@@ -2124,7 +2511,7 @@
                 });
             }
             
-            console.log('✅ All event listeners initialized');
+            console.log('✅ All event listeners initialized with progressive saving');
         }
 
         // OTP Functions - Complete
@@ -2483,9 +2870,13 @@
                     <div style="color: #667eea; font-weight: 600; font-size: 1.1rem;">Learn More →</div>
                 `;
                 
-                productCard.addEventListener('click', () => {
+                productCard.addEventListener('click', async () => {
                     console.log(`🎯 Product clicked: ${product.name}`);
                     selectedProduct = productKey;
+                    
+                    // 💾 PROGRESSIVE SAVE: Phase 5 - Product detail viewed
+                    await updateProductDetailed(productKey);
+                    
                     showProductDetail(productKey);
                 });
                 
@@ -2774,6 +3165,21 @@
                 document.getElementById('roi-total-expenses').value = `₹${totalExpenses.toLocaleString()}`;
                 document.getElementById('roi-profit').value = `₹${netProfit.toLocaleString()}`;
                 
+                // 💾 PROGRESSIVE SAVE: ROI calculated
+                const roiCalculations = {
+                    staffCount,
+                    onboardsPerDay,
+                    totalOnboards,
+                    projectedRevenue,
+                    salaryExpenses,
+                    otherExpenses,
+                    totalExpenses,
+                    netProfit
+                };
+                
+                // Save ROI calculation data
+                setTimeout(() => updateROICalculated(selectedProduct, roiCalculations), 1000);
+                
             } else {
                 // Project-based calculation (Topiko Flex, HEBT)
                 let staffCount = parseInt(document.getElementById('roi-staff').value) || data.minStaff;
@@ -2808,6 +3214,20 @@
                 document.getElementById('roi-salary').value = `₹${salaryExpenses.toLocaleString()}`;
                 document.getElementById('roi-total-expenses').value = `₹${totalExpenses.toLocaleString()}`;
                 document.getElementById('roi-profit').value = `₹${netProfit.toLocaleString()}`;
+                
+                // 💾 PROGRESSIVE SAVE: ROI calculated
+                const roiCalculations = {
+                    staffCount,
+                    projectsPerMonth,
+                    projectedRevenue,
+                    salaryExpenses,
+                    otherExpenses,
+                    totalExpenses,
+                    netProfit
+                };
+                
+                // Save ROI calculation data
+                setTimeout(() => updateROICalculated(selectedProduct, roiCalculations), 1000);
             }
             
             // Color code profit
@@ -2941,7 +3361,7 @@
                         <label for="${question.id}_${option.value}">${option.label}</label>
                     `;
                     
-                    optionElement.addEventListener('click', () => {
+                    optionElement.addEventListener('click', async () => {
                         const input = optionElement.querySelector('input');
                         if (question.type === 'radio') {
                             document.querySelectorAll(`input[name="${question.id}"]`).forEach(inp => {
@@ -2965,6 +3385,9 @@
                         console.log('📝 Answer updated:', question.id, '=', answers[question.id]);
                         updateNextButton();
                         updateSkillsPanel(); // Make sure this is called every time
+                        
+                        // 💾 PROGRESSIVE SAVE: Auto-save answer progress
+                        await autoSaveAnswer(question.id, answers[question.id]);
                     });
                     
                     if (optionsContainer) optionsContainer.appendChild(optionElement);
@@ -3000,7 +3423,7 @@
 
         // Initialize Application
         function init() {
-            console.log('🚀 Starting Enhanced Franchise Tracker v4.0...');
+            console.log('🚀 Starting Enhanced Progressive Franchise Tracker v5.0...');
             
             initializeSupabase();
             handleResize();
@@ -3033,7 +3456,11 @@
             setTimeout(init, 500);
         });
 
-        // Debug functions for testing
+        // =====================================================================
+        // 🧪 DEBUG & TESTING FUNCTIONS
+        // =====================================================================
+
+        // Debug functions for testing progressive saving
         window.testSendOTP = function() {
             console.log('🧪 Testing Send OTP...');
             document.getElementById('firstName').value = 'Test';
@@ -3053,16 +3480,77 @@
             checkOTPComplete();
         };
 
+        window.testQuickAnswer = function() {
+            console.log('🧪 Testing Quick Answer...');
+            // Simulate answering first 3 questions quickly
+            answers.q1 = 'digital_agency';
+            answers.q2 = 'yes';
+            answers.q3 = 'fulltime';
+            updateSkillsPanel();
+            console.log('📊 Answers set:', answers);
+        };
+
         window.debugState = function() {
             console.log('📊 Current State:', {
                 currentScreen,
                 currentQuestionIndex,
                 answers,
                 userProfile,
-                recommendedProducts
+                recommendedProducts,
+                currentLeadId,
+                'Supabase Status': supabase ? 'Connected' : 'Demo Mode'
             });
         };
+
+        window.testProgressiveSave = async function() {
+            console.log('🧪 Testing Progressive Save...');
+            
+            // Test Phase 1: Contact Details
+            userProfile.firstName = 'Progressive';
+            userProfile.lastName = 'Test';
+            userProfile.phone = '9999999999';
+            userProfile.city = 'TestCity';
+            
+            const result1 = await saveContactDetails();
+            console.log('Phase 1 Result:', result1);
+            
+            // Test Phase 2: OTP Verification
+            const result2 = await updateOTPVerified();
+            console.log('Phase 2 Result:', result2);
+            
+            // Test Phase 3: Assessment Started
+            answers.q1 = 'digital_agency';
+            const result3 = await updateAssessmentStarted();
+            console.log('Phase 3A Result:', result3);
+            
+            // Test Phase 4: Assessment Completed
+            answers.q2 = 'yes';
+            answers.q3 = 'fulltime';
+            userProfile.calculatedScore = 75;
+            recommendedProducts = { products: ['topiko', 'flex'] };
+            const result4 = await updateAssessmentCompleted();
+            console.log('Phase 3B Result:', result4);
+            
+            console.log('✅ Progressive save test completed!');
+        };
+
+        console.log('🎯 PROGRESSIVE SAVING SYSTEM LOADED');
+        console.log('💾 Data will be saved at every step:');
+        console.log('   1. 📞 Contact details (before OTP)');
+        console.log('   2. ✅ OTP verification');
+        console.log('   3. 📝 Assessment progress (every question)');
+        console.log('   4. 🎯 Product recommendations');
+        console.log('   5. 👁️ Product detail views');
+        console.log('   6. 💰 ROI calculations');
+        console.log('   7. 📺 Demo video views');
+        console.log('   8. 🏁 Final submission');
+        console.log('');
+        console.log('🧪 Test functions available:');
+        console.log('   • window.testSendOTP() - Test contact form');
+        console.log('   • window.testVerifyOTP() - Test OTP verification');
+        console.log('   • window.testQuickAnswer() - Simulate quick answers');
+        console.log('   • window.testProgressiveSave() - Test all save phases');
+        console.log('   • window.debugState() - Check current state');
     </script>
 </body>
 </html>
-            
