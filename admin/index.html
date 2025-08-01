@@ -363,27 +363,42 @@
         }
 
         .lead-row:hover {
-            background: rgba(102, 126, 234, 0.05);
+            background: rgba(102, 126, 234, 0.08);
             transform: translateX(4px);
             box-shadow: 
                 4px 4px 8px var(--shadow-dark),
                 -4px -4px 8px var(--shadow-light);
         }
 
-        .lead-row:hover::before {
-            content: '👁️ Click to view full profile';
+        .lead-row:hover::after {
+            content: '👁️ Click to view full profile & skills';
             position: absolute;
             right: 1rem;
             top: 50%;
             transform: translateY(-50%);
             background: var(--accent-primary);
             color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.7rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
             font-weight: 500;
             z-index: 10;
             pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            animation: fadeInTooltip 0.2s ease;
+        }
+
+        @keyframes fadeInTooltip {
+            from { opacity: 0; transform: translateY(-50%) translateX(10px); }
+            to { opacity: 1; transform: translateY(-50%) translateX(0); }
+        }
+
+        /* Make sure recent activity items also have hover effect */
+        #recent-activity .lead-row:hover::after {
+            content: '👁️ View Skills Panel';
+            right: 0.5rem;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
         }
 
         .lead-status {
@@ -1364,6 +1379,12 @@
             `;
 
             content.innerHTML = tableHTML;
+            
+            // Set up click handlers after table is rendered
+            console.log('📊 Table rendered, setting up click handlers...');
+            setTimeout(() => {
+                setupLeadRowHandlers();
+            }, 100);
         }
 
         // Filter leads based on current filter
@@ -1393,16 +1414,31 @@
 
         // Enhanced lead detail modal with skills panel
         function showEnhancedLeadDetail(leadId) {
+            console.log('🔍 showEnhancedLeadDetail called with ID:', leadId);
+            
             const lead = allLeads.find(l => l.id === leadId);
-            if (!lead) return;
+            if (!lead) {
+                console.error('❌ Lead not found with ID:', leadId);
+                console.log('Available leads:', allLeads.map(l => ({ id: l.id, name: `${l.first_name} ${l.last_name}` })));
+                alert('Lead not found! Check console for details.');
+                return;
+            }
+
+            console.log('✅ Lead found:', lead.first_name, lead.last_name);
 
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
+            
+            if (!modalTitle || !modalBody) {
+                console.error('❌ Modal elements not found');
+                return;
+            }
             
             modalTitle.textContent = `${lead.first_name} ${lead.last_name} - Complete Profile`;
             
             // Extract skills using the same logic as main app
             const skills = extractSkillsFromAnswers(lead.answers, lead.first_name, lead.city);
+            console.log('🎯 Extracted skills:', skills);
             
             modalBody.innerHTML = `
                 <!-- Skills Panel Section -->
@@ -1571,7 +1607,9 @@
                 </div>
             `;
 
+            console.log('✅ Modal content populated, showing modal...');
             document.getElementById('lead-modal').classList.add('active');
+            console.log('✅ Modal should now be visible');
         }
 
         // Format questionnaire answers in a readable way
@@ -1762,6 +1800,25 @@
                     `).join('')}
                 </div>
             `;
+            
+            // Set up click handlers for recent activity items
+            setTimeout(() => {
+                console.log('🔧 Setting up recent activity click handlers...');
+                document.querySelectorAll('#recent-activity .lead-row').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const leadId = this.getAttribute('data-lead-id');
+                        console.log('🎯 Recent activity clicked! ID:', leadId);
+                        
+                        if (leadId) {
+                            showEnhancedLeadDetail(leadId);
+                        }
+                    });
+                });
+                console.log(`✅ Set up ${document.querySelectorAll('#recent-activity .lead-row').length} recent activity handlers`);
+            }, 100);
         }
 
         // Utility functions
@@ -2038,18 +2095,52 @@
                 btn.removeAttribute('onclick');
                 btn.addEventListener('click', closeModal);
             });
+        }
 
-            // Enhanced lead detail buttons (these will be set up when table is rendered)
-            document.addEventListener('click', (e) => {
-                // Handle dynamically created lead row clicks
-                if (e.target.closest('.lead-row')) {
-                    const leadRow = e.target.closest('.lead-row');
-                    const leadId = leadRow.getAttribute('data-lead-id');
-                    if (leadId) {
-                        showEnhancedLeadDetail(leadId);
-                    }
-                }
+        // Setup lead row click handlers - called after table is rendered
+        function setupLeadRowHandlers() {
+            console.log('🔧 Setting up lead row click handlers...');
+            
+            // Remove any existing handlers first
+            document.querySelectorAll('.lead-row').forEach(row => {
+                const newRow = row.cloneNode(true);
+                row.parentNode.replaceChild(newRow, row);
             });
+            
+            // Add new handlers
+            document.querySelectorAll('.lead-row').forEach((row, index) => {
+                const leadId = row.getAttribute('data-lead-id');
+                console.log(`Setting up handler for row ${index + 1}, leadId: ${leadId}`);
+                
+                row.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('🎯 Lead row clicked! Element:', this);
+                    console.log('🎯 Lead ID from data attribute:', leadId);
+                    
+                    if (leadId) {
+                        console.log('✅ Opening lead detail for:', leadId);
+                        showEnhancedLeadDetail(leadId);
+                    } else {
+                        console.error('❌ No lead ID found on row');
+                        console.log('Row attributes:', Array.from(this.attributes).map(attr => `${attr.name}="${attr.value}"`));
+                    }
+                });
+                
+                // Visual feedback
+                row.style.cursor = 'pointer';
+                row.title = 'Click to view full profile and skills panel';
+            });
+            
+            console.log(`✅ Set up ${document.querySelectorAll('.lead-row').length} lead row handlers`);
+            
+            // Log first few rows for debugging
+            const firstFewRows = Array.from(document.querySelectorAll('.lead-row')).slice(0, 3);
+            console.log('First few rows data:', firstFewRows.map(row => ({
+                leadId: row.getAttribute('data-lead-id'),
+                innerHTML: row.firstElementChild?.textContent?.trim() || 'No content'
+            })));
         }
 
         // Close modal when clicking outside
@@ -2092,16 +2183,25 @@
             console.log('🧪 Available functions:');
             console.log('   - window.testSkillsPanel() - Test skills panel with demo data');
             console.log('   - window.debugLeadData() - Show first lead data');
+            console.log('   - window.testClickHandler() - Test click handlers');
+            console.log('   - window.forceRefresh() - Force refresh data');
         }
 
         // Test functions for debugging
         window.testSkillsPanel = function() {
             console.log('🧪 Testing Skills Panel...');
             if (allLeads.length > 0) {
+                console.log('Available leads:', allLeads.map(l => ({ id: l.id, name: `${l.first_name} ${l.last_name}` })));
                 showEnhancedLeadDetail(allLeads[0].id);
                 console.log('✅ Skills panel should now be visible');
             } else {
-                console.log('❌ No leads available. Load some data first.');
+                console.log('❌ No leads available. Loading demo data...');
+                generateDemoData();
+                loadLeads().then(() => {
+                    if (allLeads.length > 0) {
+                        showEnhancedLeadDetail(allLeads[0].id);
+                    }
+                });
             }
         };
 
@@ -2111,12 +2211,28 @@
             if (allLeads.length > 0) {
                 console.log('First lead:', allLeads[0]);
                 console.log('Skills for first lead:', extractSkillsFromAnswers(allLeads[0].answers, allLeads[0].first_name, allLeads[0].city));
+            } else {
+                console.log('No leads loaded yet');
             }
         };
 
         window.forceRefresh = function() {
             console.log('🔄 Force refreshing all data...');
             loadLeads();
+        };
+
+        window.testClickHandler = function() {
+            console.log('🧪 Testing click handlers...');
+            const leadRows = document.querySelectorAll('.lead-row');
+            console.log(`Found ${leadRows.length} lead rows`);
+            
+            if (leadRows.length > 0) {
+                console.log('First row data-lead-id:', leadRows[0].getAttribute('data-lead-id'));
+                console.log('Simulating click on first row...');
+                leadRows[0].click();
+            } else {
+                console.log('No lead rows found');
+            }
         };
 
         // Initialize when DOM is loaded
