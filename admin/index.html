@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Franchise Leads Dashboard - Topiko</title>
+    <title>Enhanced Franchise Admin Panel - Topiko</title>
     
     <!-- External Dependencies -->
     <script src="https://unpkg.com/@supabase/supabase-js@2.38.0/dist/umd/supabase.js"></script>
@@ -16,37 +16,192 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-bg: #f0f4f8;
+            --secondary-bg: #ffffff;
+            --card-bg: #fafbfc;
+            --shadow-light: #ffffff;
+            --shadow-dark: #d1d9e6;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --danger: #f56565;
+            --info: #4299e1;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1e1b4b 0%, #7c3aed 50%, #1e1b4b 100%);
+            background: var(--primary-bg);
             min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Neumorphism Card Styles */
+        .neu-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 
+                8px 8px 16px var(--shadow-dark),
+                -8px -8px 16px var(--shadow-light);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .neu-card:hover {
+            box-shadow: 
+                12px 12px 24px var(--shadow-dark),
+                -12px -12px 24px var(--shadow-light);
+        }
+
+        .neu-card-inset {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 
+                inset 4px 4px 8px var(--shadow-dark),
+                inset -4px -4px 8px var(--shadow-light);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .neu-button {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        .neu-button:hover {
+            box-shadow: 
+                2px 2px 4px var(--shadow-dark),
+                -2px -2px 4px var(--shadow-light);
+            transform: translateY(1px);
+        }
+
+        .neu-button:active {
+            box-shadow: 
+                inset 2px 2px 4px var(--shadow-dark),
+                inset -2px -2px 4px var(--shadow-light);
+        }
+
+        .neu-button.primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
         }
 
+        .neu-input {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            box-shadow: 
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .neu-input:focus {
+            outline: none;
+            box-shadow: 
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light),
+                0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Header */
         .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--secondary-bg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 
+                0 4px 8px var(--shadow-dark),
+                0 -4px 8px var(--shadow-light);
         }
 
         .header h1 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 300;
             margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .header .subtitle {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .header .timestamp {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 0 2rem 2rem;
         }
 
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: var(--card-bg);
+            padding: 0.5rem;
+            border-radius: 16px;
+            box-shadow: 
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 1rem 2rem;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: 
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -55,29 +210,50 @@
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
             text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
         }
 
         .stat-number {
             font-size: 2.5rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .stat-label {
-            color: rgba(255, 255, 255, 0.8);
+            color: var(--text-secondary);
             font-size: 0.9rem;
+            font-weight: 500;
         }
 
+        .stat-change {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+            background: rgba(72, 187, 120, 0.1);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+            background: rgba(245, 101, 101, 0.1);
+        }
+
+        /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -85,25 +261,22 @@
             margin-bottom: 2rem;
         }
 
-        .leads-table-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
+        /* Leads Table */
+        .table-container {
+            padding: 2rem;
         }
 
         .table-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: 2rem;
         }
 
         .table-header h2 {
             font-size: 1.5rem;
             font-weight: 500;
+            color: var(--text-primary);
         }
 
         .filter-buttons {
@@ -112,115 +285,52 @@
         }
 
         .filter-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
             padding: 0.5rem 1rem;
             border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
             font-size: 0.9rem;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            background: var(--card-bg);
+            border: none;
+            cursor: pointer;
+            box-shadow: 
+                2px 2px 4px var(--shadow-dark),
+                -2px -2px 4px var(--shadow-light);
         }
 
-        .filter-btn:hover, .filter-btn.active {
-            background: rgba(139, 92, 246, 0.3);
-            border-color: #8b5cf6;
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
         }
 
         .leads-table {
             width: 100%;
             border-collapse: collapse;
+            background: var(--secondary-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
         }
 
         .leads-table th,
         .leads-table td {
-            padding: 1rem;
+            padding: 1.2rem;
             text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(209, 217, 230, 0.3);
         }
 
         .leads-table th {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(102, 126, 234, 0.05);
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.9);
+            color: var(--text-primary);
             font-size: 0.9rem;
         }
 
         .leads-table td {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .lead-score {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .score-high { background: rgba(16, 185, 129, 0.3); color: #10b981; }
-        .score-medium { background: rgba(245, 158, 11, 0.3); color: #f59e0b; }
-        .score-low { background: rgba(239, 68, 68, 0.3); color: #ef4444; }
-
-        .product-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-        }
-
-        .product-tag {
-            background: rgba(139, 92, 246, 0.3);
-            color: #c4b5fd;
-            padding: 0.2rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.7rem;
-        }
-
-        .chart-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .chart-container h3 {
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .refresh-btn {
-            background: linear-gradient(135deg, #ec4899, #8b5cf6);
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .refresh-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+            color: var(--text-secondary);
         }
 
         .lead-row {
@@ -229,9 +339,149 @@
         }
 
         .lead-row:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(102, 126, 234, 0.05);
         }
 
+        .lead-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-contact_entered { background: rgba(237, 137, 54, 0.1); color: var(--warning); }
+        .status-otp_verified { background: rgba(66, 153, 225, 0.1); color: var(--info); }
+        .status-assessment_started { background: rgba(102, 126, 234, 0.1); color: var(--accent-primary); }
+        .status-assessment_completed { background: rgba(118, 75, 162, 0.1); color: var(--accent-secondary); }
+        .status-products_viewed { background: rgba(72, 187, 120, 0.1); color: var(--success); }
+        .status-final_submitted { background: rgba(72, 187, 120, 0.2); color: var(--success); font-weight: 600; }
+
+        .lead-score {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .score-high { background: rgba(72, 187, 120, 0.2); color: var(--success); }
+        .score-medium { background: rgba(237, 137, 54, 0.2); color: var(--warning); }
+        .score-low { background: rgba(245, 101, 101, 0.2); color: var(--danger); }
+
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .product-tag {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--accent-primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        /* Charts */
+        .chart-container {
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Conversion Funnel */
+        .funnel-container {
+            padding: 2rem;
+        }
+
+        .funnel-step {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 12px;
+            box-shadow: 
+                2px 2px 4px var(--shadow-dark),
+                -2px -2px 4px var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .funnel-step:hover {
+            transform: translateX(4px);
+        }
+
+        .funnel-step-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .funnel-step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .funnel-step-details h4 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .funnel-step-details p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .funnel-step-stats {
+            text-align: right;
+        }
+
+        .funnel-count {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .funnel-percentage {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .funnel-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(209, 217, 230, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .funnel-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.8s ease;
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -239,9 +489,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             padding: 2rem;
+            backdrop-filter: blur(10px);
         }
 
         .modal.active {
@@ -251,61 +502,255 @@
         }
 
         .modal-content {
-            background: rgba(30, 27, 75, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 0;
+            max-width: 900px;
             width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            max-height: 80vh;
-            overflow-y: auto;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 
+                16px 16px 32px var(--shadow-dark),
+                -16px -16px 32px var(--shadow-light);
+            position: relative;
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid rgba(209, 217, 230, 0.3);
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
         }
 
         .close-btn {
-            background: none;
+            background: var(--card-bg);
             border: none;
-            color: white;
-            font-size: 1.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            padding: 0.5rem;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            box-shadow: 
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+            transform: scale(1.05);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: calc(90vh - 120px);
+        }
+
+        /* Lead Detail Sections */
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .detail-grid {
             display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .detail-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
+            background: var(--secondary-bg);
+            padding: 1.2rem;
             border-radius: 12px;
+            box-shadow: 
+                2px 2px 4px var(--shadow-dark),
+                -2px -2px 4px var(--shadow-light);
         }
 
         .detail-label {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            color: var(--text-muted);
             margin-bottom: 0.5rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .detail-value {
             font-weight: 500;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        /* Skills Panel in Modal */
+        .skills-panel-modal {
+            background: var(--secondary-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        .skills-header-modal {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .skills-avatar-modal {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        .skills-name-modal {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .skills-title-modal {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .skill-item-modal {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.8rem;
+            box-shadow: 
+                2px 2px 4px var(--shadow-dark),
+                -2px -2px 4px var(--shadow-light);
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .skill-item-modal.highlight {
+            border-left-color: var(--accent-primary);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .skill-text-modal {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* JSON Viewer */
+        .json-viewer {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 
+                inset 2px 2px 4px var(--shadow-dark),
+                inset -2px -2px 4px var(--shadow-light);
+        }
+
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(102, 126, 234, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+            .container {
+                padding: 0 1rem 1rem;
+            }
+            
+            .header {
+                padding: 1.5rem 1rem;
             }
             
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
             }
             
             .leads-table {
@@ -314,82 +759,203 @@
             
             .leads-table th,
             .leads-table td {
-                padding: 0.5rem;
+                padding: 0.8rem 0.5rem;
             }
+            
+            .modal-content {
+                margin: 1rem;
+                max-width: calc(100% - 2rem);
+            }
+            
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--shadow-dark);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Franchise Leads Dashboard</h1>
-        <div class="subtitle">Real-time franchise opportunity tracking</div>
+        <h1>🏢 Franchise Management Hub</h1>
+        <div class="subtitle">Comprehensive lead tracking and analytics dashboard</div>
+        <div class="timestamp" id="current-time">Last updated: Loading...</div>
     </div>
 
     <div class="container">
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="total-leads">-</div>
-                <div class="stat-label">Total Leads</div>
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="overview">📊 Overview</div>
+            <div class="nav-tab" data-tab="leads">👥 Leads Management</div>
+            <div class="nav-tab" data-tab="analytics">📈 Analytics</div>
+            <div class="nav-tab" data-tab="funnel">🔄 Conversion Funnel</div>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview-tab" class="tab-content active">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="neu-card stat-card">
+                    <div class="stat-number" id="total-leads">-</div>
+                    <div class="stat-label">Total Leads</div>
+                    <div class="stat-change positive" id="total-change">+12% this week</div>
+                </div>
+                <div class="neu-card stat-card">
+                    <div class="stat-number" id="today-leads">-</div>
+                    <div class="stat-label">Today's Leads</div>
+                    <div class="stat-change positive" id="today-change">+5 since yesterday</div>
+                </div>
+                <div class="neu-card stat-card">
+                    <div class="stat-number" id="avg-score">-</div>
+                    <div class="stat-label">Avg Lead Score</div>
+                    <div class="stat-change positive" id="score-change">+3.2 this month</div>
+                </div>
+                <div class="neu-card stat-card">
+                    <div class="stat-number" id="conversion-rate">-</div>
+                    <div class="stat-label">Conversion Rate</div>
+                    <div class="stat-change positive" id="conversion-change">+8% improvement</div>
+                </div>
+                <div class="neu-card stat-card">
+                    <div class="stat-number" id="high-quality-leads">-</div>
+                    <div class="stat-label">High Quality (80+)</div>
+                    <div class="stat-change positive" id="quality-change">15% of total</div>
+                </div>
+                <div class="neu-card stat-card">
+                    <div class="stat-number" id="completed-assessments">-</div>
+                    <div class="stat-label">Completed Assessments</div>
+                    <div class="stat-change positive" id="assessment-change">78% completion</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="today-leads">-</div>
-                <div class="stat-label">Today's Leads</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="avg-score">-</div>
-                <div class="stat-label">Avg Lead Score</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="conversion-rate">-</div>
-                <div class="stat-label">Conversion Rate</div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Recent Activity -->
+                <div class="neu-card">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>🕒 Recent Activity</h2>
+                            <button class="neu-button primary" onclick="loadLeads()">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                        <div id="recent-activity">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading recent activity...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Charts -->
+                <div>
+                    <div class="neu-card chart-container">
+                        <h3>📊 Lead Sources</h3>
+                        <canvas id="sourceChart" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <div class="neu-card chart-container">
+                        <h3>📈 Weekly Trend</h3>
+                        <canvas id="weeklyChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Leads Table -->
-            <div class="leads-table-container">
-                <div class="table-header">
-                    <h2>Recent Leads</h2>
-                    <div>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" data-filter="all">All</button>
-                            <button class="filter-btn" data-filter="today">Today</button>
-                            <button class="filter-btn" data-filter="high-score">High Score</button>
+        <!-- Leads Management Tab -->
+        <div id="leads-tab" class="tab-content">
+            <div class="neu-card">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>👥 All Leads</h2>
+                        <div>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-filter="all">All Leads</button>
+                                <button class="filter-btn" data-filter="today">Today</button>
+                                <button class="filter-btn" data-filter="high-score">High Score (80+)</button>
+                                <button class="filter-btn" data-filter="completed">Completed</button>
+                                <button class="filter-btn" data-filter="verified">Verified</button>
+                            </div>
+                            <button class="neu-button primary" onclick="loadLeads()" style="margin-left: 1rem;">
+                                🔄 Refresh Data
+                            </button>
                         </div>
-                        <button class="refresh-btn" onclick="loadLeads()" style="margin-left: 1rem;">Refresh</button>
+                    </div>
+                    
+                    <div id="leads-content">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            Loading comprehensive lead data...
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics-tab" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="neu-card chart-container">
+                    <h3>🎯 Product Interest Distribution</h3>
+                    <canvas id="productChart" width="400" height="300"></canvas>
+                </div>
                 
-                <div id="leads-content">
-                    <div class="loading">Loading leads...</div>
+                <div class="neu-card chart-container">
+                    <h3>📅 Daily Lead Generation</h3>
+                    <canvas id="dailyChart" width="400" height="300"></canvas>
                 </div>
             </div>
-
-            <!-- Charts -->
-            <div>
-                <div class="chart-container" style="margin-bottom: 1.5rem;">
-                    <h3>Product Interest</h3>
-                    <canvas id="productChart" width="400" height="200"></canvas>
+            
+            <div class="dashboard-grid">
+                <div class="neu-card chart-container">
+                    <h3>🏆 Lead Quality Distribution</h3>
+                    <canvas id="qualityChart" width="400" height="300"></canvas>
                 </div>
                 
-                <div class="chart-container">
-                    <h3>Daily Leads</h3>
-                    <canvas id="dailyChart" width="400" height="200"></canvas>
+                <div class="neu-card chart-container">
+                    <h3>🌍 Geographic Distribution</h3>
+                    <canvas id="geoChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversion Funnel Tab -->
+        <div id="funnel-tab" class="tab-content">
+            <div class="neu-card funnel-container">
+                <h2 style="margin-bottom: 2rem; text-align: center;">🔄 Lead Conversion Funnel</h2>
+                <div id="conversion-funnel">
+                    <!-- Funnel steps will be populated here -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Lead Detail Modal -->
+    <!-- Enhanced Lead Detail Modal -->
     <div id="lead-modal" class="modal">
-        <div class="modal-content"> 
+        <div class="modal-content">
             <div class="modal-header">
-                <h2>Lead Details</h2>
+                <h2 id="modal-title">Lead Details</h2>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            <div id="modal-body"></div>
+            <div class="modal-body" id="modal-body">
+                <!-- Enhanced lead details will be populated here -->
+            </div>
         </div>
     </div>
 
@@ -397,39 +963,168 @@
         // Configuration
         const SUPABASE_URL = 'https://uyaubwfmxmxelcshuyaf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YXVid2ZteG14ZWxjc2h1eWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NDA0MTksImV4cCI6MjA2OTUxNjQxOX0.Sc9qUUXr73x8yw5-2rs-pcI03lFpMTSyuhW9RDLcOLI';
-        
-        // Initialize Supabase with error handling
+
+        // Initialize Supabase
         let supabase = null;
-        
+        let allLeads = [];
+        let currentFilter = 'all';
+        let charts = {};
+
         function initializeSupabase() {
             try {
                 if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
                     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    console.log('Supabase initialized successfully');
+                    console.log('✅ Supabase initialized successfully');
                 } else {
-                    console.warn('Supabase not configured. Please update credentials.');
+                    console.warn('⚠️ Supabase not configured. Using demo data.');
                 }
             } catch (error) {
-                console.error('Error initializing Supabase:', error);
+                console.error('❌ Error initializing Supabase:', error);
             }
         }
 
-        // Global variables
-        let allLeads = [];
-        let currentFilter = 'all';
-        let productChart, dailyChart;
+        // Enhanced Skills Panel Logic (Same as franchise tracker)
+        function extractSkillsFromAnswers(answers, firstName = 'User', city = 'Unknown') {
+            if (!answers) return [];
+            
+            const skills = [];
+            
+            // Q1: Self Description
+            if (answers.q1) {
+                const descriptions = {
+                    'digital_agency': 'Runs digital agency or freelance services',
+                    'aspiring_entrepreneur': 'Aspiring entrepreneur ready to start own business',
+                    'local_business_worker': 'Works with local businesses, wants to offer digital solutions',
+                    'part_time_freelancer': 'Part-time freelancer exploring online income opportunities',
+                    'technical_expert': 'Has technical expertise for custom solutions',
+                    'franchise_investor': 'Exploring franchise/investment opportunities',
+                    'other': 'Has unique background and diverse experience'
+                };
+                
+                if (descriptions[answers.q1]) {
+                    skills.push(descriptions[answers.q1]);
+                }
+            }
+            
+            // Q2: Experience
+            if (answers.q2) {
+                if (answers.q2 === 'yes') {
+                    skills.push('Having prior experience in this field');
+                } else if (answers.q2 === 'little') {
+                    skills.push('Has some knowledge in this field');
+                } else {
+                    skills.push('Fresh perspective & eagerness to join');
+                }
+            }
+            
+            // Q3: Time Commitment
+            if (answers.q3) {
+                if (answers.q3 === 'fulltime') {
+                    skills.push('Committed fulltime to take up Topiko franchise');
+                } else if (answers.q3 === 'parttime') {
+                    skills.push('Looking to start part-time and scale gradually');
+                } else {
+                    skills.push('Yet to decide what works best for their situation');
+                }
+            }
 
-        // Initialize dashboard
-        async function init() {
-            initializeSupabase();
-            setupCharts();
-            await loadLeads();
-            setupFilters();
+            // Q4: Business Connections
+            if (answers.q4 && answers.q4.length > 0) {
+                const connectionLabels = {
+                    'business_owners': 'Business owners',
+                    'associations': 'Industry associations',
+                    'startups': 'Startup founders',
+                    'others': 'Various business professionals'
+                };
+                
+                const connections = answers.q4.map(type => connectionLabels[type] || type);
+                
+                if (connections.length === 1) {
+                    skills.push(`Closely works with ${connections[0]}`);
+                } else if (connections.length === 2) {
+                    skills.push(`Closely works with ${connections[0]} and ${connections[1]}`);
+                } else {
+                    skills.push(`Has strong network with ${connections.slice(0, -1).join(', ')} and ${connections[connections.length - 1]}`);
+                }
+            }
+
+            // Q5: Current Business Operations
+            if (answers.q5 && answers.q5.length > 0 && !answers.q5.includes('none')) {
+                const businessMap = {
+                    'it_services': 'IT Services',
+                    'digital_marketing': 'Digital Marketing agency',
+                    'reseller': 'Product reselling business',
+                    'others': 'Other business ventures'
+                };
+                
+                const businesses = answers.q5.filter(b => b !== 'none')
+                                           .map(type => businessMap[type])
+                                           .filter(Boolean);
+                
+                if (businesses.length === 1) {
+                    skills.push(`Currently runs ${businesses[0]}`);
+                } else if (businesses.length > 1) {
+                    skills.push(`Manages multiple businesses: ${businesses.join(', ')}`);
+                }
+            } else if (answers.q5 && answers.q5.includes('none')) {
+                skills.push('Ready to start first entrepreneurial journey');
+            }
+
+            // Q6: Technical Capabilities
+            if (answers.q6) {
+                const techSkills = {
+                    'yes': 'Comfortable with technical setup & client branding',
+                    'no': 'Prefers support for technical setup tasks'
+                };
+                if (techSkills[answers.q6]) {
+                    skills.push(techSkills[answers.q6]);
+                }
+            }
+
+            // Q7: Scale Ambition
+            if (answers.q7) {
+                const scaleSkills = {
+                    'yes': 'Ready to build team and establish local office',
+                    'no': 'Prefers to start solo and grow organically'
+                };
+                if (scaleSkills[answers.q7]) {
+                    skills.push(scaleSkills[answers.q7]);
+                }
+            }
+
+            // Q8: Brand Strategy
+            if (answers.q8) {
+                const brandSkills = {
+                    'own_brand': 'Prefers to build and promote own brand',
+                    'topiko_brand': 'Excited to represent Topiko brand',
+                    'both': 'Open to both own brand and Topiko branding'
+                };
+                if (brandSkills[answers.q8]) {
+                    skills.push(brandSkills[answers.q8]);
+                }
+            }
+
+            // Q9: Investment Readiness
+            if (answers.q9) {
+                const investmentSkills = {
+                    'above_3l': 'Has strong financial backing (3L+ investment ready)',
+                    '1l_3l': 'Prepared with moderate investment (1L-3L range)',
+                    'under_1l': 'Starting with smart budget approach (<1L investment)',
+                    'no_investment': 'Looking for zero-investment franchise opportunity'
+                };
+                if (investmentSkills[answers.q9]) {
+                    skills.push(investmentSkills[answers.q9]);
+                }
+            }
+            
+            return skills;
         }
 
-        // Load leads from Supabase
+        // Load leads from Supabase with enhanced data
         async function loadLeads() {
             try {
+                updateTimestamp();
+                
                 if (supabase) {
                     const { data, error } = await supabase
                         .from('franchise_leads')
@@ -437,87 +1132,102 @@
                         .order('created_at', { ascending: false });
 
                     if (error) throw error;
-
                     allLeads = data || [];
                 } else {
-                    // Demo mode - load from localStorage
-                    const demoLeads = JSON.parse(localStorage.getItem('demo_leads') || '[]');
-                    allLeads = demoLeads;
-                    
-                    if (allLeads.length === 0) {
-                        // Add some demo data
-                        allLeads = [
-                            {
-                                id: '1',
-                                first_name: 'Demo',
-                                last_name: 'User',
-                                email: 'demo@example.com',
-                                phone: '+91-9876543210',
-                                business_goals: 'Looking to expand digital services',
-                                recommended_products: ['topiko', 'disblay'],
-                                selected_product: 'topiko',
-                                lead_score: 85,
-                                campaign_source: 'demo',
-                                created_at: new Date().toISOString(),
-                                answers: {
-                                    q1: 'yes',
-                                    q2: 'fulltime',
-                                    q3: ['business_owners', 'startups'],
-                                    q4: ['digital_marketing'],
-                                    q5: 'topiko_brand',
-                                    q6: '1l_3l'
-                                }
-                            }
-                        ];
-                    }
+                    // Enhanced demo data with more comprehensive information
+                    allLeads = generateDemoData();
                 }
                 
-                updateStats();
+                updateAllStats();
                 displayLeads();
-                updateCharts();
+                updateAllCharts();
+                updateConversionFunnel();
+                updateRecentActivity();
+                
             } catch (error) {
                 console.error('Error loading leads:', error);
-                document.getElementById('leads-content').innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">⚠️</div>
-                        <div>Error loading leads: ${error.message}</div>
-                        ${!supabase ? '<div style="margin-top: 1rem; font-size: 0.9rem;">Running in demo mode - please configure Supabase credentials</div>' : ''}
-                    </div>
-                `;
+                showError('Failed to load leads: ' + error.message);
             }
         }
 
-        // Update statistics
-        function updateStats() {
+        // Generate comprehensive demo data
+        function generateDemoData() {
+            const statuses = ['contact_entered', 'otp_verified', 'assessment_started', 'assessment_completed', 'products_viewed', 'final_submitted'];
+            const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Pune', 'Kolkata', 'Ahmedabad'];
+            const products = [['topiko', 'disblay'], ['flex', 'hebt'], ['topiko'], ['disblay', 'flex']];
+            
+            return Array.from({length: 25}, (_, i) => ({
+                id: `demo_${i + 1}`,
+                first_name: ['Rahul', 'Priya', 'Amit', 'Sneha', 'Vikram', 'Anita', 'Ravi', 'Kavya'][i % 8],
+                last_name: ['Sharma', 'Patel', 'Kumar', 'Singh', 'Reddy', 'Nair', 'Gupta', 'Joshi'][i % 8],
+                phone: `+91-${9000000000 + Math.floor(Math.random() * 999999999)}`,
+                city: cities[i % cities.length],
+                lead_status: statuses[Math.floor(Math.random() * statuses.length)],
+                lead_score: Math.floor(Math.random() * 100),
+                recommended_products: products[i % products.length],
+                selected_product: Math.random() > 0.5 ? products[i % products.length][0] : null,
+                campaign_source: ['topikopartner.com', 'google', 'facebook', 'referral'][Math.floor(Math.random() * 4)],
+                created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                contact_entered_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                otp_verified_at: Math.random() > 0.3 ? new Date(Date.now() - Math.random() * 29 * 24 * 60 * 60 * 1000).toISOString() : null,
+                assessment_started_at: Math.random() > 0.4 ? new Date(Date.now() - Math.random() * 28 * 24 * 60 * 60 * 1000).toISOString() : null,
+                assessment_completed_at: Math.random() > 0.6 ? new Date(Date.now() - Math.random() * 27 * 24 * 60 * 60 * 1000).toISOString() : null,
+                products_viewed_at: Math.random() > 0.7 ? new Date(Date.now() - Math.random() * 26 * 24 * 60 * 60 * 1000).toISOString() : null,
+                final_submitted_at: Math.random() > 0.85 ? new Date(Date.now() - Math.random() * 25 * 24 * 60 * 60 * 1000).toISOString() : null,
+                business_goals: Math.random() > 0.5 ? 'Looking to expand into digital services and grow my business' : null,
+                answers: {
+                    q1: ['digital_agency', 'aspiring_entrepreneur', 'technical_expert'][Math.floor(Math.random() * 3)],
+                    q2: ['yes', 'no', 'little'][Math.floor(Math.random() * 3)],
+                    q3: ['fulltime', 'parttime', 'undecided'][Math.floor(Math.random() * 3)],
+                    q4: [['business_owners'], ['startups', 'associations'], ['others']][Math.floor(Math.random() * 3)],
+                    q5: [['digital_marketing'], ['it_services'], ['none']][Math.floor(Math.random() * 3)],
+                    q6: Math.random() > 0.5 ? 'yes' : 'no',
+                    q7: Math.random() > 0.5 ? 'yes' : 'no',
+                    q8: ['own_brand', 'topiko_brand', 'both'][Math.floor(Math.random() * 3)],
+                    q9: ['1l_3l', 'above_3l', 'under_1l'][Math.floor(Math.random() * 3)]
+                },
+                utm_data: {
+                    utm_source: ['google', 'facebook', 'direct'][Math.floor(Math.random() * 3)],
+                    utm_medium: ['cpc', 'social', 'organic'][Math.floor(Math.random() * 3)]
+                },
+                browser_info: {
+                    userAgent: 'Demo Browser',
+                    screen: '1920x1080'
+                }
+            }));
+        }
+
+        // Update comprehensive statistics
+        function updateAllStats() {
             const today = new Date().toDateString();
+            const thisWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            
+            // Basic stats
+            const totalLeads = allLeads.length;
             const todayLeads = allLeads.filter(lead => 
                 new Date(lead.created_at).toDateString() === today
-            );
+            ).length;
             
-            const avgScore = allLeads.length > 0 
-                ? (allLeads.reduce((sum, lead) => sum + (lead.lead_score || 0), 0) / allLeads.length).toFixed(1)
+            const avgScore = totalLeads > 0 
+                ? (allLeads.reduce((sum, lead) => sum + (lead.lead_score || 0), 0) / totalLeads).toFixed(1)
                 : 0;
+                
+            const highQualityLeads = allLeads.filter(lead => lead.lead_score >= 80).length;
+            const completedAssessments = allLeads.filter(lead => lead.assessment_completed_at).length;
+            const conversionRate = totalLeads > 0 ? ((completedAssessments / totalLeads) * 100).toFixed(1) : 0;
 
-            document.getElementById('total-leads').textContent = allLeads.length;
-            document.getElementById('today-leads').textContent = todayLeads.length;
+            // Update DOM elements
+            document.getElementById('total-leads').textContent = totalLeads;
+            document.getElementById('today-leads').textContent = todayLeads;
             document.getElementById('avg-score').textContent = avgScore;
-            document.getElementById('conversion-rate').textContent = '85%'; // Static for now
+            document.getElementById('high-quality-leads').textContent = highQualityLeads;
+            document.getElementById('completed-assessments').textContent = completedAssessments;
+            document.getElementById('conversion-rate').textContent = conversionRate + '%';
         }
 
-        // Display leads table
+        // Enhanced lead display with comprehensive data
         function displayLeads() {
-            let filteredLeads = [...allLeads];
-
-            // Apply filters
-            if (currentFilter === 'today') {
-                const today = new Date().toDateString();
-                filteredLeads = allLeads.filter(lead => 
-                    new Date(lead.created_at).toDateString() === today
-                );
-            } else if (currentFilter === 'high-score') {
-                filteredLeads = allLeads.filter(lead => lead.lead_score > 80);
-            }
-
+            let filteredLeads = filterLeads();
             const content = document.getElementById('leads-content');
             
             if (filteredLeads.length === 0) {
@@ -534,23 +1244,31 @@
                 <table class="leads-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Contact</th>
-                            <th>Score</th>
-                            <th>Products</th>
-                            <th>Source</th>
-                            <th>Date</th>
+                            <th>👤 Lead Info</th>
+                            <th>📱 Contact</th>
+                            <th>📊 Status</th>
+                            <th>🎯 Score</th>
+                            <th>🛍️ Products</th>
+                            <th>📍 Source</th>
+                            <th>📅 Timeline</th>
+                            <th>🔄 Stage</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${filteredLeads.map(lead => `
-                            <tr class="lead-row" onclick="showLeadDetail('${lead.id}')">
+                            <tr class="lead-row" onclick="showEnhancedLeadDetail('${lead.id}')">
                                 <td>
-                                    <div style="font-weight: 500;">${lead.first_name} ${lead.last_name}</div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">${lead.first_name} ${lead.last_name}</div>
+                                    <div style="color: var(--text-muted); font-size: 0.8rem;">${lead.city}</div>
                                 </td>
                                 <td>
-                                    <div>${lead.email}</div>
-                                    <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem;">${lead.phone}</div>
+                                    <div style="font-size: 0.9rem;">${lead.phone}</div>
+                                    <div style="color: var(--text-muted); font-size: 0.8rem;">📧 Contact Available</div>
+                                </td>
+                                <td>
+                                    <span class="lead-status status-${lead.lead_status}">
+                                        ${formatStatus(lead.lead_status)}
+                                    </span>
                                 </td>
                                 <td>
                                     <span class="lead-score ${getScoreClass(lead.lead_score)}">
@@ -563,9 +1281,21 @@
                                             `<span class="product-tag">${product}</span>`
                                         ).join('')}
                                     </div>
+                                    ${lead.selected_product ? `<div style="font-size: 0.8rem; color: var(--success); margin-top: 0.25rem;">✅ Selected: ${lead.selected_product}</div>` : ''}
                                 </td>
-                                <td>${lead.campaign_source || 'Direct'}</td>
-                                <td>${new Date(lead.created_at).toLocaleDateString()}</td>
+                                <td>
+                                    <div>${lead.campaign_source || 'Direct'}</div>
+                                    ${lead.utm_data?.utm_source ? `<div style="font-size: 0.8rem; color: var(--text-muted);">${lead.utm_data.utm_source}</div>` : ''}
+                                </td>
+                                <td>
+                                    <div style="font-size: 0.85rem;">${new Date(lead.created_at).toLocaleDateString()}</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">${new Date(lead.created_at).toLocaleTimeString()}</div>
+                                </td>
+                                <td>
+                                    <div style="font-size: 0.8rem;">
+                                        ${getStageProgress(lead)}
+                                    </div>
+                                </td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -575,83 +1305,207 @@
             content.innerHTML = tableHTML;
         }
 
-        // Get score class for styling
-        function getScoreClass(score) {
-            if (score >= 80) return 'score-high';
-            if (score >= 50) return 'score-medium';
-            return 'score-low';
+        // Filter leads based on current filter
+        function filterLeads() {
+            let filtered = [...allLeads];
+            
+            switch (currentFilter) {
+                case 'today':
+                    const today = new Date().toDateString();
+                    filtered = allLeads.filter(lead => 
+                        new Date(lead.created_at).toDateString() === today
+                    );
+                    break;
+                case 'high-score':
+                    filtered = allLeads.filter(lead => lead.lead_score >= 80);
+                    break;
+                case 'completed':
+                    filtered = allLeads.filter(lead => lead.assessment_completed_at);
+                    break;
+                case 'verified':
+                    filtered = allLeads.filter(lead => lead.otp_verified_at);
+                    break;
+            }
+            
+            return filtered;
         }
 
-        // Show lead detail modal
-        function showLeadDetail(leadId) {
+        // Enhanced lead detail modal with skills panel
+        function showEnhancedLeadDetail(leadId) {
             const lead = allLeads.find(l => l.id === leadId);
             if (!lead) return;
 
+            const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = `${lead.first_name} ${lead.last_name} - Complete Profile`;
+            
+            // Extract skills using the same logic as main app
+            const skills = extractSkillsFromAnswers(lead.answers, lead.first_name, lead.city);
+            
             modalBody.innerHTML = `
-                <div class="detail-grid">
-                    <div class="detail-item">
-                        <div class="detail-label">Full Name</div>
-                        <div class="detail-value">${lead.first_name} ${lead.last_name}</div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-label">Email</div>
-                        <div class="detail-value">${lead.email}</div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-label">Phone</div>
-                        <div class="detail-value">${lead.phone}</div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-label">Lead Score</div>
-                        <div class="detail-value">
-                            <span class="lead-score ${getScoreClass(lead.lead_score)}">
-                                ${Math.round(lead.lead_score || 0)}/100
-                            </span>
+                <!-- Skills Panel Section -->
+                <div class="detail-section">
+                    <h3>🎯 Candidate Profile & Skills Analysis</h3>
+                    <div class="skills-panel-modal">
+                        <div class="skills-header-modal">
+                            <div class="skills-avatar-modal">${lead.first_name.charAt(0).toUpperCase()}</div>
+                            <div class="skills-name-modal">${lead.first_name} from ${lead.city}</div>
+                            <div class="skills-title-modal">Profile Strength: ${lead.lead_score || 0}/100</div>
+                        </div>
+                        
+                        <div class="skills-section-modal">
+                            ${skills.length > 0 ? skills.map((skill, index) => `
+                                <div class="skill-item-modal ${index < 3 ? 'highlight' : ''}">
+                                    <div class="skill-text-modal">${skill}</div>
+                                </div>
+                            `).join('') : '<div class="skill-item-modal"><div class="skill-text-modal">No assessment data available</div></div>'}
                         </div>
                     </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-label">Recommended Products</div>
-                        <div class="detail-value">
-                            <div class="product-tags">
-                                ${(lead.recommended_products || []).map(product => 
-                                    `<span class="product-tag">${product}</span>`
-                                ).join('')}
+                </div>
+
+                <!-- Basic Information -->
+                <div class="detail-section">
+                    <h3>👤 Basic Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Full Name</div>
+                            <div class="detail-value">${lead.first_name} ${lead.last_name}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Phone Number</div>
+                            <div class="detail-value">${lead.phone}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">City</div>
+                            <div class="detail-value">${lead.city}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Lead Score</div>
+                            <div class="detail-value">
+                                <span class="lead-score ${getScoreClass(lead.lead_score)}">
+                                    ${Math.round(lead.lead_score || 0)}/100
+                                </span>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-label">Selected Product</div>
-                        <div class="detail-value">${lead.selected_product || 'None selected'}</div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-label">Business Goals</div>
-                        <div class="detail-value">${lead.business_goals || 'Not provided'}</div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-label">Campaign Source</div>
-                        <div class="detail-value">${lead.campaign_source || 'Direct'}</div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-label">Questionnaire Answers</div>
-                        <div class="detail-value">
-                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.8);">
-                                ${formatAnswers(lead.answers)}
+                </div>
+
+                <!-- Progress Timeline -->
+                <div class="detail-section">
+                    <h3>📈 Progress Timeline</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Current Status</div>
+                            <div class="detail-value">
+                                <span class="lead-status status-${lead.lead_status}">
+                                    ${formatStatus(lead.lead_status)}
+                                </span>
                             </div>
                         </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Contact Entered</div>
+                            <div class="detail-value">${lead.contact_entered_at ? new Date(lead.contact_entered_at).toLocaleString() : 'Not recorded'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">OTP Verified</div>
+                            <div class="detail-value">${lead.otp_verified_at ? new Date(lead.otp_verified_at).toLocaleString() : '❌ Pending'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Assessment Started</div>
+                            <div class="detail-value">${lead.assessment_started_at ? new Date(lead.assessment_started_at).toLocaleString() : '❌ Not started'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Assessment Completed</div>
+                            <div class="detail-value">${lead.assessment_completed_at ? new Date(lead.assessment_completed_at).toLocaleString() : '❌ Incomplete'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Products Viewed</div>
+                            <div class="detail-value">${lead.products_viewed_at ? new Date(lead.products_viewed_at).toLocaleString() : '❌ Not viewed'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Final Submission</div>
+                            <div class="detail-value">${lead.final_submitted_at ? '✅ ' + new Date(lead.final_submitted_at).toLocaleString() : '❌ Not submitted'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Total Time in Funnel</div>
+                            <div class="detail-value">${calculateTimeInFunnel(lead)}</div>
+                        </div>
                     </div>
-                    
+                </div>
+
+                <!-- Product Information -->
+                <div class="detail-section">
+                    <h3>🛍️ Product Interest</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Recommended Products</div>
+                            <div class="detail-value">
+                                <div class="product-tags">
+                                    ${(lead.recommended_products || []).map(product => 
+                                        `<span class="product-tag">${product}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Selected Product</div>
+                            <div class="detail-value">${lead.selected_product || 'None selected yet'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Business Goals</div>
+                            <div class="detail-value">${lead.business_goals || 'Not provided'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campaign & Technical Data -->
+                <div class="detail-section">
+                    <h3>📊 Campaign & Technical Data</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Campaign Source</div>
+                            <div class="detail-value">${lead.campaign_source || 'Direct'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">UTM Source</div>
+                            <div class="detail-value">${lead.utm_data?.utm_source || 'Not available'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">UTM Medium</div>
+                            <div class="detail-value">${lead.utm_data?.utm_medium || 'Not available'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Browser Info</div>
+                            <div class="detail-value">${lead.browser_info?.screen || 'Not available'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Session ID</div>
+                            <div class="detail-value">${lead.session_id || 'Not tracked'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Priority Level</div>
+                            <div class="detail-value">${'⭐'.repeat(lead.priority_level || 1)} (${lead.priority_level || 1}/5)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questionnaire Responses -->
+                <div class="detail-section">
+                    <h3>❓ Questionnaire Responses</h3>
                     <div class="detail-item">
-                        <div class="detail-label">Submitted</div>
-                        <div class="detail-value">${new Date(lead.created_at).toLocaleString()}</div>
+                        <div class="detail-label">Complete Answers</div>
+                        <div class="detail-value">
+                            ${formatQuestionnaireAnswers(lead.answers)}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Raw Data (for debugging) -->
+                <div class="detail-section">
+                    <h3>🔧 Technical Data (JSON)</h3>
+                    <div class="json-viewer">
+                        ${JSON.stringify(lead, null, 2)}
                     </div>
                 </div>
             `;
@@ -659,115 +1513,359 @@
             document.getElementById('lead-modal').classList.add('active');
         }
 
-        // Format questionnaire answers
-        function formatAnswers(answers) {
+        // Format questionnaire answers in a readable way
+        function formatQuestionnaireAnswers(answers) {
             if (!answers) return 'No answers available';
             
-            const labels = {
-                q1: 'Sales/Marketing Experience',
-                q2: 'Time Commitment',
-                q3: 'Business Connections',
-                q4: 'Current Business',
-                q5: 'Brand Preference',
-                q6: 'Investment Range'
+            const questionLabels = {
+                q1: '1. How would you describe yourself?',
+                q2: '2. Prior experience in sales/marketing?',
+                q3: '3. Full-time or part-time commitment?',
+                q4: '4. Business connections?',
+                q5: '5. Current business operations?',
+                q6: '6. Technical comfort level?',
+                q7: '7. Willing to hire team?',
+                q8: '8. Brand preference?',
+                q9: '9. Investment range?'
+            };
+
+            const answerLabels = {
+                // Q1 options
+                'digital_agency': 'Runs digital agency/freelance',
+                'aspiring_entrepreneur': 'Aspiring entrepreneur',
+                'local_business_worker': 'Works with local businesses',
+                'part_time_freelancer': 'Part-time freelancer/student',
+                'technical_expert': 'Technical expert',
+                'franchise_investor': 'Franchise investor',
+                'other': 'Other background',
+                
+                // Q2 options
+                'yes': 'Yes',
+                'no': 'No',
+                'little': 'Some experience',
+                
+                // Q3 options
+                'fulltime': 'Full-time commitment',
+                'parttime': 'Part-time approach',
+                'undecided': 'Still deciding',
+                
+                // Q4 options
+                'business_owners': 'Business owners',
+                'associations': 'Industry associations',
+                'startups': 'Startups',
+                'others': 'Other professionals',
+                
+                // Q5 options
+                'it_services': 'IT Services',
+                'digital_marketing': 'Digital Marketing',
+                'reseller': 'Reseller business',
+                'none': 'No current business',
+                
+                // Q8 options
+                'own_brand': 'Own brand',
+                'topiko_brand': 'Topiko brand',
+                'both': 'Both options',
+                
+                // Q9 options
+                'under_1l': 'Under ₹1L',
+                '1l_3l': '₹1L-3L',
+                'above_3l': 'Above ₹3L',
+                'no_investment': 'No investment'
             };
 
             return Object.entries(answers).map(([key, value]) => {
-                const label = labels[key] || key;
-                const displayValue = Array.isArray(value) ? value.join(', ') : value;
-                return `<div><strong>${label}:</strong> ${displayValue}</div>`;
+                const label = questionLabels[key] || key;
+                let displayValue;
+                
+                if (Array.isArray(value)) {
+                    displayValue = value.map(v => answerLabels[v] || v).join(', ');
+                } else {
+                    displayValue = answerLabels[value] || value;
+                }
+                
+                return `
+                    <div style="margin-bottom: 1rem; padding: 0.8rem; background: rgba(102, 126, 234, 0.05); border-radius: 8px;">
+                        <strong style="color: var(--accent-primary);">${label}</strong><br>
+                        <span style="color: var(--text-secondary);">${displayValue}</span>
+                    </div>
+                `;
             }).join('');
         }
 
-        // Close modal
+        // Calculate time spent in funnel
+        function calculateTimeInFunnel(lead) {
+            const start = new Date(lead.created_at);
+            const end = lead.final_submitted_at ? new Date(lead.final_submitted_at) : new Date();
+            const diffMs = end - start;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffHours / 24);
+            
+            if (diffDays > 0) {
+                return `${diffDays} days, ${diffHours % 24} hours`;
+            } else {
+                return `${diffHours} hours`;
+            }
+        }
+
+        // Update conversion funnel visualization
+        function updateConversionFunnel() {
+            const funnelContainer = document.getElementById('conversion-funnel');
+            
+            const stages = [
+                { key: 'contact_entered', name: 'Contact Entered', icon: '📝', color: '#ed8936' },
+                { key: 'otp_verified', name: 'OTP Verified', icon: '✅', color: '#4299e1' },
+                { key: 'assessment_started', name: 'Assessment Started', icon: '📋', color: '#667eea' },
+                { key: 'assessment_completed', name: 'Assessment Completed', icon: '📊', color: '#764ba2' },
+                { key: 'products_viewed', name: 'Products Viewed', icon: '👀', color: '#48bb78' },
+                { key: 'final_submitted', name: 'Final Submission', icon: '🎯', color: '#38a169' }
+            ];
+            
+            const totalLeads = allLeads.length;
+            
+            funnelContainer.innerHTML = stages.map((stage, index) => {
+                let count;
+                if (stage.key === 'contact_entered') {
+                    count = totalLeads;
+                } else if (stage.key === 'final_submitted') {
+                    count = allLeads.filter(lead => lead.final_submitted_at).length;
+                } else {
+                    count = allLeads.filter(lead => lead[`${stage.key}_at`]).length;
+                }
+                
+                const percentage = totalLeads > 0 ? Math.round((count / totalLeads) * 100) : 0;
+                const dropoffFromPrevious = index > 0 ? stages[index - 1] : null;
+                
+                return `
+                    <div class="funnel-step">
+                        <div class="funnel-step-info">
+                            <div class="funnel-step-icon" style="background: ${stage.color};">
+                                ${stage.icon}
+                            </div>
+                            <div class="funnel-step-details">
+                                <h4>${stage.name}</h4>
+                                <p>Stage ${index + 1} of conversion process</p>
+                            </div>
+                        </div>
+                        <div class="funnel-step-stats">
+                            <div class="funnel-count">${count}</div>
+                            <div class="funnel-percentage">${percentage}% of total</div>
+                            <div class="funnel-bar">
+                                <div class="funnel-bar-fill" style="width: ${percentage}%; background: ${stage.color};"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update recent activity feed
+        function updateRecentActivity() {
+            const recentActivity = document.getElementById('recent-activity');
+            const recentLeads = allLeads
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .slice(0, 8);
+            
+            if (recentLeads.length === 0) {
+                recentActivity.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <div>No recent activity</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            recentActivity.innerHTML = `
+                <div style="max-height: 400px; overflow-y: auto;">
+                    ${recentLeads.map(lead => `
+                        <div class="detail-item" style="margin-bottom: 1rem; cursor: pointer;" onclick="showEnhancedLeadDetail('${lead.id}')">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 500; color: var(--text-primary);">
+                                        ${lead.first_name} ${lead.last_name}
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">
+                                        ${lead.city} • Score: ${lead.lead_score || 0}
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <span class="lead-status status-${lead.lead_status}" style="font-size: 0.7rem;">
+                                        ${formatStatus(lead.lead_status)}
+                                    </span>
+                                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                        ${new Date(lead.created_at).toLocaleDateString()}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Utility functions
+        function formatStatus(status) {
+            const statusMap = {
+                'contact_entered': 'Contact Entered',
+                'otp_verified': 'Phone Verified',
+                'assessment_started': 'Assessment Started',
+                'assessment_completed': 'Assessment Done',
+                'products_viewed': 'Products Viewed',
+                'product_detailed': 'Product Detailed',
+                'roi_calculated': 'ROI Calculated',
+                'demo_viewed': 'Demo Watched',
+                'final_submitted': 'Submitted'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getScoreClass(score) {
+            if (score >= 80) return 'score-high';
+            if (score >= 50) return 'score-medium';
+            return 'score-low';
+        }
+
+        function getStageProgress(lead) {
+            const stages = ['contact_entered', 'otp_verified', 'assessment_started', 'assessment_completed', 'products_viewed', 'final_submitted'];
+            let currentStage = 0;
+            
+            for (let i = 0; i < stages.length; i++) {
+                if (stages[i] === 'contact_entered' || lead[`${stages[i]}_at`]) {
+                    currentStage = i + 1;
+                } else {
+                    break;
+                }
+            }
+            
+            return `${currentStage}/${stages.length}`;
+        }
+
+        function updateTimestamp() {
+            document.getElementById('current-time').textContent = 
+                'Last updated: ' + new Date().toLocaleString();
+        }
+
+        function showError(message) {
+            // You can implement a toast notification here
+            console.error(message);
+        }
+
         function closeModal() {
             document.getElementById('lead-modal').classList.remove('active');
         }
 
-        // Setup filter buttons
-        function setupFilters() {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilter = btn.dataset.filter;
-                    displayLeads();
-                });
-            });
-        }
-
-        // Setup charts
-        function setupCharts() {
-            // Product Interest Chart
-            const productCtx = document.getElementById('productChart').getContext('2d');
-            productChart = new Chart(productCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: [],
-                        backgroundColor: [
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(139, 92, 246, 0.8)',
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(245, 158, 11, 0.8)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            labels: { color: 'white' }
+        // Initialize all charts
+        function initializeCharts() {
+            // Chart configurations with neumorphism theme
+            const chartConfig = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: { 
+                            color: 'var(--text-primary)',
+                            font: { size: 12 }
                         }
                     }
-                }
-            });
-
-            // Daily Leads Chart
-            const dailyCtx = document.getElementById('dailyChart').getContext('2d');
-            dailyChart = new Chart(dailyCtx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Daily Leads',
-                        data: [],
-                        borderColor: 'rgba(139, 92, 246, 1)',
-                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                        tension: 0.4
-                    }]
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { ticks: { color: 'white' } },
-                        y: { ticks: { color: 'white' } }
+                scales: {
+                    x: { 
+                        ticks: { color: 'var(--text-secondary)' },
+                        grid: { color: 'rgba(209, 217, 230, 0.3)' }
                     },
-                    plugins: {
-                        legend: {
-                            labels: { color: 'white' }
-                        }
+                    y: { 
+                        ticks: { color: 'var(--text-secondary)' },
+                        grid: { color: 'rgba(209, 217, 230, 0.3)' }
                     }
                 }
+            };
+
+            // Initialize charts
+            charts.product = new Chart(document.getElementById('productChart').getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: ['#667eea', '#764ba2', '#48bb78', '#ed8936'] }] },
+                options: { ...chartConfig, scales: undefined }
+            });
+
+            charts.daily = new Chart(document.getElementById('dailyChart').getContext('2d'), {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: 'Daily Leads', data: [], borderColor: '#667eea', backgroundColor: 'rgba(102, 126, 234, 0.1)', tension: 0.4 }] },
+                options: chartConfig
+            });
+
+            charts.quality = new Chart(document.getElementById('qualityChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: ['High (80+)', 'Medium (50-79)', 'Low (<50)'], datasets: [{ data: [], backgroundColor: ['#48bb78', '#ed8936', '#f56565'] }] },
+                options: { ...chartConfig, scales: { ...chartConfig.scales, x: undefined } }
+            });
+
+            charts.geo = new Chart(document.getElementById('geoChart').getContext('2d'), {
+                type: 'pie',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: ['#667eea', '#764ba2', '#48bb78', '#ed8936', '#f56565'] }] },
+                options: { ...chartConfig, scales: undefined }
+            });
+
+            charts.source = new Chart(document.getElementById('sourceChart').getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: ['#667eea', '#48bb78', '#ed8936', '#f56565'] }] },
+                options: { ...chartConfig, scales: undefined }
+            });
+
+            charts.weekly = new Chart(document.getElementById('weeklyChart').getContext('2d'), {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: 'Weekly Trend', data: [], borderColor: '#764ba2', backgroundColor: 'rgba(118, 75, 162, 0.1)', tension: 0.4 }] },
+                options: chartConfig
             });
         }
 
-        // Update charts with data
-        function updateCharts() {
-            // Product Interest Data
+        // Update all charts with current data
+        function updateAllCharts() {
+            // Product Interest Chart
             const productCounts = {};
             allLeads.forEach(lead => {
                 (lead.recommended_products || []).forEach(product => {
                     productCounts[product] = (productCounts[product] || 0) + 1;
                 });
             });
+            charts.product.data.labels = Object.keys(productCounts);
+            charts.product.data.datasets[0].data = Object.values(productCounts);
+            charts.product.update();
 
-            productChart.data.labels = Object.keys(productCounts);
-            productChart.data.datasets[0].data = Object.values(productCounts);
-            productChart.update();
+            // Lead Quality Distribution
+            const qualityData = [
+                allLeads.filter(lead => lead.lead_score >= 80).length,
+                allLeads.filter(lead => lead.lead_score >= 50 && lead.lead_score < 80).length,
+                allLeads.filter(lead => lead.lead_score < 50).length
+            ];
+            charts.quality.data.datasets[0].data = qualityData;
+            charts.quality.update();
 
-            // Daily Leads Data (last 7 days)
+            // Geographic Distribution
+            const cityCounts = {};
+            allLeads.forEach(lead => {
+                cityCounts[lead.city] = (cityCounts[lead.city] || 0) + 1;
+            });
+            const topCities = Object.entries(cityCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+            charts.geo.data.labels = topCities.map(([city]) => city);
+            charts.geo.data.datasets[0].data = topCities.map(([,count]) => count);
+            charts.geo.update();
+
+            // Source Distribution
+            const sourceCounts = {};
+            allLeads.forEach(lead => {
+                sourceCounts[lead.campaign_source || 'Direct'] = (sourceCounts[lead.campaign_source || 'Direct'] || 0) + 1;
+            });
+            charts.source.data.labels = Object.keys(sourceCounts);
+            charts.source.data.datasets[0].data = Object.values(sourceCounts);
+            charts.source.update();
+
+            // Daily and Weekly trends
+            updateTrendCharts();
+        }
+
+        function updateTrendCharts() {
+            // Daily trend (last 7 days)
             const last7Days = [];
             const dailyCounts = [];
             
@@ -784,26 +1882,86 @@
                 );
             }
 
-            dailyChart.data.labels = last7Days;
-            dailyChart.data.datasets[0].data = dailyCounts;
-            dailyChart.update();
+            charts.daily.data.labels = last7Days;
+            charts.daily.data.datasets[0].data = dailyCounts;
+            charts.daily.update();
+
+            // Weekly trend (last 4 weeks)
+            const last4Weeks = [];
+            const weeklyCounts = [];
+            
+            for (let i = 3; i >= 0; i--) {
+                const weekStart = new Date();
+                weekStart.setDate(weekStart.getDate() - (i * 7) - weekStart.getDay());
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                
+                last4Weeks.push(`Week ${4-i}`);
+                weeklyCounts.push(
+                    allLeads.filter(lead => {
+                        const leadDate = new Date(lead.created_at);
+                        return leadDate >= weekStart && leadDate <= weekEnd;
+                    }).length
+                );
+            }
+
+            charts.weekly.data.labels = last4Weeks;
+            charts.weekly.data.datasets[0].data = weeklyCounts;
+            charts.weekly.update();
         }
 
-        // Auto-refresh every 30 seconds (only if supabase is configured)
-        setInterval(() => {
-            if (supabase) loadLeads();
-        }, 30000);
+        // Tab switching functionality
+        function setupTabs() {
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.dataset.tab + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
 
-        // Initialize dashboard when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(init, 500);
-        });
+        // Filter functionality
+        function setupFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    displayLeads();
+                });
+            });
+        }
 
         // Close modal when clicking outside
         document.getElementById('lead-modal').addEventListener('click', (e) => {
             if (e.target.id === 'lead-modal') {
                 closeModal();
             }
+        });
+
+        // Auto-refresh every 60 seconds
+        setInterval(() => {
+            if (supabase) loadLeads();
+        }, 60000);
+
+        // Initialize dashboard
+        async function init() {
+            initializeSupabase();
+            initializeCharts();
+            setupTabs();
+            setupFilters();
+            await loadLeads();
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(init, 500);
         });
     </script>
 </body>
