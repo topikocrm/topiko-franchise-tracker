@@ -1,1 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Franchise Leads Dashboard - Topiko</title>
+    
+    <!-- External Dependencies -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.38.0/dist/umd/supabase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #7c3aed 50%, #1e1b4b 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .leads-table-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6;
+        }
+
+        .leads-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leads-table th,
+        .leads-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leads-table th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .leads-table td {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .lead-score {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .score-high { background: rgba(16, 185, 129, 0.3); color: #10b981; }
+        .score-medium { background: rgba(245, 158, 11, 0.3); color: #f59e0b; }
+        .score-low { background: rgba(239, 68, 68, 0.3); color: #ef4444; }
+
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .product-tag {
+            background: rgba(139, 92, 246, 0.3);
+            color: #c4b5fd;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        .lead-row {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lead-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: rgba(30, 27, 75, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .detail-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .leads-table {
+                font-size: 0.8rem;
+            }
+            
+            .leads-table th,
+            .leads-table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Franchise Leads Dashboard</h1>
+        <div class="subtitle">Real-time franchise opportunity tracking</div>
+    </div>
+
+    <div class="container">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-leads">-</div>
+                <div class="stat-label">Total Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="today-leads">-</div>
+                <div class="stat-label">Today's Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avg-score">-</div>
+                <div class="stat-label">Avg Lead Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="conversion-rate">-</div>
+                <div class="stat-label">Conversion Rate</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Leads Table -->
+            <div class="leads-table-container">
+                <div class="table-header">
+                    <h2>Recent Leads</h2>
+                    <div>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="today">Today</button>
+                            <button class="filter-btn" data-filter="high-score">High Score</button>
+                        </div>
+                        <button class="refresh-btn" onclick="loadLeads()" style="margin-left: 1rem;">Refresh</button>
+                    </div>
+                </div>
+                
+                <div id="leads-content">
+                    <div class="loading">Loading leads...</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div>
+                <div class="chart-container" style="margin-bottom: 1.5rem;">
+                    <h3>Product Interest</h3>
+                    <canvas id="productChart" width="400" height="200"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Daily Leads</h3>
+                    <canvas id="dailyChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lead Detail Modal -->
+    <div id="lead-modal" class="modal">
+        <div class="modal-content"> 
+            <div class="modal-header">
+                <h2>Lead Details</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const SUPABASE_URL = 'https://uyaubwfmxmxelcshuyaf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YXVid2ZteG14ZWxjc2h1eWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NDA0MTksImV4cCI6MjA2OTUxNjQxOX';
+        
+        // Initialize Supabase with error handling
+        let supabase = null;
+        
+        function initializeSupabase() {
+            try {
+                if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('Supabase initialized successfully');
+                } else {
+                    console.warn('Supabase not configured. Please update credentials.');
+                }
+            } catch (error) {
+                console.error('Error initializing Supabase:', error);
+            }
+        }
+
+        // Global variables
+        let allLeads = [];
+        let currentFilter = 'all';
+        let productChart, dailyChart;
+
+        // Initialize dashboard
+        async function init() {
+            initializeSupabase();
+            await loadLeads();
+            setupFilters();
+            setupCharts();
+        }
+
+        // Load leads from Supabase
+        async function loadLeads() {
+            try {
+                if (supabase) {
+                    const { data, error } = await supabase
+                        .from('franchise_leads')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error) throw error;
+
+                    allLeads = data || [];
+                } else {
+                    // Demo mode - load from localStorage
+                    const demoLeads = JSON.parse(localStorage.getItem('demo_leads') || '[]');
+                    allLeads = demoLeads;
+                    
+                    if (allLeads.length === 0) {
+                        // Add some demo data
+                        allLeads = [
+                            {
+                                id: '1',
+                                first_name: 'Demo',
+                                last_name: 'User',
+                                email: 'demo@example.com',
+                                phone: '+91-9876543210',
+                                business_goals: 'Looking to expand digital services',
+                                recommended_products: ['topiko', 'disblay'],
+                                selected_product: 'topiko',
+                                lead_score: 85,
+                                campaign_source: 'demo',
+                                created_at: new Date().toISOString(),
+                                answers: {
+                                    q1: 'yes',
+                                    q2: 'fulltime',
+                                    q3: ['business_owners', 'startups'],
+                                    q4: ['digital_marketing'],
+                                    q5: 'topiko_brand',
+                                    q6: '1l_3l'
+                                }
+                            }
+                        ];
+                    }
+                }
+                
+                updateStats();
+                displayLeads();
+                updateCharts();
+            } catch (error) {
+                console.error('Error loading leads:', error);
+                document.getElementById('leads-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <div>Error loading leads: ${error.message}</div>
+                        ${!supabase ? '<div style="margin-top: 1rem; font-size: 0.9rem;">Running in demo mode - please configure Supabase credentials</div>' : ''}
+                    </div>
+                `;
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const today = new Date().toDateString();
+            const todayLeads = allLeads.filter(lead => 
+                new Date(lead.created_at).toDateString() === today
+            );
+            
+            const avgScore = allLeads.length > 0 
+                ? (allLeads.reduce((sum, lead) => sum + (lead.lead_score || 0), 0) / allLeads.length).toFixed(1)
+                : 0;
+
+            document.getElementById('total-leads').textContent = allLeads.length;
+            document.getElementById('today-leads').textContent = todayLeads.length;
+            document.getElementById('avg-score').textContent = avgScore;
+            document.getElementById('conversion-rate').textContent = '85%'; // Static for now
+        }
+
+        // Display leads table
+        function displayLeads() {
+            let filteredLeads = [...allLeads];
+
+            // Apply filters
+            if (currentFilter === 'today') {
+                const today = new Date().toDateString();
+                filteredLeads = allLeads.filter(lead => 
+                    new Date(lead.created_at).toDateString() === today
+                );
+            } else if (currentFilter === 'high-score') {
+                filteredLeads = allLeads.filter(lead => lead.lead_score > 80);
+            }
+
+            const content = document.getElementById('leads-content');
+            
+            if (filteredLeads.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <div>No leads found for the selected filter</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const tableHTML = `
+                <table class="leads-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Contact</th>
+                            <th>Score</th>
+                            <th>Products</th>
+                            <th>Source</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredLeads.map(lead => `
+                            <tr class="lead-row" onclick="showLeadDetail('${lead.id}')">
+                                <td>
+                                    <div style="font-weight: 500;">${lead.first_name} ${lead.last_name}</div>
+                                </td>
+                                <td>
+                                    <div>${lead.email}</div>
+                                    <div style="color: rgba(255,255,255,0.6); font-size: 0.8rem;">${lead.phone}</div>
+                                </td>
+                                <td>
+                                    <span class="lead-score ${getScoreClass(lead.lead_score)}">
+                                        ${Math.round(lead.lead_score || 0)}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="product-tags">
+                                        ${(lead.recommended_products || []).map(product => 
+                                            `<span class="product-tag">${product}</span>`
+                                        ).join('')}
+                                    </div>
+                                </td>
+                                <td>${lead.campaign_source || 'Direct'}</td>
+                                <td>${new Date(lead.created_at).toLocaleDateString()}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            content.innerHTML = tableHTML;
+        }
+
+        // Get score class for styling
+        function getScoreClass(score) {
+            if (score >= 80) return 'score-high';
+            if (score >= 50) return 'score-medium';
+            return 'score-low';
+        }
+
+        // Show lead detail modal
+        function showLeadDetail(leadId) {
+            const lead = allLeads.find(l => l.id === leadId);
+            if (!lead) return;
+
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Full Name</div>
+                        <div class="detail-value">${lead.first_name} ${lead.last_name}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value">${lead.email}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value">${lead.phone}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Lead Score</div>
+                        <div class="detail-value">
+                            <span class="lead-score ${getScoreClass(lead.lead_score)}">
+                                ${Math.round(lead.lead_score || 0)}/100
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Recommended Products</div>
+                        <div class="detail-value">
+                            <div class="product-tags">
+                                ${(lead.recommended_products || []).map(product => 
+                                    `<span class="product-tag">${product}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Selected Product</div>
+                        <div class="detail-value">${lead.selected_product || 'None selected'}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Business Goals</div>
+                        <div class="detail-value">${lead.business_goals || 'Not provided'}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Campaign Source</div>
+                        <div class="detail-value">${lead.campaign_source || 'Direct'}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Questionnaire Answers</div>
+                        <div class="detail-value">
+                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                                ${formatAnswers(lead.answers)}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Submitted</div>
+                        <div class="detail-value">${new Date(lead.created_at).toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('lead-modal').classList.add('active');
+        }
+
+        // Format questionnaire answers
+        function formatAnswers(answers) {
+            if (!answers) return 'No answers available';
+            
+            const labels = {
+                q1: 'Sales/Marketing Experience',
+                q2: 'Time Commitment',
+                q3: 'Business Connections',
+                q4: 'Current Business',
+                q5: 'Brand Preference',
+                q6: 'Investment Range'
+            };
+
+            return Object.entries(answers).map(([key, value]) => {
+                const label = labels[key] || key;
+                const displayValue = Array.isArray(value) ? value.join(', ') : value;
+                return `<div><strong>${label}:</strong> ${displayValue}</div>`;
+            }).join('');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('lead-modal').classList.remove('active');
+        }
+
+        // Setup filter buttons
+        function setupFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    displayLeads();
+                });
+            });
+        }
+
+        // Setup charts
+        function setupCharts() {
+            // Product Interest Chart
+            const productCtx = document.getElementById('productChart').getContext('2d');
+            productChart = new Chart(productCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: 'white' }
+                        }
+                    }
+                }
+            });
+
+            // Daily Leads Chart
+            const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+            dailyChart = new Chart(dailyCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Daily Leads',
+                        data: [],
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { ticks: { color: 'white' } },
+                        y: { ticks: { color: 'white' } }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: 'white' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update charts with data
+        function updateCharts() {
+            // Product Interest Data
+            const productCounts = {};
+            allLeads.forEach(lead => {
+                (lead.recommended_products || []).forEach(product => {
+                    productCounts[product] = (productCounts[product] || 0) + 1;
+                });
+            });
+
+            productChart.data.labels = Object.keys(productCounts);
+            productChart.data.datasets[0].data = Object.values(productCounts);
+            productChart.update();
+
+            // Daily Leads Data (last 7 days)
+            const last7Days = [];
+            const dailyCounts = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toDateString();
+                
+                last7Days.push(date.toLocaleDateString());
+                dailyCounts.push(
+                    allLeads.filter(lead => 
+                        new Date(lead.created_at).toDateString() === dateStr
+                    ).length
+                );
+            }
+
+            dailyChart.data.labels = last7Days;
+            dailyChart.data.datasets[0].data = dailyCounts;
+            dailyChart.update();
+        }
+
+        // Auto-refresh every 30 seconds (only if supabase is configured)
+        setInterval(() => {
+            if (supabase) loadLeads();
+        }, 30000);
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(init, 500);
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('lead-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'lead-modal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
