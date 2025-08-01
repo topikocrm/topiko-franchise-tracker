@@ -79,6 +79,8 @@
             box-shadow: 
                 4px 4px 8px var(--shadow-dark),
                 -4px -4px 8px var(--shadow-light);
+            position: relative;
+            overflow: hidden;
         }
 
         .neu-button:hover {
@@ -94,9 +96,19 @@
                 inset -2px -2px 4px var(--shadow-light);
         }
 
+        .neu-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .neu-button.primary {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
+        }
+
+        .neu-button.primary:hover {
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
         }
 
         .neu-input {
@@ -142,6 +154,17 @@
         .header .subtitle {
             color: var(--text-secondary);
             font-size: 1.1rem;
+        }
+
+        .header .skills-info {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--accent-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            display: inline-block;
+            border: 1px solid rgba(102, 126, 234, 0.2);
         }
 
         .header .timestamp {
@@ -336,10 +359,31 @@
         .lead-row {
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .lead-row:hover {
             background: rgba(102, 126, 234, 0.05);
+            transform: translateX(4px);
+            box-shadow: 
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        .lead-row:hover::before {
+            content: '👁️ Click to view full profile';
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            z-index: 10;
+            pointer-events: none;
         }
 
         .lead-status {
@@ -563,6 +607,14 @@
             margin-bottom: 2rem;
         }
 
+        .detail-section.skills-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            margin-bottom: 2rem;
+        }
+
         .detail-section h3 {
             font-size: 1.2rem;
             font-weight: 500;
@@ -571,6 +623,12 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .detail-section.skills-section h3 {
+            color: var(--accent-primary);
+            font-size: 1.4rem;
+            font-weight: 600;
         }
 
         .detail-grid {
@@ -795,6 +853,9 @@
     <div class="header">
         <h1>🏢 Franchise Management Hub</h1>
         <div class="subtitle">Comprehensive lead tracking and analytics dashboard</div>
+        <div class="skills-info">
+            💡 <strong>Skills Panel View:</strong> Click on any lead row to see their complete skills analysis (same as franchise tracker)
+        </div>
         <div class="timestamp" id="current-time">Last updated: Loading...</div>
     </div>
 
@@ -1256,7 +1317,7 @@
                     </thead>
                     <tbody>
                         ${filteredLeads.map(lead => `
-                            <tr class="lead-row" onclick="showEnhancedLeadDetail('${lead.id}')">
+                            <tr class="lead-row" data-lead-id="${lead.id}">
                                 <td>
                                     <div style="font-weight: 600; color: var(--text-primary);">${lead.first_name} ${lead.last_name}</div>
                                     <div style="color: var(--text-muted); font-size: 0.8rem;">${lead.city}</div>
@@ -1345,7 +1406,7 @@
             
             modalBody.innerHTML = `
                 <!-- Skills Panel Section -->
-                <div class="detail-section">
+                <div class="detail-section skills-section">
                     <h3>🎯 Candidate Profile & Skills Analysis</h3>
                     <div class="skills-panel-modal">
                         <div class="skills-header-modal">
@@ -1678,7 +1739,7 @@
             recentActivity.innerHTML = `
                 <div style="max-height: 400px; overflow-y: auto;">
                     ${recentLeads.map(lead => `
-                        <div class="detail-item" style="margin-bottom: 1rem; cursor: pointer;" onclick="showEnhancedLeadDetail('${lead.id}')">
+                        <div class="detail-item lead-row" style="margin-bottom: 1rem; cursor: pointer;" data-lead-id="${lead.id}">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
                                     <div style="font-weight: 500; color: var(--text-primary);">
@@ -1756,8 +1817,8 @@
 
         // Initialize all charts
         function initializeCharts() {
-            // Chart configurations with neumorphism theme
-            const chartConfig = {
+            // Base chart configuration
+            const baseConfig = {
                 responsive: true,
                 plugins: {
                     legend: {
@@ -1766,7 +1827,12 @@
                             font: { size: 12 }
                         }
                     }
-                },
+                }
+            };
+
+            // Configuration for charts with scales (line, bar)
+            const scaledChartConfig = {
+                ...baseConfig,
                 scales: {
                     x: { 
                         ticks: { color: 'var(--text-secondary)' },
@@ -1779,41 +1845,52 @@
                 }
             };
 
-            // Initialize charts
+            // Configuration for bar charts (no x-axis grid)
+            const barChartConfig = {
+                ...baseConfig,
+                scales: {
+                    y: { 
+                        ticks: { color: 'var(--text-secondary)' },
+                        grid: { color: 'rgba(209, 217, 230, 0.3)' }
+                    }
+                }
+            };
+
+            // Initialize charts with appropriate configurations
             charts.product = new Chart(document.getElementById('productChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: [], datasets: [{ data: [], backgroundColor: ['#667eea', '#764ba2', '#48bb78', '#ed8936'] }] },
-                options: { ...chartConfig, scales: undefined }
+                options: baseConfig
             });
 
             charts.daily = new Chart(document.getElementById('dailyChart').getContext('2d'), {
                 type: 'line',
                 data: { labels: [], datasets: [{ label: 'Daily Leads', data: [], borderColor: '#667eea', backgroundColor: 'rgba(102, 126, 234, 0.1)', tension: 0.4 }] },
-                options: chartConfig
+                options: scaledChartConfig
             });
 
             charts.quality = new Chart(document.getElementById('qualityChart').getContext('2d'), {
                 type: 'bar',
                 data: { labels: ['High (80+)', 'Medium (50-79)', 'Low (<50)'], datasets: [{ data: [], backgroundColor: ['#48bb78', '#ed8936', '#f56565'] }] },
-                options: { ...chartConfig, scales: { ...chartConfig.scales, x: undefined } }
+                options: barChartConfig
             });
 
             charts.geo = new Chart(document.getElementById('geoChart').getContext('2d'), {
                 type: 'pie',
                 data: { labels: [], datasets: [{ data: [], backgroundColor: ['#667eea', '#764ba2', '#48bb78', '#ed8936', '#f56565'] }] },
-                options: { ...chartConfig, scales: undefined }
+                options: baseConfig
             });
 
             charts.source = new Chart(document.getElementById('sourceChart').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: [], datasets: [{ data: [], backgroundColor: ['#667eea', '#48bb78', '#ed8936', '#f56565'] }] },
-                options: { ...chartConfig, scales: undefined }
+                options: baseConfig
             });
 
             charts.weekly = new Chart(document.getElementById('weeklyChart').getContext('2d'), {
                 type: 'line',
                 data: { labels: [], datasets: [{ label: 'Weekly Trend', data: [], borderColor: '#764ba2', backgroundColor: 'rgba(118, 75, 162, 0.1)', tension: 0.4 }] },
-                options: chartConfig
+                options: scaledChartConfig
             });
         }
 
@@ -1938,10 +2015,58 @@
             });
         }
 
+        // Setup all button event listeners
+        function setupButtonActions() {
+            // Refresh buttons
+            document.querySelectorAll('[onclick="loadLeads()"]').forEach(btn => {
+                btn.removeAttribute('onclick');
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '🔄 Refreshing...';
+                    btn.disabled = true;
+                    
+                    await loadLeads();
+                    
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+            });
+
+            // Close modal buttons
+            document.querySelectorAll('[onclick="closeModal()"]').forEach(btn => {
+                btn.removeAttribute('onclick');
+                btn.addEventListener('click', closeModal);
+            });
+
+            // Enhanced lead detail buttons (these will be set up when table is rendered)
+            document.addEventListener('click', (e) => {
+                // Handle dynamically created lead row clicks
+                if (e.target.closest('.lead-row')) {
+                    const leadRow = e.target.closest('.lead-row');
+                    const leadId = leadRow.getAttribute('data-lead-id');
+                    if (leadId) {
+                        showEnhancedLeadDetail(leadId);
+                    }
+                }
+            });
+        }
+
         // Close modal when clicking outside
         document.getElementById('lead-modal').addEventListener('click', (e) => {
             if (e.target.id === 'lead-modal') {
                 closeModal();
+            }
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('lead-modal').classList.contains('active')) {
+                closeModal();
+            }
+            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+                e.preventDefault();
+                loadLeads();
             }
         });
 
@@ -1956,8 +2081,43 @@
             initializeCharts();
             setupTabs();
             setupFilters();
+            setupButtonActions();
             await loadLeads();
+            
+            // Show welcome message
+            console.log('🎯 Enhanced Admin Panel Loaded!');
+            console.log('📊 Click on any lead row to see the Skills Panel');
+            console.log('🔄 Use Ctrl+R or F5 to refresh data');
+            console.log('⌨️ Press Escape to close modals');
+            console.log('🧪 Available functions:');
+            console.log('   - window.testSkillsPanel() - Test skills panel with demo data');
+            console.log('   - window.debugLeadData() - Show first lead data');
         }
+
+        // Test functions for debugging
+        window.testSkillsPanel = function() {
+            console.log('🧪 Testing Skills Panel...');
+            if (allLeads.length > 0) {
+                showEnhancedLeadDetail(allLeads[0].id);
+                console.log('✅ Skills panel should now be visible');
+            } else {
+                console.log('❌ No leads available. Load some data first.');
+            }
+        };
+
+        window.debugLeadData = function() {
+            console.log('🔍 Debug Lead Data:');
+            console.log('Total leads:', allLeads.length);
+            if (allLeads.length > 0) {
+                console.log('First lead:', allLeads[0]);
+                console.log('Skills for first lead:', extractSkillsFromAnswers(allLeads[0].answers, allLeads[0].first_name, allLeads[0].city));
+            }
+        };
+
+        window.forceRefresh = function() {
+            console.log('🔄 Force refreshing all data...');
+            loadLeads();
+        };
 
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
