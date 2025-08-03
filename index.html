@@ -114,146 +114,6 @@
             min-height: min-content;
         }
 
-        /* Video Modal Styles */
-        .video-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .video-modal.active {
-            display: flex;
-        }
-
-        .video-container {
-            position: relative;
-            width: 90%;
-            max-width: 800px;
-            background: #000;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-        }
-
-        .video-iframe {
-            width: 100%;
-            height: 450px;
-            border: none;
-        }
-
-        .video-controls {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            display: flex;
-            gap: 1rem;
-            z-index: 10001;
-        }
-
-        .video-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .video-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        .skip-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .close-btn {
-            background: rgba(239, 68, 68, 0.8);
-        }
-
-        .video-progress {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .video-progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* Watch Button Styles - Compact Version */
-        .watch-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 25px;
-            padding: 0.8rem 1.5rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-top: 2rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
-        }
-
-        .watch-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .watch-btn:hover::before {
-            left: 100%;
-        }
-
-        .watch-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-        }
-
-        .play-icon {
-            width: 0;
-            height: 0;
-            border-left: 12px solid white;
-            border-top: 7px solid transparent;
-            border-bottom: 7px solid transparent;
-            margin-left: 2px;
-        }
-
-        /* Original styles continue... */
         .questions-layout {
             display: grid;
             grid-template-columns: 1fr 400px;
@@ -286,6 +146,335 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
         }
 
+        /* Save Status Indicator */
+        .save-status {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: #10b981;
+            display: none;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .save-status.saving {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+            display: block;
+        }
+
+        .save-status.saved {
+            display: block;
+            animation: fadeInOut 2s ease-in-out;
+        }
+
+        .save-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            display: block;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(-10px); }
+            20%, 80% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Desktop Skills Panel */
+        .skills-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px);
+            border-radius: 32px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 2rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+
+        .skills-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .skills-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .skills-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.98);
+            margin-bottom: 0.3rem;
+            line-height: 1.3;
+        }
+
+        .skills-title {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 300;
+        }
+
+        .skills-section {
+            margin-bottom: 2rem;
+        }
+
+        .skill-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.8rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideInSkill 0.6s ease forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .skill-item.highlight::before {
+            opacity: 1;
+        }
+
+        @keyframes slideInSkill {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .skill-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.88);
+            line-height: 1.4;
+        }
+
+        /* Mobile Skills Panel - Updated to show last answer */
+        .mobile-skills-float {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            right: 6rem; /* Leave space for circular next button */
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-skills-float:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .float-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .float-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .float-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .float-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 0.3rem;
+        }
+
+        .float-last-answer {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Mobile Circular Next Button */
+        .mobile-circular-next {
+            display: none;
+            position: fixed;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+            z-index: 101;
+            opacity: 0.3;
+        }
+
+        .mobile-circular-next:not(:disabled) {
+            opacity: 1;
+        }
+
+        .mobile-circular-next:hover:not(:disabled) {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .mobile-circular-next:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+
+        /* Bottom Sheet for Mobile Profile */
+        .mobile-profile-sheet {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(40px);
+            border-radius: 32px 32px 0 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .mobile-profile-sheet.open {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            margin: 1rem auto;
+            cursor: pointer;
+        }
+
+        .sheet-content {
+            padding: 0 2rem 2rem;
+        }
+
+        /* Inline Skills for Mobile */
+        .mobile-skills-inline {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: right;
+        }
+
+        .inline-skills-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .inline-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .inline-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.98);
+            margin-bottom: 0.2rem;
+        }
+
+        .inline-info p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .inline-skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .inline-skill {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.3;
+            border-right: 3px solid #667eea;
+            text-align: right;
+        }
+
         h1 {
             font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 100;
@@ -314,12 +503,175 @@
             font-weight: 300;
         }
 
+        .progress-container {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            display: none; /* Hide progress text */
+        }
+
+        .question-container {
+            margin-bottom: 3rem;
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .question {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: -0.01em;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* Reduced from 1.2rem */
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px; /* Reduced from 20px */
+            padding: 1.4rem 1.8rem; /* Reduced from 1.8rem 2rem */
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* Reduced from 1.2rem */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .option:hover::before {
+            opacity: 1;
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .option input {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .option input[type="checkbox"] {
+            border-radius: 6px;
+        }
+
+        .option input:checked {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .option input:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option input[type="checkbox"]:checked::after {
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            background: none;
+            transform: translate(-50%, -60%) rotate(45deg);
+        }
+
+        .option label {
+            font-size: 1rem; /* Reduced from 1.1rem */
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            flex: 1;
+            text-align: left;
+            line-height: 1.4;
+        }
+
         .next-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 20px;
             padding: 1.2rem 3rem;
-            font-size: 1.1rem;
+            font-size: 1.1rem; /* Reduced from 1.4rem */
             font-weight: 600;
             color: white;
             cursor: pointer;
@@ -359,8 +711,229 @@
             transform: translateY(-3px);
             box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
         }
+        
+        .next-btn:hover span {
+            transform: translateX(5px);
+        }
+
+        /* Circular Next Button - Next to answers section */
+        .circular-next-btn {
+            position: absolute;
+            right: -90px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+            z-index: 50;
+            opacity: 0.3;
+        }
+
+        .circular-next-btn:not(:disabled) {
+            opacity: 1;
+        }
+
+        .circular-next-btn:hover:not(:disabled) {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .circular-next-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+
+        .circular-next-btn .arrow {
+            transform: translateX(2px);
+            transition: transform 0.3s ease;
+        }
+
+        .circular-next-btn:hover:not(:disabled) .arrow {
+            transform: translateX(4px);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.2rem 1.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px; /* Match next button border-radius */
+            padding: 1.2rem 3rem; /* Match next button padding exactly */
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Match next button transition */
+            margin-right: 1rem;
+            font-weight: 600; /* Match next button weight */
+            font-size: 1.1rem; /* Match next button size */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px; /* Match next button min-width */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden { display: none !important; }
+
+        /* OTP Styles */
+        .otp-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .otp-input {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: white;
+            font-size: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .otp-input.error {
+            border-color: #ef4444;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
 
         /* Mobile Responsiveness */
+        @media (max-width: 1200px) {
+            .questions-layout {
+                grid-template-columns: 1fr 350px;
+                gap: 2rem;
+            }
+            
+            .skills-panel {
+                padding: 2.5rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .questions-layout {
+                grid-template-columns: 1fr 300px;
+                gap: 1.5rem;
+            }
+            
+            .glass-card {
+                padding: 3rem 2.5rem;
+            }
+            
+            .skills-panel {
+                padding: 2rem;
+            }
+        }
+
+        /* Tablet Landscape */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .questions-layout {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .skills-panel {
+                display: none;
+            }
+            
+            .mobile-skills-float {
+                display: block;
+            }
+            
+            .mobile-skills-inline {
+                display: block;
+                margin-top: 2rem;
+            }
+        }
+
+        /* Mobile Portrait */
         @media (max-width: 768px) {
             .screen {
                 padding: 1rem;
@@ -368,191 +941,199 @@
                 padding-top: 2rem;
             }
             
+            .questions-layout {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
             .glass-card {
                 padding: 2.5rem 2rem;
                 margin: 1rem 0;
             }
             
-            .watch-btn {
-                padding: 0.7rem 1.2rem;
-                font-size: 0.9rem;
+            .skills-panel {
+                display: none;
             }
             
-            .video-iframe {
-                height: 250px;
+            .mobile-skills-float {
+                display: block;
             }
             
-            .video-btn {
-                width: 40px;
-                height: 40px;
+            .mobile-skills-inline {
+                display: block;
+            }
+            
+            .circular-next-btn {
+                display: none;
+            }
+            
+            .mobile-circular-next {
+                display: flex;
+            }
+            
+            .question {
+                font-size: 1.5rem;
+            }
+            
+            .option {
+                padding: 1.2rem; /* Further reduced for mobile */
+                font-size: 0.95rem;
+            }
+            
+            .form-row { 
+                grid-template-columns: 1fr; 
+            }
+            
+            .otp-container {
+                gap: 0.5rem;
+            }
+            
+            .otp-input {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .container {
+                margin: 0;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            /* ROI Calculator Mobile */
+            #roi-calculator-content .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            #roi-calculator-content > form > div {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Video Modal Mobile */
+            #video-modal > div {
+                width: 95% !important;
+                margin: 1rem;
+            }
+
+            #video-iframe {
+                height: 250px !important;
+            }
+        }
+
+        /* Small Mobile */
+        @media (max-width: 480px) {
+            .screen {
+                padding: 0.5rem;
+                padding-top: 1rem;
+            }
+            
+            .glass-card {
+                padding: 2rem 1.5rem;
+                border-radius: 24px;
+            }
+            
+            .mobile-skills-float {
+                top: 0.5rem;
+                left: 0.5rem;
+                right: 5rem;
+                padding: 0.8rem 1rem;
+            }
+            
+            .float-avatar {
+                width: 36px;
+                height: 36px;
                 font-size: 1rem;
             }
-        }
-
-        /* Time Slot Scheduling Styles */
-        .time-slot {
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .time-slot::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .time-slot:hover {
-            transform: translateY(-3px);
-            border-color: rgba(102, 126, 234, 0.3);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
-        }
-
-        .time-slot:hover::before {
-            opacity: 1;
-        }
-
-        .time-slot.selected {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-            border-color: #667eea;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .slot-date {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .slot-time {
-            font-size: 1.2rem;
-            color: white;
-            font-weight: 600;
-        }
-
-        .time-slot.selected .slot-date,
-        .time-slot.selected .slot-time {
-            color: white;
-        }
-
-        /* Mobile responsive for time slots */
-        @media (max-width: 768px) {
-            .time-slot {
-                padding: 1rem;
+            
+            .float-name {
+                font-size: 0.8rem;
             }
             
-            .slot-time {
-                font-size: 1rem;
+            .float-last-answer {
+                font-size: 0.7rem;
+            }
+
+            .mobile-circular-next {
+                right: 0.5rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.1rem;
+            }
+
+            .circular-next-btn {
+                right: 1rem;
+                width: 60px;
+                height: 60px;
+                font-size: 1.3rem;
+            }
+
+            /* ROI Calculator Mobile */
+            #roi-calculator-content .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            #roi-calculator-content > form > div {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Video Modal Mobile */
+            #video-modal > div {
+                width: 95% !important;
+                margin: 1rem;
+            }
+
+            #video-iframe {
+                height: 250px !important;
             }
         }
 
-        /* Hide elements during video playback */
-        .video-playing .screen:not(.video-modal) {
-            pointer-events: none;
+        /* CSS Animations for products */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* Loading animation for video */
-        .video-loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 1.2rem;
-            z-index: 10002;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
     </style>
 </head>
 <body>
+    <!-- Save Status Indicator -->
+    <div id="save-status" class="save-status">
+        <span id="save-status-text">💾 Saving...</span>
+    </div>
+
     <!-- Welcome Screen -->
     <div id="welcome-screen" class="screen active">
         <div class="container">
-            <h1>Welcome to Your Digital Future</h1>
+            <h1>Welcome</h1>
             <p class="subtitle">
-                Discover which Topiko franchise opportunity<br>
-                <span style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">matches your investment goals and expertise</span>
+                Thanks for your interest in joining us to change the face of<br>
+                <span style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Indian digital revolution</span>
             </p>
         </div>
     </div>
 
-    <!-- About Screen with Video Integration -->
+    <!-- About Screen -->
     <div id="about-screen" class="screen">
         <div class="container">
             <h1>About <span style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Topiko</span></h1>
             <p class="subtitle">
                 Our platform offers a seamless, all-in-one solution to power your business growth and innovation.
             </p>
-            <p class="subtitle" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 500; margin-bottom: 2rem;">
+            <p class="subtitle" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 500;">
                 Here's how we stand apart.
             </p>
-            
-            <!-- Watch Video Button - Compact Version -->
-            <div style="text-align: center;">
-                <button id="watch-video-btn" class="watch-btn">
-                    <span>Watch (30 Sec)</span>
-                    <div class="play-icon"></div>
-                </button>
-                <div style="margin-top: 1rem;">
-                    <button id="skip-video-btn" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); cursor: pointer; text-decoration: underline; font-size: 0.9rem;">
-                        Skip Video →
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Video Modal -->
-    <div id="video-modal" class="video-modal">
-        <div class="video-container">
-            <div class="video-loading" id="video-loading">
-                <div class="spinner"></div>
-                Loading video...
-            </div>
-            <iframe id="video-iframe" class="video-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            <div class="video-controls">
-                <button id="skip-video-modal" class="video-btn skip-btn" title="Skip Video">
-                    ⏭️
-                </button>
-                <button id="close-video-modal" class="video-btn close-btn" title="Close">
-                    ✕
-                </button>
-            </div>
-            <div class="video-progress">
-                <div class="video-progress-fill" id="video-progress"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rest of your existing screens... -->
     <!-- Contact Details Screen -->
     <div id="contact-details-screen" class="screen">
         <div class="container">
@@ -561,42 +1142,195 @@
                 <p class="subtitle">Tell us a little about yourself, we'll suggest the best Topiko product for our partnership</p>
                 
                 <div class="form-container">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                        <div>
-                            <input type="text" id="firstName" style="width: 100%; padding: 1.2rem 1.8rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; font-size: 1rem;" placeholder="First Name" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="firstName" class="form-input" placeholder="First Name" required>
                         </div>
-                        <div>
-                            <input type="text" id="lastName" style="width: 100%; padding: 1.2rem 1.8rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; font-size: 1rem;" placeholder="Last Name" required>
+                        <div class="form-group">
+                            <input type="text" id="lastName" class="form-input" placeholder="Last Name" required>
                         </div>
                     </div>
                     
-                    <div style="margin-bottom: 2rem;">
-                        <input type="tel" id="phone" style="width: 100%; padding: 1.2rem 1.8rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; font-size: 1rem;" placeholder="Phone Number" required>
+                    <div class="form-group">
+                        <input type="tel" id="phone" class="form-input" placeholder="Phone Number" required>
                     </div>
                     
-                    <div style="margin-bottom: 2rem;">
-                        <input type="text" id="city" style="width: 100%; padding: 1.2rem 1.8rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; color: white; font-size: 1rem;" placeholder="City" required>
+                    <div class="form-group">
+                        <input type="text" id="city" class="form-input" placeholder="City" required>
                     </div>
                     
                     <button id="send-otp-btn" class="next-btn">
                         <span id="send-otp-text">Let's Explore!</span>
-                        <span id="send-otp-loading" style="display: none;">💾 Saving...</span>
+                        <span id="send-otp-loading" class="loading hidden"></span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Enhanced Slot Booking Modal -->
+    <!-- OTP Verification Screen -->
+    <div id="otp-screen" class="screen">
+        <div class="container">
+            <div class="glass-card">
+                <h2>Verify Your Phone</h2>
+                <p class="subtitle">Enter the 4-digit OTP sent to <span id="phone-display"></span></p>
+                
+                <div class="otp-container">
+                    <input type="text" class="otp-input" maxlength="1" data-index="0">
+                    <input type="text" class="otp-input" maxlength="1" data-index="1">
+                    <input type="text" class="otp-input" maxlength="1" data-index="2">
+                    <input type="text" class="otp-input" maxlength="1" data-index="3">
+                </div>
+                
+                <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; margin-bottom: 2rem;">
+                    For demo purposes, use OTP: <strong style="color: #667eea;">1111</strong>
+                </p>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button id="back-to-contact" class="back-btn">← Back</button>
+                    <button id="verify-otp-btn" class="next-btn">
+                        <span id="verify-otp-text">Verify & Continue</span>
+                        <span id="verify-otp-loading" class="loading hidden"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Screen -->
+    <div id="questions-screen" class="screen">
+        <div class="questions-layout">
+            <div class="glass-card">
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🚀 Exclusive Franchise Assessment</h2>
+                    <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.95rem;">Answer a few quick questions to get matched with the best digital opportunity</p>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 11.11%"></div>
+                    </div>
+                    <div class="progress-text">Question <span id="current-q">1</span> of 9</div>
+                </div>
+                
+                <div class="question-container" id="question-container">
+                    <div id="question-text" class="question"></div>
+                    <div id="options-container" class="options"></div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem;">
+                    <button id="back-question-btn" class="back-btn" style="display: none;">← Back</button>
+                    <button id="next-btn" class="next-btn" disabled>Next Question</button>
+                </div>
+
+                <!-- Mobile Inline Skills -->
+                <div class="mobile-skills-inline" id="mobile-inline-skills">
+                    <div class="inline-skills-header">
+                        <div class="inline-avatar" id="inline-avatar">U</div>
+                        <div class="inline-info">
+                            <h3 id="inline-name">Finding best product for you...</h3>
+                            <p>Analyzing your responses</p>
+                        </div>
+                    </div>
+                    <div class="inline-skills-grid" id="inline-skills-list">
+                        <!-- Skills will be populated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Desktop Skills Panel -->
+            <div class="skills-panel">
+                <div class="skills-header">
+                    <div class="skills-avatar" id="skills-avatar">U</div>
+                    <div class="skills-name" id="skills-name">Finding best product for you...</div>
+                    <div class="skills-title" id="skills-title">Analyzing your responses</div>
+                </div>
+                
+                <div class="skills-section">
+                    <div id="all-skills-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Circular Next Button (Desktop) -->
+        <!-- REMOVED: Using only bottom button -->
+    </div>
+
+    <!-- Products Screen -->
+    <div id="products-screen" class="screen">
+        <div class="container">
+            <h2>Recommended Products</h2>
+            <p class="subtitle">Based on your responses, here are the perfect matches for your journey</p>
+            <div id="products-grid" class="products-grid"></div>
+            <button id="contact-btn" class="next-btn">Speak with Our Team</button>
+        </div>
+    </div>
+
+    <!-- Product Detail Screen -->
+    <div id="product-detail-screen" class="screen">
+        <div class="container">
+            <div class="glass-card">
+                <div id="product-detail-content">
+                    <!-- Product details will be populated here -->
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+                    <button id="demo-btn" class="next-btn" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <span>📺 See Demo</span>
+                    </button>
+                    <button id="roi-btn" class="next-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <span>💰 Calculate ROI</span>
+                    </button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button id="back-to-products" class="back-btn">← Back to Products</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROI Calculator Screen -->
+    <div id="roi-calculator-screen" class="screen">
+        <div class="container">
+            <div class="glass-card">
+                <h2 style="text-align: center; margin-bottom: 2rem;">ROI Calculator</h2>
+                
+                <div id="roi-calculator-content">
+                    <!-- ROI calculator form will be dynamically populated based on product type -->
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+                    <button id="back-to-product-detail" class="back-btn">← Back to Product</button>
+                    <button id="request-demo-btn" class="next-btn" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <span>📅 Request Demo</span>
+                    </button>
+                    <button id="lets-talk-btn" class="next-btn" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        <span>💬 Let's Talk</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Popup Modal -->
+    <div id="video-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="position: relative; width: 90%; max-width: 800px; background: #000; border-radius: 16px; overflow: hidden;">
+            <button id="close-video" style="position: absolute; top: 1rem; right: 1rem; z-index: 10001; background: rgba(255, 255, 255, 0.2); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+            <iframe id="video-iframe" width="100%" height="450" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Slot Booking Modal -->
     <div id="slot-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 10000; align-items: center; justify-content: center;">
-        <div style="position: relative; width: 90%; max-width: 800px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px); border-radius: 24px; padding: 3rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+        <div style="position: relative; width: 90%; max-width: 600px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px); border-radius: 24px; padding: 3rem; border: 1px solid rgba(255, 255, 255, 0.1);">
             <button id="close-slot-modal" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
             
-            <h3 style="color: white; text-align: center; margin-bottom: 1rem; font-size: 1.8rem;">📅 Select Your Preferred Time</h3>
+            <h3 style="color: white; text-align: center; margin-bottom: 2rem; font-size: 1.8rem;">📅 Select Your Preferred Time</h3>
             <p id="slot-modal-subtitle" style="color: rgba(255, 255, 255, 0.7); text-align: center; margin-bottom: 2rem;">Choose a convenient time for your demo session</p>
             
-            <div id="slot-days-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                <!-- Time slots will be populated here -->
+            <div id="slot-days-container" style="margin-bottom: 2rem;">
+                <!-- Days will be populated here -->
             </div>
             
             <div style="text-align: center;">
@@ -607,28 +1341,88 @@
         </div>
     </div>
 
+    <!-- Contact Screen -->
+    <div id="contact-screen" class="screen">
+        <div class="container">
+            <div class="glass-card">
+                <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 2.5rem;">🎯</div>
+                <h2>Let's Connect!</h2>
+                <p class="subtitle">Our team will reach out to you within 24 hours to discuss your franchise opportunity.</p>
+                
+                <div class="form-container">
+                    <div class="form-group">
+                        <textarea id="businessGoals" class="form-input" placeholder="Tell us more about your business goals..." rows="4" style="resize: vertical; min-height: 120px;"></textarea>
+                    </div>
+                    
+                    <button id="submit-btn" class="next-btn">
+                        <span id="submit-text">Submit & Get Started</span>
+                        <span id="submit-loading" class="loading hidden"></span>
+                    </button>
+                </div>
+                
+                <p style="margin-top: 2rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.5);">
+                    By submitting, you agree to our terms and privacy policy.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div id="success-screen" class="screen">
+        <div class="container">
+            <div class="glass-card">
+                <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 2.5rem; animation: pulse 2s infinite;">✅</div>
+                <h2>Thank You!</h2>
+                <p class="subtitle">
+                    Your information has been submitted successfully.<br>
+                    Our team will contact you within 24 hours.
+                </p>
+                <button onclick="location.reload()" class="next-btn">Start New Application</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Floating Skills -->
+    <div class="mobile-skills-float" id="mobile-float" onclick="toggleMobileProfile()">
+        <div class="float-content">
+            <div class="float-avatar" id="float-avatar">U</div>
+            <div class="float-info">
+                <div class="float-name" id="float-name">Finding best product for you...</div>
+                <div class="float-last-answer" id="float-last-answer">Answer questions to get started</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Circular Next Button -->
+    <!-- REMOVED: Using only bottom button -->
+
+    <!-- Mobile Profile Bottom Sheet -->
+    <div class="mobile-profile-sheet" id="mobile-sheet">
+        <div class="sheet-handle" onclick="toggleMobileProfile()"></div>
+        <div class="sheet-content">
+            <div class="skills-header">
+                <div class="skills-avatar" id="sheet-avatar">U</div>
+                <div class="skills-name" id="sheet-name">Finding best product for you...</div>
+                <div class="skills-title">Analyzing your responses</div>
+            </div>
+            
+            <div class="skills-section">
+                <div id="sheet-skills-list">
+                    <!-- Skills will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        console.log('🚀 ENHANCED FRANCHISE TRACKER WITH VIDEO INTEGRATION v5.1 LOADED');
+        console.log('🚀 ENHANCED PROGRESSIVE FRANCHISE TRACKER v5.0 LOADED');
         
         // Configuration
         const SUPABASE_URL = 'https://uyaubwfmxmxelcshuyaf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YXVid2ZteG14ZWxjc2h1eWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NDA0MTksImV4cCI6MjA2OTUxNjQxOX0.Sc9qUUXr73x8yw5-2rs-pcI03lFpMTSyuhW9RDLcOLI';
         
-        // Video Configuration - Updated duration
-        const VIDEO_CONFIG = {
-            url: 'https://youtube.com/shorts/LKuxfquja-o?si=Ui0Yum-nZOnxLnCY',
-            embedUrl: 'https://www.youtube.com/embed/LKuxfquja-o?si=Ui0Yum-nZOnxLnCY&autoplay=1&rel=0&modestbranding=1',
-            duration: 30 // Updated to 30 seconds for progress bar
-        };
-        
         // Initialize Supabase
         let supabase = null;
-        let currentScreen = 'welcome';
-        let currentLeadId = null;
-        let userProfile = {};
-        let videoWatched = false;
-        let videoStartTime = null;
-        let videoProgressInterval = null;
         
         function initializeSupabase() {
             try {
@@ -644,156 +1438,808 @@
             }
         }
 
+        // Application State
+        let currentScreen = 'welcome';
+        let currentQuestionIndex = 0;
+        let answers = {};
+        let recommendedProducts = null;
+        let selectedProduct = null;
+        let currentLeadId = null; // Track current lead ID for updates
+        let userProfile = {
+            firstName: '',
+            lastName: '',
+            phone: '',
+            city: '',
+            verified: false,
+            calculatedScore: 0
+        };
+
         // =====================================================================
-        // 📺 VIDEO INTEGRATION FUNCTIONS
+        // 💾 PROGRESSIVE DATA SAVING FUNCTIONS
         // =====================================================================
 
-        function showVideo() {
-            console.log('📺 Opening video modal');
+        // Save Status Indicator Functions
+        function showSaveStatus(message, type = 'saving') {
+            const saveStatus = document.getElementById('save-status');
+            const saveText = document.getElementById('save-status-text');
             
-            const videoModal = document.getElementById('video-modal');
-            const videoIframe = document.getElementById('video-iframe');
-            const videoLoading = document.getElementById('video-loading');
-            
-            if (!videoModal || !videoIframe) {
-                console.error('❌ Video modal elements not found');
-                return;
+            if (saveStatus && saveText) {
+                saveText.textContent = message;
+                saveStatus.className = `save-status ${type}`;
+                
+                if (type === 'saved') {
+                    setTimeout(() => {
+                        saveStatus.className = 'save-status';
+                    }, 2000);
+                }
             }
-            
-            // Show modal and loading
-            videoModal.classList.add('active');
-            videoLoading.style.display = 'block';
-            document.body.classList.add('video-playing');
-            document.body.style.overflow = 'hidden';
-            
-            // Set video source with autoplay
-            videoIframe.src = VIDEO_CONFIG.embedUrl;
-            
-            // Hide loading after iframe loads
-            videoIframe.onload = function() {
-                setTimeout(() => {
-                    videoLoading.style.display = 'none';
-                }, 1000);
+        }
+
+        // Generate Session ID and Capture Browser Info
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function getBrowserInfo() {
+            return {
+                userAgent: navigator.userAgent,
+                screen: `${screen.width}x${screen.height}`,
+                viewport: `${window.innerWidth}x${window.innerHeight}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                language: navigator.language
+            };
+        }
+
+        function captureUTMParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                utm_source: urlParams.get('utm_source'),
+                utm_medium: urlParams.get('utm_medium'),
+                utm_campaign: urlParams.get('utm_campaign'),
+                utm_content: urlParams.get('utm_content'),
+                utm_term: urlParams.get('utm_term'),
+                referrer: document.referrer
+            };
+        }
+
+        // Robust update function with retry logic
+        async function updateLeadData(updateData, retries = 3) {
+            if (!supabase || !currentLeadId) {
+                console.log('💾 Demo mode: Simulating data save:', updateData);
+                return { success: true, data: updateData };
+            }
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const { data, error } = await supabase
+                        .from('franchise_leads')
+                        .update(updateData)
+                        .eq('id', currentLeadId)
+                        .select();
+                        
+                    if (!error) {
+                        console.log('✅ Data saved successfully:', updateData);
+                        return { success: true, data };
+                    }
+                    
+                    console.warn(`⚠️ Update attempt ${i + 1} failed:`, error);
+                    if (i === retries - 1) throw error;
+                    
+                    // Wait before retry (exponential backoff)
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                } catch (error) {
+                    if (i === retries - 1) {
+                        console.error('❌ Final update attempt failed:', error);
+                        return { success: false, error };
+                    }
+                }
+            }
+        }
+
+        // PHASE 1: Save Contact Details (Immediate Save)
+        async function saveContactDetails() {
+            console.log('💾 Phase 1: Saving contact details...');
+            showSaveStatus('💾 Saving your details...', 'saving');
+
+            const leadData = {
+                first_name: document.getElementById('firstName').value.trim(),
+                last_name: document.getElementById('lastName').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                lead_status: 'contact_entered',
+                contact_entered_at: new Date().toISOString(),
+                session_id: generateSessionId(),
+                browser_info: getBrowserInfo(),
+                utm_data: captureUTMParameters(),
+                campaign_source: 'topikopartner.com',
+                answers: {},
+                recommended_products: [],
+                lead_score: 0
             };
             
-            // Start tracking video progress
-            startVideoProgress();
-            videoStartTime = Date.now();
-            
-            // Track video opened event
-            trackVideoEvent('video_opened', {
-                video_url: VIDEO_CONFIG.url,
-                timestamp: new Date().toISOString()
-            });
+            if (!supabase) {
+                console.log('💾 Demo mode: Contact details would be saved:', leadData);
+                currentLeadId = 'demo_lead_' + Date.now();
+                showSaveStatus('✅ Details saved!', 'saved');
+                return { success: true, leadId: currentLeadId };
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('franchise_leads')
+                    .insert([leadData])
+                    .select('id');
+                
+                if (!error && data && data.length > 0) {
+                    currentLeadId = data[0].id;
+                    console.log('✅ Contact details saved with ID:', currentLeadId);
+                    showSaveStatus('✅ Details saved!', 'saved');
+                    return { success: true, leadId: currentLeadId };
+                } else {
+                    throw error || new Error('No data returned');
+                }
+            } catch (error) {
+                console.error('❌ Failed to save contact details:', error);
+                showSaveStatus('❌ Save failed - will retry', 'error');
+                return { success: false, error };
+            }
         }
 
-        function closeVideo() {
-            console.log('📺 Closing video modal');
+        // PHASE 2: Update OTP Verification
+        async function updateOTPVerified() {
+            console.log('💾 Phase 2: Updating OTP verification...');
+            showSaveStatus('💾 Updating verification...', 'saving');
+
+            const updateData = {
+                lead_status: 'otp_verified',
+                otp_verified_at: new Date().toISOString()
+            };
+
+            const result = await updateLeadData(updateData);
             
-            const videoModal = document.getElementById('video-modal');
-            const videoIframe = document.getElementById('video-iframe');
-            
-            if (videoModal) {
-                videoModal.classList.remove('active');
-                document.body.classList.remove('video-playing');
-                document.body.style.overflow = 'auto';
+            if (result.success) {
+                showSaveStatus('✅ Verification saved!', 'saved');
+            } else {
+                showSaveStatus('❌ Update failed', 'error');
             }
+
+            return result;
+        }
+
+        // PHASE 3A: Assessment Started (First Question Answered)
+        async function updateAssessmentStarted() {
+            console.log('💾 Phase 3A: Assessment started...');
+            showSaveStatus('💾 Saving progress...', 'saving');
+
+            const updateData = {
+                lead_status: 'assessment_started',
+                assessment_started_at: new Date().toISOString(),
+                answers: answers // Partial answers
+            };
+
+            const result = await updateLeadData(updateData);
             
-            if (videoIframe) {
-                videoIframe.src = '';
+            if (result.success) {
+                showSaveStatus('✅ Progress saved!', 'saved');
+            } else {
+                showSaveStatus('❌ Save failed', 'error');
             }
+
+            return result;
+        }
+
+        // PHASE 3B: Assessment Completed (All Questions Done)
+        async function updateAssessmentCompleted() {
+            console.log('💾 Phase 3B: Assessment completed...');
+            showSaveStatus('💾 Finalizing assessment...', 'saving');
+
+            const updateData = {
+                lead_status: 'assessment_completed',
+                assessment_completed_at: new Date().toISOString(),
+                answers: answers,
+                lead_score: userProfile.calculatedScore,
+                recommended_products: recommendedProducts.products || []
+            };
+
+            const result = await updateLeadData(updateData);
             
-            // Stop progress tracking
-            stopVideoProgress();
+            if (result.success) {
+                showSaveStatus('✅ Assessment completed!', 'saved');
+            } else {
+                showSaveStatus('❌ Save failed', 'error');
+            }
+
+            return result;
+        }
+
+        // PHASE 4: Products Viewed
+        async function updateProductsViewed() {
+            console.log('💾 Phase 4: Products viewed...');
+            showSaveStatus('💾 Tracking product views...', 'saving');
+
+            const updateData = {
+                lead_status: 'products_viewed',
+                products_viewed_at: new Date().toISOString()
+            };
+
+            const result = await updateLeadData(updateData);
             
-            // Track video completion if watched long enough
-            if (videoStartTime) {
-                const watchDuration = (Date.now() - videoStartTime) / 1000;
-                trackVideoEvent('video_closed', {
-                    watch_duration: watchDuration,
-                    completed: watchDuration >= (VIDEO_CONFIG.duration * 0.8)
+            if (result.success) {
+                showSaveStatus('✅ Product views tracked!', 'saved');
+            }
+
+            return result;
+        }
+
+        // PHASE 5: Product Detail Viewed
+        async function updateProductDetailed(productKey) {
+            console.log('💾 Phase 5: Product detail viewed:', productKey);
+            showSaveStatus('💾 Tracking product interest...', 'saving');
+
+            const updateData = {
+                lead_status: 'product_detailed',
+                selected_product: productKey
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Interest tracked!', 'saved');
+            }
+
+            return result;
+        }
+
+        // PHASE 6: ROI Calculator Used
+        async function updateROICalculated(productKey, calculations) {
+            console.log('💾 Phase 6: ROI calculated for:', productKey);
+            showSaveStatus('💾 Saving ROI calculations...', 'saving');
+
+            const updateData = {
+                lead_status: 'roi_calculated',
+                roi_calculated_at: new Date().toISOString(),
+                selected_product: productKey,
+                roi_data: calculations // Store ROI results
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ ROI data saved!', 'saved');
+            }
+
+            return result;
+        }
+
+        // PHASE 7: Demo Video Viewed
+        async function updateDemoViewed(productKey) {
+            console.log('💾 Phase 7: Demo viewed for:', productKey);
+            showSaveStatus('💾 Tracking demo engagement...', 'saving');
+
+            const updateData = {
+                lead_status: 'demo_viewed',
+                demo_viewed_at: new Date().toISOString(),
+                selected_product: productKey
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Demo tracked!', 'saved');
+            }
+
+            return result;
+        }
+
+        // PHASE 8: Final Submission
+        async function updateFinalSubmission() {
+            console.log('💾 Phase 8: Final submission...');
+            showSaveStatus('💾 Submitting final data...', 'saving');
+
+            const updateData = {
+                lead_status: 'final_submitted',
+                final_submitted_at: new Date().toISOString(),
+                business_goals: document.getElementById('businessGoals').value.trim()
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Submission complete!', 'saved');
+            } else {
+                showSaveStatus('❌ Submission failed', 'error');
+            }
+
+            return result;
+        }
+
+        // Auto-save answers as user progresses
+        async function autoSaveAnswer(questionId, answer) {
+            // Don't save every single keystroke, but save significant progress
+            if (Object.keys(answers).length === 1) {
+                // First question answered - assessment started
+                await updateAssessmentStarted();
+            } else if (currentQuestionIndex > 0 && currentQuestionIndex % 3 === 0) {
+                // Save progress every 3 questions
+                await updateLeadData({
+                    answers: answers,
+                    lead_score: userProfile.calculatedScore
                 });
+            }
+        }
+
+        // =====================================================================
+        // 📱 ORIGINAL APPLICATION LOGIC (Enhanced with Progressive Saving)
+        // =====================================================================
+
+        // Questions Data
+        const questions = [
+            {
+                id: 'q1',
+                question: 'How would you best describe yourself?',
+                options: [
+                    { value: 'digital_agency', label: 'I run a digital agency or freelance service (web, app, or marketing)' },
+                    { value: 'aspiring_entrepreneur', label: 'I\'m an aspiring entrepreneur looking to start my own business' },
+                    { value: 'local_business_worker', label: 'I already work with local businesses and want to offer digital solutions' },
+                    { value: 'part_time_freelancer', label: 'I\'m a part-time freelancer or student exploring online income' },
+                    { value: 'technical_expert', label: 'I have technical experience and want to offer full custom solutions' },
+                    { value: 'franchise_investor', label: 'I am exploring franchise/investment opportunities with good returns' },
+                    { value: 'other', label: 'Other (please specify)' }
+                ],
+                type: 'radio',
+                hasTextInput: true
+            },
+            {
+                id: 'q2',
+                question: 'Do you have any prior experience in sales or digital marketing?',
+                options: [
+                    { value: 'yes', label: 'Yes' },
+                    { value: 'no', label: 'No' },
+                    { value: 'little', label: 'Little bit' }
+                ],
+                type: 'radio'
+            },
+            {
+                id: 'q3',
+                question: 'Are you looking to take this as a full-time opportunity or part-time?',
+                options: [
+                    { value: 'fulltime', label: 'Full-time' },
+                    { value: 'parttime', label: 'Part-time' },
+                    { value: 'undecided', label: 'Yet to decide what works best' }
+                ],
+                type: 'radio'
+            },
+            {
+                id: 'q4',
+                question: 'What kind of businesses do you usually connect with?',
+                options: [
+                    { value: 'business_owners', label: 'Business owners' },
+                    { value: 'associations', label: 'Associations' },
+                    { value: 'startups', label: 'Startups' },
+                    { value: 'others', label: 'Others' }
+                ],
+                type: 'checkbox'
+            },
+            {
+                id: 'q5',
+                question: 'Do you already run any of these?',
+                options: [
+                    { value: 'it_services', label: 'IT Services' },
+                    { value: 'digital_marketing', label: 'Digital Marketing agency' },
+                    { value: 'reseller', label: 'Reseller' },
+                    { value: 'others', label: 'Others (specify)' },
+                    { value: 'none', label: 'None' }
+                ],
+                type: 'checkbox'
+            },
+            {
+                id: 'q6',
+                question: 'Are you comfortable handling domain, app store setup, or client branding requests?',
+                options: [
+                    { value: 'yes', label: 'Yes' },
+                    { value: 'no', label: 'No' }
+                ],
+                type: 'radio'
+            },
+            {
+                id: 'q7',
+                question: 'Are you willing to hire a team and setup an office in your area?',
+                options: [
+                    { value: 'yes', label: 'Yes' },
+                    { value: 'no', label: 'No' }
+                ],
+                type: 'radio'
+            },
+            {
+                id: 'q8',
+                question: 'Are you looking to sell under your own brand or promote Topiko brand?',
+                options: [
+                    { value: 'own_brand', label: 'Own Brand' },
+                    { value: 'topiko_brand', label: 'Topiko' },
+                    { value: 'both', label: 'Both' }
+                ],
+                type: 'radio'
+            },
+            {
+                id: 'q9',
+                question: 'What investment range are you comfortable with?',
+                options: [
+                    { value: 'under_1l', label: '<1L' },
+                    { value: '1l_3l', label: '1L-3L' },
+                    { value: 'above_3l', label: '3L+' },
+                    { value: 'no_investment', label: 'No Investment' }
+                ],
+                type: 'radio'
+            }
+        ];
+
+        // Mobile Profile Functions
+        function toggleMobileProfile() {
+            const sheet = document.getElementById('mobile-sheet');
+            sheet.classList.toggle('open');
+        }
+
+        // Close sheet when clicking outside
+        document.addEventListener('click', (e) => {
+            const sheet = document.getElementById('mobile-sheet');
+            const float = document.getElementById('mobile-float');
+            
+            if (sheet.classList.contains('open') && 
+                !sheet.contains(e.target) && 
+                !float.contains(e.target)) {
+                sheet.classList.remove('open');
+            }
+        });
+
+        // Responsive behavior
+        function handleResize() {
+            const mobileFloat = document.getElementById('mobile-float');
+            const mobileSheet = document.getElementById('mobile-sheet');
+            const inlineSkills = document.getElementById('mobile-inline-skills');
+            
+            if (window.innerWidth > 768) {
+                // Desktop
+                if (mobileFloat) mobileFloat.style.display = 'none';
+                if (mobileSheet) mobileSheet.style.display = 'none';
+                if (inlineSkills) inlineSkills.style.display = 'none';
+            } else {
+                // Mobile
+                if (currentScreen === 'questions-screen') {
+                    if (mobileFloat) mobileFloat.style.display = 'block';
+                    if (mobileSheet) mobileSheet.style.display = 'block';
+                }
+            }
+        }
+
+        function updateNextButton() {
+            const question = questions[currentQuestionIndex];
+            const nextBtn = document.getElementById('next-btn');
+            const backBtn = document.getElementById('back-question-btn');
+            
+            if (!question) return;
+            
+            const hasAnswer = question.type === 'checkbox' 
+                ? answers[question.id] && answers[question.id].length > 0 
+                : answers[question.id];
+            
+            // Update regular next button - just arrow
+            if (nextBtn) {
+                nextBtn.disabled = !hasAnswer;
+                nextBtn.innerHTML = '<span style="transition: transform 0.3s ease;">→</span>';
+            }
+            
+            // Show/hide back button
+            if (backBtn) {
+                if (currentQuestionIndex > 0) {
+                    backBtn.style.display = 'inline-flex';
+                } else {
+                    backBtn.style.display = 'none';
+                }
+            }
+        }
+
+        // Update progress dots
+        function updateProgressDots() {
+            const dots = document.querySelectorAll('.progress-dot');
+            const progress = currentQuestionIndex + 1;
+            
+            dots.forEach((dot, index) => {
+                if (index < progress) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Enhanced Skills Panel Update Function
+        function updateSkillsPanel() {
+            if (!userProfile.firstName) return;
+            
+            const avatarElements = document.querySelectorAll('.skills-avatar, .float-avatar, .inline-avatar, .sheet-avatar');
+            const desktopNameElement = document.getElementById('skills-name');
+            const inlineNameElement = document.getElementById('inline-name');
+            const floatNameElement = document.getElementById('float-name');
+            const sheetNameElement = document.getElementById('sheet-name');
+            const skillsTitleElement = document.getElementById('skills-title');
+            
+            const avatar = userProfile.firstName.charAt(0).toUpperCase();
+            
+            // Desktop and Mobile top: "John from Mumbai"
+            const topWidgetName = `${userProfile.firstName} from ${userProfile.city}`;
+            
+            // Mobile bottom: "Finding best product for John"
+            const bottomWidgetName = `Finding best product for ${userProfile.firstName}`;
+            
+            avatarElements.forEach(el => el.textContent = avatar);
+            
+            // Desktop skills panel - "John from Mumbai"
+            if (desktopNameElement) desktopNameElement.textContent = topWidgetName;
+            
+            // Mobile inline skills - "Finding best product for John"
+            if (inlineNameElement) inlineNameElement.textContent = bottomWidgetName;
+            
+            // Mobile float (top widget) - "John from Mumbai"
+            if (floatNameElement) floatNameElement.textContent = topWidgetName;
+            
+            // Mobile sheet (bottom widget) - "Finding best product for John"
+            if (sheetNameElement) sheetNameElement.textContent = bottomWidgetName;
+            
+            // Dynamic skills title based on question progress
+            if (skillsTitleElement) {
+                let titleText = '';
+                if (currentQuestionIndex <= 2) {
+                    titleText = 'Let\'s find what suits you best<span class="thinking-dots"></span>';
+                } else if (currentQuestionIndex <= 5) {
+                    titleText = 'Preparing your personalized suggestions<span class="thinking-dots"></span>';
+                } else {
+                    titleText = 'Almost there! Just finalizing your match<span class="thinking-dots"></span>';
+                }
+                skillsTitleElement.innerHTML = titleText;
+            }
+            
+            const allSkills = [];
+            let score = 0;
+            
+            // Process Q1 - Self Description
+            if (answers.q1) {
+                const descriptions = {
+                    'digital_agency': 'Runs digital agency or freelance services',
+                    'aspiring_entrepreneur': 'Aspiring entrepreneur ready to start own business',
+                    'local_business_worker': 'Works with local businesses, wants to offer digital solutions',
+                    'part_time_freelancer': 'Part-time freelancer exploring online income opportunities',
+                    'technical_expert': 'Has technical expertise for custom solutions',
+                    'franchise_investor': 'Exploring franchise/investment opportunities',
+                    'other': 'Has unique background and diverse experience'
+                };
                 
-                if (watchDuration >= (VIDEO_CONFIG.duration * 0.8)) {
-                    videoWatched = true;
+                if (descriptions[answers.q1]) {
+                    allSkills.push(descriptions[answers.q1]);
+                }
+                
+                const scores = {
+                    'digital_agency': 30, 'franchise_investor': 25, 'technical_expert': 28,
+                    'local_business_worker': 22, 'aspiring_entrepreneur': 20,
+                    'part_time_freelancer': 15, 'other': 18
+                };
+                score += scores[answers.q1] || 15;
+            }
+            
+            // Process other questions (Q2-Q9)
+            if (answers.q2) {
+                if (answers.q2 === 'yes') {
+                    allSkills.push('Having prior experience in this field');
+                    score += 25;
+                } else if (answers.q2 === 'little') {
+                    allSkills.push('Has some knowledge in this field');
+                    score += 15;
+                } else {
+                    allSkills.push('Fresh perspective & eagerness to join');
+                    score += 10;
                 }
             }
             
-            // Proceed to contact details after video
-            setTimeout(() => {
-                proceedToContactDetails();
-            }, 500);
-        }
+            if (answers.q3) {
+                if (answers.q3 === 'fulltime') {
+                    allSkills.push('Committed fulltime to take up Topiko franchise');
+                    score += 20;
+                } else if (answers.q3 === 'parttime') {
+                    allSkills.push('Looking to start part-time and scale gradually');
+                    score += 12;
+                } else {
+                    allSkills.push('Yet to decide what works best for their situation');
+                    score += 8;
+                }
+            }
 
-        function skipVideo() {
-            console.log('⏭️ Video skipped');
+            // Add more question processing for complete skill building
+            if (answers.q4 && answers.q4.length > 0) {
+                const connectionLabels = {
+                    'business_owners': 'Business owners',
+                    'associations': 'Industry associations',
+                    'startups': 'Startup founders',
+                    'others': 'Various business professionals'
+                };
+                
+                const connections = answers.q4.map(type => connectionLabels[type] || type);
+                
+                if (connections.length === 1) {
+                    allSkills.push(`Closely works with ${connections[0]}`);
+                } else if (connections.length === 2) {
+                    allSkills.push(`Closely works with ${connections[0]} and ${connections[1]}`);
+                } else {
+                    allSkills.push(`Has strong network with ${connections.slice(0, -1).join(', ')} and ${connections[connections.length - 1]}`);
+                }
+                
+                score += Math.min(connections.length * 7, 20);
+            }
+
+            // Q5: Current Business Operations
+            if (answers.q5 && answers.q5.length > 0 && !answers.q5.includes('none')) {
+                const businessMap = {
+                    'it_services': 'IT Services',
+                    'digital_marketing': 'Digital Marketing agency',
+                    'reseller': 'Product reselling business',
+                    'others': 'Other business ventures'
+                };
+                
+                const businesses = answers.q5.filter(b => b !== 'none')
+                                           .map(type => businessMap[type])
+                                           .filter(Boolean);
+                
+                if (businesses.length === 1) {
+                    allSkills.push(`Currently runs ${businesses[0]}`);
+                } else if (businesses.length > 1) {
+                    allSkills.push(`Manages multiple businesses: ${businesses.join(', ')}`);
+                }
+                score += 25;
+            } else if (answers.q5 && answers.q5.includes('none')) {
+                allSkills.push('Ready to start first entrepreneurial journey');
+                score += 8;
+            }
+
+            // Q6: Technical Capabilities
+            if (answers.q6) {
+                const techSkills = {
+                    'yes': 'Comfortable with technical setup & client branding',
+                    'no': 'Prefers support for technical setup tasks'
+                };
+                if (techSkills[answers.q6]) {
+                    allSkills.push(techSkills[answers.q6]);
+                    score += answers.q6 === 'yes' ? 20 : 10;
+                }
+            }
+
+            // Q7: Scale Ambition
+            if (answers.q7) {
+                const scaleSkills = {
+                    'yes': 'Ready to build team and establish local office',
+                    'no': 'Prefers to start solo and grow organically'
+                };
+                if (scaleSkills[answers.q7]) {
+                    allSkills.push(scaleSkills[answers.q7]);
+                    score += answers.q7 === 'yes' ? 25 : 12;
+                }
+            }
+
+            // Q8: Brand Strategy
+            if (answers.q8) {
+                const brandSkills = {
+                    'own_brand': 'Prefers to build and promote own brand',
+                    'topiko_brand': 'Excited to represent Topiko brand',
+                    'both': 'Open to both own brand and Topiko branding'
+                };
+                if (brandSkills[answers.q8]) {
+                    allSkills.push(brandSkills[answers.q8]);
+                    score += 15;
+                }
+            }
+
+            // Q9: Investment Readiness
+            if (answers.q9) {
+                const investmentSkills = {
+                    'above_3l': 'Has strong financial backing (3L+ investment ready)',
+                    '1l_3l': 'Prepared with moderate investment (1L-3L range)',
+                    'under_1l': 'Starting with smart budget approach (<1L investment)',
+                    'no_investment': 'Looking for zero-investment franchise opportunity'
+                };
+                if (investmentSkills[answers.q9]) {
+                    allSkills.push(investmentSkills[answers.q9]);
+                    score += answers.q9 === 'above_3l' ? 25 : answers.q9 === '1l_3l' ? 18 : answers.q9 === 'under_1l' ? 12 : 5;
+                }
+            }
             
-            trackVideoEvent('video_skipped', {
-                timestamp: new Date().toISOString()
+            // Store calculated score
+            userProfile.calculatedScore = Math.min(score, 100);
+            
+            // Update all skill displays
+            const skillContainers = [
+                document.getElementById('all-skills-list'),
+                document.getElementById('inline-skills-list'),
+                document.getElementById('sheet-skills-list')
+            ];
+            
+            skillContainers.forEach(container => {
+                if (container) {
+                    container.innerHTML = '';
+                    allSkills.forEach((skill, index) => {
+                        const skillItem = document.createElement('div');
+                        skillItem.className = container.id === 'inline-skills-list' ? 'inline-skill' : 'skill-item';
+                        skillItem.style.animationDelay = `${index * 0.15}s`;
+                        
+                        if (container.id === 'inline-skills-list') {
+                            skillItem.textContent = skill;
+                        } else {
+                            skillItem.innerHTML = `<div class="skill-text">${skill}</div>`;
+                            setTimeout(() => {
+                                skillItem.classList.add('highlight');
+                            }, (index * 150) + 600);
+                        }
+                        
+                        container.appendChild(skillItem);
+                    });
+                }
             });
             
-            closeVideo();
+            // Update mobile float with last answer
+            updateMobileFloatAnswer();
+            
+            // Show mobile inline skills after first interaction on mobile
+            if (window.innerWidth <= 768 && allSkills.length > 0) {
+                const inlineSkills = document.getElementById('mobile-inline-skills');
+                if (inlineSkills) inlineSkills.style.display = 'block';
+            }
         }
 
-        function startVideoProgress() {
-            const progressFill = document.getElementById('video-progress');
-            let progress = 0;
-            
-            videoProgressInterval = setInterval(() => {
-                progress += (100 / VIDEO_CONFIG.duration);
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(videoProgressInterval);
-                    
-                    // Video completed
-                    setTimeout(() => {
-                        videoWatched = true;
-                        closeVideo();
-                    }, 1000);
+        // Update mobile float with converted skills instead of raw answers
+        function updateMobileFloatAnswer() {
+            const floatLastAnswer = document.getElementById('float-last-answer');
+            if (!floatLastAnswer) return;
+
+            const currentQuestionId = `q${currentQuestionIndex + 1}`;
+            const currentAnswer = answers[currentQuestionId];
+
+            if (currentAnswer && currentQuestionIndex >= 0) {
+                // Show converted skill text like desktop instead of raw answer
+                let skillText = '';
+                
+                if (currentQuestionId === 'q1' && currentAnswer) {
+                    const descriptions = {
+                        'digital_agency': 'Runs digital agency or freelance services',
+                        'aspiring_entrepreneur': 'Aspiring entrepreneur ready to start own business',
+                        'local_business_worker': 'Works with local businesses, wants to offer digital solutions',
+                        'part_time_freelancer': 'Part-time freelancer exploring online income opportunities',
+                        'technical_expert': 'Has technical expertise for custom solutions',
+                        'franchise_investor': 'Exploring franchise/investment opportunities',
+                        'other': 'Has unique background and diverse experience'
+                    };
+                    skillText = descriptions[currentAnswer] || 'Has unique background';
+                } else if (currentQuestionId === 'q2' && currentAnswer) {
+                    const experienceTexts = {
+                        'yes': 'Having prior experience in this field',
+                        'little': 'Has some knowledge in this field',
+                        'no': 'Fresh perspective & eagerness to join'
+                    };
+                    skillText = experienceTexts[currentAnswer] || '';
+                } else if (currentQuestionId === 'q3' && currentAnswer) {
+                    const commitmentTexts = {
+                        'fulltime': 'Committed fulltime to take up Topiko franchise',
+                        'parttime': 'Looking to start part-time and scale gradually',
+                        'undecided': 'Yet to decide what works best for their situation'
+                    };
+                    skillText = commitmentTexts[currentAnswer] || '';
+                } else {
+                    // For other questions, show a generic processing message
+                    skillText = 'Building your profile...';
                 }
                 
-                if (progressFill) {
-                    progressFill.style.width = progress + '%';
-                }
-            }, 1000);
-        }
-
-        function stopVideoProgress() {
-            if (videoProgressInterval) {
-                clearInterval(videoProgressInterval);
-                videoProgressInterval = null;
-            }
-            
-            const progressFill = document.getElementById('video-progress');
-            if (progressFill) {
-                progressFill.style.width = '0%';
+                floatLastAnswer.textContent = skillText;
+            } else {
+                floatLastAnswer.textContent = 'Answer questions to get started';
             }
         }
 
-        function proceedToContactDetails() {
-            console.log('➡️ Proceeding to contact details');
-            showScreen('contact-details-screen');
-        }
-
-        function trackVideoEvent(eventName, properties = {}) {
-            console.log('📊 Video event tracked:', eventName, properties);
-            
-            // Track with your analytics system
-            if (typeof gtag !== 'undefined') {
-                gtag('event', eventName, properties);
-            }
-            
-            // Save to database if available
-            if (supabase && currentLeadId) {
-                // Update lead with video engagement data
-                // This can be enhanced based on your needs
-            }
-        }
-
-        // =====================================================================
-        // 🔧 SCREEN TRANSITION FUNCTIONS
-        // =====================================================================
-
+        // Screen Transition Functions - Updated for circular buttons
         function showScreen(screenId) {
             const currentActiveScreen = document.querySelector('.screen.active');
             const targetScreen = document.getElementById(screenId);
@@ -819,197 +2265,29 @@
                     }
                     
                     currentScreen = screenId;
+                    
+                    // Circular buttons removed
+                    
+                    handleResize();
                 }, 600);
             } else {
                 targetScreen.classList.add('active');
                 currentScreen = screenId;
+                handleResize();
             }
         }
 
-        // =====================================================================
-        // 📅 DEMO SCHEDULING SYSTEM (From Previous Code)
-        // =====================================================================
-
-        function generateTimeSlots() {
-            const slots = [];
-            const now = new Date();
-            const startTime = new Date(now.getTime() + (2 * 60 * 60 * 1000));
-            
-            for (let i = 0; i < 8; i++) {
-                const slotTime = new Date(startTime.getTime() + (i * 60 * 60 * 1000));
-                
-                const slot = {
-                    id: `slot_${i + 1}`,
-                    datetime: slotTime,
-                    date: slotTime.toLocaleDateString('en-US', { 
-                        weekday: 'short', 
-                        month: 'short', 
-                        day: 'numeric' 
-                    }),
-                    time: slotTime.toLocaleTimeString('en-US', { 
-                        hour: 'numeric', 
-                        minute: '2-digit',
-                        hour12: true 
-                    })
-                };
-                
-                slots.push(slot);
-            }
-            
-            return slots;
-        }
-
-        function showDemoScheduling(buttonType = 'demo') {
-            console.log('📅 Opening demo scheduling modal');
-            
-            const modal = document.getElementById('slot-modal');
-            const subtitle = document.getElementById('slot-modal-subtitle');
-            const slotsContainer = document.getElementById('slot-days-container');
-            
-            if (!modal || !subtitle || !slotsContainer) {
-                console.error('❌ Scheduling modal elements not found');
-                return;
-            }
-            
-            if (buttonType === 'demo') {
-                subtitle.textContent = 'Choose a convenient time for your product demo session';
-            } else {
-                subtitle.textContent = 'Schedule a call to discuss your franchise opportunity';
-            }
-            
-            const timeSlots = generateTimeSlots();
-            
-            slotsContainer.innerHTML = timeSlots.map(slot => `
-                <div class="time-slot" data-slot-id="${slot.id}" data-datetime="${slot.datetime.toISOString()}">
-                    <div class="slot-date">${slot.date}</div>
-                    <div class="slot-time">${slot.time}</div>
-                </div>
-            `).join('');
-            
-            document.querySelectorAll('.time-slot').forEach(slotElement => {
-                slotElement.addEventListener('click', function() {
-                    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-                    this.classList.add('selected');
-                    
-                    const confirmBtn = document.getElementById('confirm-slot-btn');
-                    if (confirmBtn) {
-                        confirmBtn.disabled = false;
-                        confirmBtn.style.opacity = '1';
-                    }
-                    
-                    window.selectedTimeSlot = {
-                        id: this.dataset.slotId,
-                        datetime: this.dataset.datetime,
-                        displayText: this.textContent.trim()
-                    };
-                });
-            });
-            
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            
-            const confirmBtn = document.getElementById('confirm-slot-btn');
-            if (confirmBtn) {
-                confirmBtn.disabled = true;
-                confirmBtn.style.opacity = '0.5';
-            }
-        }
-
-        function confirmTimeSlot() {
-            if (!window.selectedTimeSlot) {
-                alert('Please select a time slot');
-                return;
-            }
-            
-            const slot = window.selectedTimeSlot;
-            console.log('✅ Time slot confirmed:', slot);
-            
-            alert(`✅ Demo scheduled for ${slot.displayText}\n\nYou'll receive a confirmation email shortly with the meeting link.`);
-            closeSlotModal();
-            showScreen('contact-details-screen');
-        }
-
-        function closeSlotModal() {
-            const modal = document.getElementById('slot-modal');
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-            window.selectedTimeSlot = null;
-        }
-
-        // =====================================================================
-        // 🎬 EVENT LISTENERS SETUP
-        // =====================================================================
-
+        // Event Listeners - Complete and working with PROGRESSIVE SAVING
         function initializeEventListeners() {
-            console.log('🔧 Initializing event listeners...');
+            console.log('🔧 Initializing event listeners with progressive saving...');
             
-            // Watch Video Button
-            const watchVideoBtn = document.getElementById('watch-video-btn');
-            if (watchVideoBtn) {
-                watchVideoBtn.addEventListener('click', showVideo);
-                console.log('✅ Watch video button listener added');
-            }
-
-            // Skip Video Button (on about screen)
-            const skipVideoBtn = document.getElementById('skip-video-btn');
-            if (skipVideoBtn) {
-                skipVideoBtn.addEventListener('click', skipVideo);
-                console.log('✅ Skip video button listener added');
-            }
-
-            // Video Modal Controls
-            const skipVideoModal = document.getElementById('skip-video-modal');
-            if (skipVideoModal) {
-                skipVideoModal.addEventListener('click', skipVideo);
-            }
-
-            const closeVideoModal = document.getElementById('close-video-modal');
-            if (closeVideoModal) {
-                closeVideoModal.addEventListener('click', closeVideo);
-            }
-
-            // Close video modal when clicking outside
-            const videoModal = document.getElementById('video-modal');
-            if (videoModal) {
-                videoModal.addEventListener('click', function(e) {
-                    if (e.target === videoModal) {
-                        closeVideo();
-                    }
-                });
-            }
-
-            // Scheduling modal controls
-            const closeSlotBtn = document.getElementById('close-slot-modal');
-            if (closeSlotBtn) {
-                closeSlotBtn.addEventListener('click', closeSlotModal);
-            }
-
-            const confirmSlotBtn = document.getElementById('confirm-slot-btn');
-            if (confirmSlotBtn) {
-                confirmSlotBtn.addEventListener('click', confirmTimeSlot);
-            }
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (videoModal && videoModal.classList.contains('active')) {
-                        closeVideo();
-                    }
-                    const slotModal = document.getElementById('slot-modal');
-                    if (slotModal && slotModal.style.display === 'flex') {
-                        closeSlotModal();
-                    }
-                }
-            });
-
-            // Contact form submission
+            // Send OTP Button - ENHANCED with Phase 1 saving
             const sendOtpBtn = document.getElementById('send-otp-btn');
             if (sendOtpBtn) {
-                sendOtpBtn.addEventListener('click', function(e) {
+                console.log('✅ Send OTP button found');
+                sendOtpBtn.addEventListener('click', async function(e) {
                     e.preventDefault();
-                    console.log('📤 Contact form submitted');
+                    console.log('📤 Send OTP button clicked');
                     
                     const firstName = document.getElementById('firstName').value.trim();
                     const lastName = document.getElementById('lastName').value.trim();
@@ -1021,68 +2299,1258 @@
                         return;
                     }
                     
-                    userProfile = { firstName, lastName, phone, city };
+                    userProfile.firstName = firstName;
+                    userProfile.lastName = lastName;
+                    userProfile.phone = phone;
+                    userProfile.city = city;
                     
-                    // Simulate form processing
                     const sendText = document.getElementById('send-otp-text');
                     const sendLoading = document.getElementById('send-otp-loading');
                     
                     sendOtpBtn.disabled = true;
-                    sendText.style.display = 'none';
-                    sendLoading.style.display = 'inline';
+                    sendText.classList.add('hidden');
+                    sendLoading.classList.remove('hidden');
+                    
+                    // 💾 PROGRESSIVE SAVE: Phase 1 - Save contact details immediately
+                    const saveResult = await saveContactDetails();
                     
                     setTimeout(() => {
-                        alert('Thank you! Your information has been submitted successfully.\n\nOur team will contact you within 24 hours to discuss your franchise opportunity.');
+                        document.getElementById('phone-display').textContent = phone;
+                        showScreen('otp-screen');
+                        
+                        // Setup OTP inputs and focus first one
+                        setTimeout(() => {
+                            setupOTPInputs();
+                            const firstOtpInput = document.querySelector('.otp-input');
+                            if (firstOtpInput) {
+                                firstOtpInput.focus();
+                                console.log('🎯 Focused first OTP input');
+                            }
+                        }, 100);
                         
                         sendOtpBtn.disabled = false;
-                        sendText.style.display = 'inline';
-                        sendLoading.style.display = 'none';
+                        sendText.classList.remove('hidden');
+                        sendLoading.classList.add('hidden');
+                    }, 1500);
+                });
+            }
+
+            // Verify OTP Button - ENHANCED with Phase 2 saving
+            const verifyOtpBtn = document.getElementById('verify-otp-btn');
+            if (verifyOtpBtn) {
+                console.log('✅ Verify OTP button found');
+                verifyOtpBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    console.log('🔐 Verify OTP button clicked');
+                    
+                    const verifyText = document.getElementById('verify-otp-text');
+                    const verifyLoading = document.getElementById('verify-otp-loading');
+                    
+                    verifyOtpBtn.disabled = true;
+                    verifyText.classList.add('hidden');
+                    verifyLoading.classList.remove('hidden');
+                    
+                    // 💾 PROGRESSIVE SAVE: Phase 2 - Update OTP verification
+                    const updateResult = await updateOTPVerified();
+                    
+                    setTimeout(() => {
+                        verifyOTP();
+                        
+                        verifyOtpBtn.disabled = false;
+                        verifyText.classList.remove('hidden');
+                        verifyLoading.classList.add('hidden');
+                    }, 1000);
+                });
+            }
+
+            // Back to Contact Button
+            const backToContactBtn = document.getElementById('back-to-contact');
+            if (backToContactBtn) {
+                console.log('✅ Back to contact button found');
+                backToContactBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('← Back to contact clicked');
+                    showScreen('contact-details-screen');
+                });
+            }
+
+            // Next Button (Questions) - ENHANCED with Phase 3 saving
+            const nextBtn = document.getElementById('next-btn');
+            if (nextBtn) {
+                console.log('✅ Next button found');
+                nextBtn.addEventListener('click', async function() {
+                    console.log('➡️ Next button clicked');
+                    
+                    if (currentQuestionIndex < questions.length - 1) {
+                        currentQuestionIndex++;
+                        renderQuestion();
+                        
+                        // 💾 PROGRESSIVE SAVE: Auto-save progress
+                        await autoSaveAnswer();
+                        
+                    } else {
+                        console.log('🎯 Assessment complete, generating recommendations...');
+                        recommendedProducts = getRecommendedProducts(answers);
+                        console.log('✅ Generated recommendations:', recommendedProducts);
+                        
+                        // 💾 PROGRESSIVE SAVE: Phase 3B - Assessment completed
+                        await updateAssessmentCompleted();
+                        
+                        renderProducts();
+                        showScreen('products-screen');
+                        
+                        // 💾 PROGRESSIVE SAVE: Phase 4 - Products viewed
+                        setTimeout(() => updateProductsViewed(), 1000);
+                    }
+                });
+            }
+
+            // Back Question Button
+            const backQuestionBtn = document.getElementById('back-question-btn');
+            if (backQuestionBtn) {
+                console.log('✅ Back question button found');
+                backQuestionBtn.addEventListener('click', function() {
+                    console.log('← Back question clicked');
+                    if (currentQuestionIndex > 0) {
+                        currentQuestionIndex--;
+                        renderQuestion();
+                    }
+                });
+            }
+
+            // Contact Button
+            const contactBtn = document.getElementById('contact-btn');
+            if (contactBtn) {
+                console.log('✅ Contact button found');
+                contactBtn.addEventListener('click', function() {
+                    showScreen('contact-screen');
+                });
+            }
+
+            // Submit Button - ENHANCED with Phase 8 saving
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                console.log('✅ Submit button found');
+                submitBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    
+                    const submitButton = document.getElementById('submit-btn');
+                    const submitText = document.getElementById('submit-text');
+                    const submitLoading = document.getElementById('submit-loading');
+                    
+                    submitButton.disabled = true;
+                    submitText.classList.add('hidden');
+                    submitLoading.classList.remove('hidden');
+                    
+                    // 💾 PROGRESSIVE SAVE: Phase 8 - Final submission
+                    const finalResult = await updateFinalSubmission();
+                    
+                    // Simulate submission
+                    setTimeout(() => {
+                        showScreen('success-screen');
                     }, 2000);
                 });
             }
 
-            console.log('✅ All event listeners initialized');
+            // Demo Button - ENHANCED with saving
+            const demoBtn = document.getElementById('demo-btn');
+            if (demoBtn) {
+                console.log('✅ Demo button found');
+                demoBtn.addEventListener('click', async function() {
+                    console.log('📺 Demo button clicked');
+                    
+                    // 💾 PROGRESSIVE SAVE: Demo viewed
+                    await updateDemoViewed(selectedProduct);
+                    
+                    showVideoDemo();
+                });
+            }
+
+            // ROI Button - ENHANCED with saving
+            const roiBtn = document.getElementById('roi-btn');
+            if (roiBtn) {
+                console.log('✅ ROI button found');
+                roiBtn.addEventListener('click', function() {
+                    console.log('💰 ROI button clicked');
+                    showROICalculator(selectedProduct);
+                });
+            }
+
+            // Back to Products Button
+            const backToProductsBtn = document.getElementById('back-to-products');
+            if (backToProductsBtn) {
+                console.log('✅ Back to products button found');
+                backToProductsBtn.addEventListener('click', function() {
+                    showScreen('products-screen');
+                });
+            }
+
+            // Back to Product Detail Button
+            const backToProductDetailBtn = document.getElementById('back-to-product-detail');
+            if (backToProductDetailBtn) {
+                console.log('✅ Back to product detail button found');
+                backToProductDetailBtn.addEventListener('click', function() {
+                    showScreen('product-detail-screen');
+                });
+            }
+
+            // Close Video Button
+            const closeVideoBtn = document.getElementById('close-video');
+            if (closeVideoBtn) {
+                console.log('✅ Close video button found');
+                closeVideoBtn.addEventListener('click', closeVideoDemo);
+            }
+
+            // Close video modal when clicking outside
+            const videoModal = document.getElementById('video-modal');
+            if (videoModal) {
+                videoModal.addEventListener('click', function(e) {
+                    if (e.target === videoModal) {
+                        closeVideoDemo();
+                    }
+                });
+            }
+            
+            console.log('✅ All event listeners initialized with progressive saving');
         }
 
-        // =====================================================================
-        // 🚀 APPLICATION INITIALIZATION
-        // =====================================================================
+        // OTP Functions - Complete
+        function setupOTPInputs() {
+            console.log('🔑 Setting up OTP inputs');
+            const otpInputs = document.querySelectorAll('.otp-input');
+            
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    
+                    if (!/^\d$/.test(value)) {
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    if (value && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                    
+                    checkOTPComplete();
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+                
+                // Auto-paste handling
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+                    
+                    pastedData.split('').forEach((char, i) => {
+                        if (otpInputs[i]) {
+                            otpInputs[i].value = char;
+                        }
+                    });
+                    checkOTPComplete();
+                });
+            });
+        }
+        
+        function checkOTPComplete() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            const verifyBtn = document.getElementById('verify-otp-btn');
+            
+            if (verifyBtn) {
+                verifyBtn.disabled = otp.length !== 4;
+                
+                // Auto-submit if 4 digits and correct OTP
+                if (otp.length === 4 && otp === '1111') {
+                    console.log('🚀 Auto-submitting correct OTP');
+                    setTimeout(() => verifyOTP(), 300);
+                }
+            }
+        }
+        
+        function verifyOTP() {
+            console.log('🔐 Verifying OTP...');
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            
+            console.log('📱 Entered OTP:', otp);
+            
+            if (otp === '1111') {
+                console.log('✅ OTP verified successfully');
+                userProfile.verified = true;
+                showScreen('questions-screen');
+                renderQuestion();
+                updateSkillsPanel();
+                handleResize(); // Show mobile elements if needed
+            } else {
+                console.log('❌ Invalid OTP');
+                otpInputs.forEach(input => {
+                    input.classList.add('error');
+                    setTimeout(() => input.classList.remove('error'), 500);
+                });
+                
+                setTimeout(() => {
+                    otpInputs.forEach(input => input.value = '');
+                    otpInputs[0].focus();
+                }, 500);
+            }
+        }
 
+        // Products Data
+        const products = {
+            disblay: {
+                name: "Disblay",
+                description: "Disblay is ideal for micro and early-stage businesses who feel a website or app is too much. It lets them create a clean, mobile-ready mini-site to showcase products or services with images and contact options - all through a single link. It's the simplest way to start building online credibility.",
+                logo: `<div style="width: 80px; height: 80px; background: #405266; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; position: relative;">
+                    <span style="font-size: 48px; font-weight: bold; color: white;">D</span>
+                    <div style="position: absolute; bottom: 8px; width: 20px; height: 3px; background: #ef4444; border-radius: 2px;"></div>
+                </div>`,
+                color: "linear-gradient(135deg, #405266, #3b4856)"
+            },
+            topiko: {
+                name: "Topiko",
+                description: "Topiko is the all-in-one platform for small and medium businesses ready to grow online. It includes a website, app interface, CRM, loyalty tools, and SEO features - all fully managed. No tech expertise needed, just plug and grow.",
+                logo: `<div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b2ca8, #5b1a6b); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto; position: relative;">
+                    <div style="color: white; font-size: 24px; font-weight: 300; letter-spacing: -0.5px; margin-bottom: -2px;">Topiko</div>
+                    <div style="position: absolute; top: 15px; right: 15px; width: 20px; height: 20px;">
+                        <div style="width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 12px solid white; transform: rotate(45deg);"></div>
+                    </div>
+                </div>`,
+                color: "linear-gradient(135deg, #8b2ca8, #5b1a6b)"
+            },
+            flex: {
+                name: "Topiko Flex",
+                description: "Topiko Flex is a white-label solution that allows businesses to launch under their own brand, with a custom domain and branded apps. Delivered by resellers using the Flex platform, it's perfect for those who want the functionality but the brand is 100% theirs.",
+                logo: `<div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b2ca8, #5b1a6b); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto; position: relative;">
+                    <div style="color: white; font-size: 16px; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 2px;">Topiko</div>
+                    <div style="color: #f59e0b; font-size: 14px; font-weight: bold; letter-spacing: 1px;">FLEX</div>
+                </div>`,
+                color: "linear-gradient(135deg, #8b2ca8, #5b1a6b)"
+            },
+            hebt: {
+                name: "HEBT",
+                description: "HEBT is a no-code platform built for digital agencies and IT firms. It enables users to build websites, mobile apps, or custom platforms — and download full source code for hosting or advanced customization. It's for those who want full control without development delays.",
+                logo: `<div style="width: 80px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto; position: relative;">
+                    <div style="font-size: 36px; font-weight: bold; color: white; margin-bottom: 4px; position: relative;">
+                        H
+                        <div style="position: absolute; top: -5px; right: -15px; width: 0; height: 0; border-left: 8px solid #f56500; border-top: 6px solid transparent; border-bottom: 6px solid transparent;"></div>
+                    </div>
+                    <div style="font-size: 16px; font-weight: bold; color: white; letter-spacing: 2px;">
+                        HE<span style="color: #f56500;">B</span>T
+                    </div>
+                </div>`,
+                color: "linear-gradient(135deg, #2d3748, #f56500)"
+            }
+        };
+
+        // Product Recommendation Engine - Complete and FIXED
+        function getRecommendedProducts(answers) {
+            console.log('🔍 getRecommendedProducts called with answers:', answers);
+            
+            const scores = {
+                disblay: 0,
+                topiko: 0,
+                flex: 0,
+                hebt: 0
+            };
+            
+            // Q1: Self Description
+            if (answers.q1) {
+                switch (answers.q1) {
+                    case 'digital_agency':
+                        scores.flex += 2; scores.hebt += 2; break;
+                    case 'aspiring_entrepreneur':
+                        scores.topiko += 2; scores.disblay += 2; break;
+                    case 'local_business_worker':
+                        scores.topiko += 2; scores.disblay += 1; break;
+                    case 'part_time_freelancer':
+                        scores.disblay += 2; break;
+                    case 'technical_expert':
+                        scores.hebt += 3; break;
+                    case 'franchise_investor':
+                        scores.topiko += 2; scores.flex += 2; break;
+                    case 'other':
+                        scores.topiko += 1; scores.disblay += 1; break;
+                }
+            }
+            
+            // Q2: Experience
+            if (answers.q2) {
+                switch (answers.q2) {
+                    case 'yes':
+                        scores.disblay += 2; scores.topiko += 2; 
+                        scores.flex += 2; scores.hebt += 2; break;
+                    case 'little':
+                        scores.topiko += 1; scores.disblay += 1; break;
+                    case 'no':
+                        scores.disblay += 2; break;
+                }
+            }
+            
+            // Q3: Time Commitment
+            if (answers.q3) {
+                switch (answers.q3) {
+                    case 'fulltime':
+                        scores.hebt += 2; scores.flex += 2; scores.topiko += 1; break;
+                    case 'parttime':
+                        scores.disblay += 2; scores.topiko += 1; break;
+                    case 'undecided':
+                        scores.topiko += 1; scores.disblay += 1; break;
+                }
+            }
+            
+            // Q4: Business Connections
+            if (answers.q4 && answers.q4.length > 0) {
+                answers.q4.forEach(connection => {
+                    switch (connection) {
+                        case 'business_owners': scores.topiko += 2; break;
+                        case 'associations': scores.flex += 2; break;
+                        case 'startups': scores.hebt += 2; scores.flex += 1; break;
+                        case 'others': scores.topiko += 1; break;
+                    }
+                });
+            }
+            
+            // Q5: Current Business
+            if (answers.q5 && answers.q5.length > 0) {
+                answers.q5.forEach(business => {
+                    switch (business) {
+                        case 'it_services': scores.hebt += 3; break;
+                        case 'digital_marketing': scores.flex += 2; break;
+                        case 'reseller': scores.topiko += 2; break;
+                        case 'others': scores.topiko += 1; break;
+                        case 'none': scores.disblay += 2; break;
+                    }
+                });
+            }
+            
+            // Q6: Technical Comfort
+            if (answers.q6) {
+                switch (answers.q6) {
+                    case 'yes': scores.hebt += 2; scores.flex += 2; break;
+                    case 'no': scores.topiko += 2; scores.disblay += 2; break;
+                }
+            }
+            
+            // Q7: Team Building
+            if (answers.q7) {
+                switch (answers.q7) {
+                    case 'yes': scores.flex += 2; scores.topiko += 2; scores.hebt += 1; break;
+                    case 'no': scores.disblay += 2; break;
+                }
+            }
+            
+            // Q8: Brand Preference
+            if (answers.q8) {
+                switch (answers.q8) {
+                    case 'own_brand': scores.flex += 2; scores.hebt += 2; break;
+                    case 'topiko_brand': scores.topiko += 2; scores.disblay += 2; break;
+                    case 'both': 
+                        scores.disblay += 1; scores.topiko += 1; 
+                        scores.flex += 1; scores.hebt += 1; 
+                        break;
+                }
+            }
+            
+            // Q9: Investment Range
+            if (answers.q9) {
+                switch (answers.q9) {
+                    case 'under_1l': scores.disblay += 2; scores.topiko += 2; break;
+                    case '1l_3l': scores.topiko += 2; scores.flex += 2; break;
+                    case 'above_3l': scores.hebt += 3; scores.flex += 2; break;
+                    case 'no_investment': scores.disblay += 3; break;
+                }
+            }
+            
+            const productScores = Object.entries(scores).map(([product, score]) => ({
+                product, score
+            })).sort((a, b) => b.score - a.score);
+            
+            console.log('💯 Calculated scores:', productScores);
+            
+            // FIXED: Always return exactly 2 products with tags
+            return {
+                products: productScores.slice(0, 2).map(p => p.product),
+                scores: productScores,
+                tags: ['⭐ Best Match', '👍 Also Recommended']
+            };
+        }
+
+        // Product Rendering - Complete and FIXED
+        function renderProducts() {
+            console.log('🚀 renderProducts called');
+            console.log('recommendedProducts:', recommendedProducts);
+            
+            const productsGrid = document.getElementById('products-grid');
+            if (!productsGrid) {
+                console.error('❌ Products grid not found');
+                return;
+            }
+            
+            productsGrid.innerHTML = '';
+            
+            let productsList = [];
+            let tagsList = [];
+            
+            if (recommendedProducts && recommendedProducts.products) {
+                productsList = recommendedProducts.products;
+                tagsList = recommendedProducts.tags || ['⭐ Best Match', '👍 Also Recommended'];
+            } else if (Array.isArray(recommendedProducts)) {
+                productsList = recommendedProducts;
+                tagsList = ['⭐ Best Match', '👍 Also Recommended'];
+            } else {
+                // Fallback products
+                productsList = ['topiko', 'disblay'];
+                tagsList = ['⭐ Best Match', '👍 Also Recommended'];
+            }
+            
+            // ENSURE exactly 2 products are shown
+            if (productsList.length < 2) {
+                // Add default second product if only one was recommended
+                const allProducts = ['topiko', 'disblay', 'flex', 'hebt'];
+                const missingProduct = allProducts.find(p => !productsList.includes(p));
+                if (missingProduct) {
+                    productsList.push(missingProduct);
+                }
+            }
+            
+            // Take only first 2 products
+            productsList = productsList.slice(0, 2);
+            tagsList = tagsList.slice(0, 2);
+            
+            console.log('📦 Products to render:', productsList);
+            
+            // Add products grid styles
+            productsGrid.style.cssText = `
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
+                margin: 3rem 0;
+            `;
+            
+            productsList.forEach((productKey, index) => {
+                const product = products[productKey];
+                
+                if (!product) {
+                    console.warn(`❓ Product not found: ${productKey}`);
+                    return;
+                }
+                
+                console.log(`✅ Rendering product: ${product.name}`);
+                
+                const productCard = document.createElement('div');
+                productCard.style.cssText = `
+                    background: rgba(255, 255, 255, 0.03);
+                    backdrop-filter: blur(20px);
+                    border-radius: 24px;
+                    padding: 2.5rem;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    position: relative;
+                    overflow: hidden;
+                    opacity: 0;
+                    transform: translateY(50px);
+                    animation: fadeInUp 0.8s ease forwards;
+                    animation-delay: ${index * 0.1}s;
+                `;
+                
+                const tag = tagsList[index] ? `<div style="position: absolute; top: 1rem; right: 1rem; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">${tagsList[index]}</div>` : '';
+                
+                productCard.innerHTML = `
+                    ${tag}
+                    <div style="font-size: 4rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; min-height: 80px;">${product.logo}</div>
+                    <div style="font-size: 1.8rem; font-weight: 600; margin-bottom: 1.5rem; color: rgba(255, 255, 255, 0.95);">${product.name}</div>
+                    <div style="color: rgba(255, 255, 255, 0.7); line-height: 1.6; margin-bottom: 2rem; font-size: 1rem;">${product.description}</div>
+                    <div style="color: #667eea; font-weight: 600; font-size: 1.1rem;">Learn More →</div>
+                `;
+                
+                productCard.addEventListener('click', async () => {
+                    console.log(`🎯 Product clicked: ${product.name}`);
+                    selectedProduct = productKey;
+                    
+                    // 💾 PROGRESSIVE SAVE: Phase 5 - Product detail viewed
+                    await updateProductDetailed(productKey);
+                    
+                    showProductDetail(productKey);
+                });
+                
+                productCard.addEventListener('mouseenter', () => {
+                    productCard.style.transform = 'translateY(-10px)';
+                    productCard.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    productCard.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.4)';
+                });
+                
+                productCard.addEventListener('mouseleave', () => {
+                    productCard.style.transform = 'translateY(0)';
+                    productCard.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                    productCard.style.boxShadow = 'none';
+                });
+                
+                productsGrid.appendChild(productCard);
+            });
+            
+            console.log('✅ Products rendered successfully');
+        }
+
+        // Show Product Detail Screen
+        function showProductDetail(productKey) {
+            const product = products[productKey];
+            if (!product) return;
+            
+            const productDetailContent = document.getElementById('product-detail-content');
+            productDetailContent.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1.5rem;">${product.logo}</div>
+                    <h2 style="margin-bottom: 1rem;">${product.name}</h2>
+                    <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; line-height: 1.6;">${product.description}</p>
+                </div>
+            `;
+            
+            showScreen('product-detail-screen');
+        }
+
+        // Show ROI Calculator
+        function showROICalculator(productKey) {
+            const productData = {
+                topiko: {
+                    name: 'Topiko',
+                    type: 'subscription',
+                    subscription: 9999,
+                    commission: 4999,
+                    minStaff: 2,
+                    minPerDay: 1,
+                    salaryPerStaff: 25000
+                },
+                disblay: {
+                    name: 'Disblay', 
+                    type: 'subscription',
+                    subscription: 1499,
+                    commission: 799,
+                    minStaff: 2,
+                    minPerDay: 1,
+                    salaryPerStaff: 25000
+                },
+                flex: {
+                    name: 'Topiko Flex',
+                    type: 'project',
+                    averageProjectCost: 39999,
+                    commission: 19999,
+                    minStaff: 2,
+                    minProjectsPerMonth: 12,
+                    salaryPerStaff: 40000
+                },
+                hebt: {
+                    name: 'HEBT',
+                    type: 'project',
+                    averageProjectCost: 100000,
+                    commission: 50000,
+                    minStaff: 3,
+                    minProjectsPerMonth: 6,
+                    salaryPerStaff: 60000
+                }
+            };
+            
+            const data = productData[productKey] || productData.topiko;
+            
+            // Update form fields based on product type
+            updateROIForm(data);
+            
+            // Store data for calculations
+            window.currentROIData = data;
+            
+            // Initial calculation
+            calculateROI();
+            
+            showScreen('roi-calculator-screen');
+        }
+
+        // Update ROI Form based on product type
+        function updateROIForm(data) {
+            const roiContent = document.getElementById('roi-calculator-content');
+            
+            if (data.type === 'subscription') {
+                // Subscription-based products (Topiko, Disblay)
+                roiContent.innerHTML = `
+                    <form id="roi-form">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Product</label>
+                                <input type="text" id="roi-product" class="form-input" readonly value="${data.name}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Subscription Fee</label>
+                                <input type="text" id="roi-subscription" class="form-input" readonly value="₹${data.subscription.toLocaleString()}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Franchise Commission</label>
+                                <input type="text" id="roi-commission" class="form-input" readonly value="₹${data.commission.toLocaleString()}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Sales Staff Count</label>
+                                <input type="number" id="roi-staff" class="form-input" min="${data.minStaff}" value="${data.minStaff}" placeholder="Enter staff count">
+                                <div id="staff-alert" style="color: #f59e0b; font-size: 0.8rem; margin-top: 0.5rem; display: none;">Minimum requirement is ${data.minStaff}</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Onboards per Day</label>
+                                <input type="number" id="roi-onboards" class="form-input" min="${data.minPerDay}" value="${data.minPerDay}" placeholder="Minimum ${data.minPerDay}">
+                                <div id="onboards-alert" style="color: #f59e0b; font-size: 0.8rem; margin-top: 0.5rem; display: none;">Minimum requirement is ${data.minPerDay}</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Total Onboards per Month</label>
+                                <input type="text" id="roi-total-onboards" class="form-input" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Projected Revenue</label>
+                                <input type="text" id="roi-revenue" class="form-input" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Salary Expenses</label>
+                                <input type="text" id="roi-salary" class="form-input" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Other Expenses</label>
+                                <input type="number" id="roi-other-expenses" class="form-input" value="0" placeholder="Enter other expenses">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Total Expenses</label>
+                                <input type="text" id="roi-total-expenses" class="form-input" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Net Profit</label>
+                                <input type="text" id="roi-profit" class="form-input" readonly style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1)); border-color: #10b981; color: #10b981; font-weight: 600; font-size: 1.2rem;">
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 1.5rem; margin-top: 2rem;">
+                            <h4 style="color: rgba(255, 255, 255, 0.9); margin-bottom: 1rem;">📋 Your Responsibilities:</h4>
+                            <ul style="color: rgba(255, 255, 255, 0.7); line-height: 1.6; list-style: none; padding: 0;">
+                                <li style="margin-bottom: 0.5rem;">• Office space</li>
+                                <li style="margin-bottom: 0.5rem;">• 2 staff members</li>
+                                <li>• Tele callers</li>
+                            </ul>
+                        </div>
+                    </form>
+                `;
+            } else {
+                // Project-based products (Topiko Flex, HEBT)
+                roiContent.innerHTML = `
+                    <form id="roi-form">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Product</label>
+                                <input type="text" id="roi-product" class="form-input" readonly value="${data.name}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Average Project Cost</label>
+                                <input type="text" id="roi-project-cost" class="form-input" readonly value="₹${data.averageProjectCost.toLocaleString()}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Franchise Commission</label>
+                                <input type="text" id="roi-commission" class="form-input" readonly value="₹${data.commission.toLocaleString()}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Staff Members</label>
+                                <input type="number" id="roi-staff" class="form-input" min="${data.minStaff}" value="${data.minStaff}" placeholder="Minimum ${data.minStaff}">
+                                <div id="staff-alert" style="color: #f59e0b; font-size: 0.8rem; margin-top: 0.5rem; display: none;">Minimum requirement is ${data.minStaff}</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Projects per Month</label>
+                                <input type="number" id="roi-projects" class="form-input" min="${data.minProjectsPerMonth}" value="${data.minProjectsPerMonth}" placeholder="Minimum ${data.minProjectsPerMonth}">
+                                <div id="projects-alert" style="color: #f59e0b; font-size: 0.8rem; margin-top: 0.5rem; display: none;">Minimum requirement is ${data.minProjectsPerMonth}</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Projected Revenue</label>
+                                <input type="text" id="roi-revenue" class="form-input" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Salary Expenses</label>
+                                <input type="text" id="roi-salary" class="form-input" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Other Expenses</label>
+                                <input type="number" id="roi-other-expenses" class="form-input" value="0" placeholder="Enter other expenses">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Total Expenses</label>
+                                <input type="text" id="roi-total-expenses" class="form-input" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Net Profit</label>
+                                <input type="text" id="roi-profit" class="form-input" readonly style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1)); border-color: #10b981; color: #10b981; font-weight: 600; font-size: 1.2rem;">
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 1.5rem; margin-top: 2rem;">
+                            <h4 style="color: rgba(255, 255, 255, 0.9); margin-bottom: 1rem;">📋 Your Responsibilities:</h4>
+                            <ul style="color: rgba(255, 255, 255, 0.7); line-height: 1.6; list-style: none; padding: 0;">
+                                <li style="margin-bottom: 0.5rem;">• Office space</li>
+                                <li style="margin-bottom: 0.5rem;">• 2 staff members</li>
+                                <li>• Tele callers</li>
+                            </ul>
+                        </div>
+                    </form>
+                `;
+            }
+            
+            // Reattach event listeners for new form
+            attachROIEventListeners();
+        }
+
+        // FIXED: Calculate ROI with proper event handling
+        function calculateROI() {
+            const data = window.currentROIData;
+            if (!data) return;
+            
+            if (data.type === 'subscription') {
+                // Subscription-based calculation (Topiko, Disblay)
+                let staffCount = parseInt(document.getElementById('roi-staff').value) || data.minStaff;
+                let onboardsPerDay = parseInt(document.getElementById('roi-onboards').value) || data.minPerDay;
+                const otherExpenses = parseInt(document.getElementById('roi-other-expenses').value) || 0;
+                
+                // Validate and enforce minimums
+                if (staffCount < data.minStaff) {
+                    staffCount = data.minStaff;
+                    document.getElementById('roi-staff').value = staffCount;
+                    showAlert('staff-alert', `Minimum requirement is ${data.minStaff}`);
+                } else {
+                    hideAlert('staff-alert');
+                }
+                
+                if (onboardsPerDay < data.minPerDay) {
+                    onboardsPerDay = data.minPerDay;
+                    document.getElementById('roi-onboards').value = onboardsPerDay;
+                    showAlert('onboards-alert', `Minimum requirement is ${data.minPerDay}`);
+                } else {
+                    hideAlert('onboards-alert');
+                }
+                
+                // Calculations
+                const totalOnboards = staffCount * onboardsPerDay * 30;
+                const projectedRevenue = totalOnboards * data.commission;
+                const salaryExpenses = staffCount * data.salaryPerStaff;
+                const totalExpenses = salaryExpenses + otherExpenses;
+                const netProfit = projectedRevenue - totalExpenses;
+                
+                // Update fields
+                document.getElementById('roi-total-onboards').value = totalOnboards.toLocaleString();
+                document.getElementById('roi-revenue').value = `₹${projectedRevenue.toLocaleString()}`;
+                document.getElementById('roi-salary').value = `₹${salaryExpenses.toLocaleString()}`;
+                document.getElementById('roi-total-expenses').value = `₹${totalExpenses.toLocaleString()}`;
+                document.getElementById('roi-profit').value = `₹${netProfit.toLocaleString()}`;
+                
+                // 💾 PROGRESSIVE SAVE: ROI calculated
+                const roiCalculations = {
+                    staffCount,
+                    onboardsPerDay,
+                    totalOnboards,
+                    projectedRevenue,
+                    salaryExpenses,
+                    otherExpenses,
+                    totalExpenses,
+                    netProfit
+                };
+                
+                // Save ROI calculation data
+                setTimeout(() => updateROICalculated(selectedProduct, roiCalculations), 1000);
+                
+            } else {
+                // Project-based calculation (Topiko Flex, HEBT)
+                let staffCount = parseInt(document.getElementById('roi-staff').value) || data.minStaff;
+                let projectsPerMonth = parseInt(document.getElementById('roi-projects').value) || data.minProjectsPerMonth;
+                const otherExpenses = parseInt(document.getElementById('roi-other-expenses').value) || 0;
+                
+                // Validate and enforce minimums
+                if (staffCount < data.minStaff) {
+                    staffCount = data.minStaff;
+                    document.getElementById('roi-staff').value = staffCount;
+                    showAlert('staff-alert', `Minimum requirement is ${data.minStaff}`);
+                } else {
+                    hideAlert('staff-alert');
+                }
+                
+                if (projectsPerMonth < data.minProjectsPerMonth) {
+                    projectsPerMonth = data.minProjectsPerMonth;
+                    document.getElementById('roi-projects').value = projectsPerMonth;
+                    showAlert('projects-alert', `Minimum requirement is ${data.minProjectsPerMonth}`);
+                } else {
+                    hideAlert('projects-alert');
+                }
+                
+                // Calculations
+                const projectedRevenue = projectsPerMonth * data.commission;
+                const salaryExpenses = staffCount * data.salaryPerStaff;
+                const totalExpenses = salaryExpenses + otherExpenses;
+                const netProfit = projectedRevenue - totalExpenses;
+                
+                // Update fields
+                document.getElementById('roi-revenue').value = `₹${projectedRevenue.toLocaleString()}`;
+                document.getElementById('roi-salary').value = `₹${salaryExpenses.toLocaleString()}`;
+                document.getElementById('roi-total-expenses').value = `₹${totalExpenses.toLocaleString()}`;
+                document.getElementById('roi-profit').value = `₹${netProfit.toLocaleString()}`;
+                
+                // 💾 PROGRESSIVE SAVE: ROI calculated
+                const roiCalculations = {
+                    staffCount,
+                    projectsPerMonth,
+                    projectedRevenue,
+                    salaryExpenses,
+                    otherExpenses,
+                    totalExpenses,
+                    netProfit
+                };
+                
+                // Save ROI calculation data
+                setTimeout(() => updateROICalculated(selectedProduct, roiCalculations), 1000);
+            }
+            
+            // Color code profit
+            const profitField = document.getElementById('roi-profit');
+            const netProfit = parseInt(profitField.value.replace(/[₹,]/g, ''));
+            if (netProfit > 0) {
+                profitField.style.color = '#10b981';
+                profitField.style.borderColor = '#10b981';
+                profitField.style.background = 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1))';
+            } else {
+                profitField.style.color = '#ef4444';
+                profitField.style.borderColor = '#ef4444';
+                profitField.style.background = 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))';
+            }
+        }
+
+        // Show alert message
+        function showAlert(alertId, message) {
+            const alert = document.getElementById(alertId);
+            if (alert) {
+                alert.textContent = message;
+                alert.style.display = 'block';
+                setTimeout(() => {
+                    if (alert) alert.style.display = 'none';
+                }, 3000); // Hide after 3 seconds
+            }
+        }
+
+        // Hide alert message
+        function hideAlert(alertId) {
+            const alert = document.getElementById(alertId);
+            if (alert) {
+                alert.style.display = 'none';
+            }
+        }
+
+        // FIXED: Attach ROI Event Listeners with proper debouncing
+        function attachROIEventListeners() {
+            const data = window.currentROIData;
+            if (!data) return;
+            
+            let inputIds = ['roi-staff', 'roi-other-expenses'];
+            
+            if (data.type === 'subscription') {
+                inputIds.push('roi-onboards');
+            } else {
+                inputIds.push('roi-projects');
+            }
+            
+            // Remove existing listeners first
+            inputIds.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    // Clone and replace to remove all event listeners
+                    const newInput = input.cloneNode(true);
+                    input.parentNode.replaceChild(newInput, input);
+                }
+            });
+            
+            // Add new listeners with debouncing
+            inputIds.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    let timeout;
+                    const debouncedCalculate = () => {
+                        clearTimeout(timeout);
+                        timeout = setTimeout(calculateROI, 100); // 100ms debounce
+                    };
+                    
+                    input.addEventListener('input', debouncedCalculate);
+                    input.addEventListener('change', calculateROI);
+                    input.addEventListener('blur', calculateROI);
+                }
+            });
+            
+            console.log('✅ ROI event listeners attached');
+        }
+
+        // Show Video Popup
+        function showVideoDemo() {
+            const videoModal = document.getElementById('video-modal');
+            const videoIframe = document.getElementById('video-iframe');
+            
+            // Convert YouTube Shorts URL to embeddable format
+            const videoUrl = 'https://www.youtube.com/embed/LKuxfquja-o?si=qwUGrs6C9JoZo89g&autoplay=1';
+            videoIframe.src = videoUrl;
+            
+            videoModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Video Popup
+        function closeVideoDemo() {
+            const videoModal = document.getElementById('video-modal');
+            const videoIframe = document.getElementById('video-iframe');
+            
+            videoModal.style.display = 'none';
+            videoIframe.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        function renderQuestion() {
+            console.log('📝 Rendering question:', currentQuestionIndex + 1);
+            const question = questions[currentQuestionIndex];
+            const questionContainer = document.getElementById('question-container');
+            
+            if (!question || !questionContainer) {
+                console.error('❌ Question or container not found');
+                return;
+            }
+            
+            questionContainer.style.opacity = '0';
+            questionContainer.style.transform = 'translateY(-30px)';
+            questionContainer.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            setTimeout(() => {
+                const questionText = document.getElementById('question-text');
+                const optionsContainer = document.getElementById('options-container');
+                
+                if (questionText) questionText.textContent = question.question;
+                if (optionsContainer) optionsContainer.innerHTML = '';
+                
+                question.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option';
+                    optionElement.style.opacity = '0';
+                    optionElement.style.transform = 'translateX(-50px)';
+                    optionElement.style.transition = `all 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s`;
+                    optionElement.innerHTML = `
+                        <input type="${question.type}" name="${question.id}" value="${option.value}" id="${question.id}_${option.value}">
+                        <label for="${question.id}_${option.value}">${option.label}</label>
+                    `;
+                    
+                    optionElement.addEventListener('click', async () => {
+                        const input = optionElement.querySelector('input');
+                        if (question.type === 'radio') {
+                            document.querySelectorAll(`input[name="${question.id}"]`).forEach(inp => {
+                                inp.closest('.option').classList.remove('selected');
+                            });
+                            input.checked = true;
+                            optionElement.classList.add('selected');
+                            answers[question.id] = option.value;
+                        } else {
+                            input.checked = !input.checked;
+                            optionElement.classList.toggle('selected');
+                            
+                            if (!answers[question.id]) answers[question.id] = [];
+                            if (input.checked) {
+                                answers[question.id].push(option.value);
+                            } else {
+                                answers[question.id] = answers[question.id].filter(v => v !== option.value);
+                            }
+                        }
+                        
+                        console.log('📝 Answer updated:', question.id, '=', answers[question.id]);
+                        updateNextButton();
+                        updateSkillsPanel(); // Make sure this is called every time
+                        
+                        // 💾 PROGRESSIVE SAVE: Auto-save answer progress
+                        await autoSaveAnswer(question.id, answers[question.id]);
+                    });
+                    
+                    if (optionsContainer) optionsContainer.appendChild(optionElement);
+                });
+                
+                questionContainer.style.opacity = '1';
+                questionContainer.style.transform = 'translateY(0)';
+                
+                setTimeout(() => {
+                    question.options.forEach((option, index) => {
+                        const optionElement = optionsContainer.children[index];
+                        if (optionElement) {
+                            optionElement.style.opacity = '1';
+                            optionElement.style.transform = 'translateX(0)';
+                        }
+                    });
+                }, 100);
+                
+                updateProgress();
+                updateNextButton();
+            }, 500);
+        }
+
+        // Update progress
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            const progressFill = document.querySelector('.progress-fill');
+            const currentQ = document.getElementById('current-q');
+            
+            if (progressFill) progressFill.style.width = progress + '%';
+            if (currentQ) currentQ.textContent = currentQuestionIndex + 1;
+        }
+
+        // Initialize Application
         function init() {
-            console.log('🚀 Starting Enhanced Franchise Tracker with Video Integration...');
+            console.log('🚀 Starting Enhanced Progressive Franchise Tracker v5.0...');
             
             initializeSupabase();
+            handleResize();
             initializeEventListeners();
             
-            // Auto-advance from welcome to about screen
             setTimeout(() => {
                 showScreen('about-screen');
+                setTimeout(() => {
+                    showScreen('contact-details-screen');
+                }, 3000);
             }, 3000);
         }
 
-        // Test Functions
-        window.testVideo = function() {
-            console.log('🧪 Testing video modal...');
-            showVideo();
-        };
+        // Window event listeners
+        window.addEventListener('resize', handleResize);
 
-        window.testScheduling = function() {
-            console.log('🧪 Testing scheduling modal...');
-            showDemoScheduling('demo');
-        };
+        // Close video modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const videoModal = document.getElementById('video-modal');
+                if (videoModal && videoModal.style.display === 'flex') {
+                    closeVideoDemo();
+                }
+            }
+        });
 
-        // Initialize when DOM is ready
+        // DOM Ready
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📄 DOM loaded, initializing...');
             setTimeout(init, 500);
         });
 
-        console.log('🎯 VIDEO INTEGRATION LOADED');
-        console.log('📺 Video URL:', VIDEO_CONFIG.url);
-        console.log('🧪 Test functions available:');
-        console.log('   • window.testVideo() - Test video modal');
-        console.log('   • window.testScheduling() - Test scheduling modal');
+        // =====================================================================
+        // 🧪 DEBUG & TESTING FUNCTIONS
+        // =====================================================================
 
+        // Debug functions for testing progressive saving
+        window.testSendOTP = function() {
+            console.log('🧪 Testing Send OTP...');
+            document.getElementById('firstName').value = 'Test';
+            document.getElementById('lastName').value = 'User';
+            document.getElementById('phone').value = '9876543210';
+            document.getElementById('city').value = 'Mumbai';
+            document.getElementById('send-otp-btn').click();
+        };
+
+        window.testVerifyOTP = function() {
+            console.log('🧪 Testing Verify OTP...');
+            const otpInputs = document.querySelectorAll('.otp-input');
+            otpInputs[0].value = '1';
+            otpInputs[1].value = '1';
+            otpInputs[2].value = '1';
+            otpInputs[3].value = '1';
+            checkOTPComplete();
+        };
+
+        window.testQuickAnswer = function() {
+            console.log('🧪 Testing Quick Answer...');
+            // Simulate answering first 3 questions quickly
+            answers.q1 = 'digital_agency';
+            answers.q2 = 'yes';
+            answers.q3 = 'fulltime';
+            updateSkillsPanel();
+            console.log('📊 Answers set:', answers);
+        };
+
+        window.debugState = function() {
+            console.log('📊 Current State:', {
+                currentScreen,
+                currentQuestionIndex,
+                answers,
+                userProfile,
+                recommendedProducts,
+                currentLeadId,
+                'Supabase Status': supabase ? 'Connected' : 'Demo Mode'
+            });
+        };
+
+        window.testProgressiveSave = async function() {
+            console.log('🧪 Testing Progressive Save...');
+            
+            // Test Phase 1: Contact Details
+            userProfile.firstName = 'Progressive';
+            userProfile.lastName = 'Test';
+            userProfile.phone = '9999999999';
+            userProfile.city = 'TestCity';
+            
+            const result1 = await saveContactDetails();
+            console.log('Phase 1 Result:', result1);
+            
+            // Test Phase 2: OTP Verification
+            const result2 = await updateOTPVerified();
+            console.log('Phase 2 Result:', result2);
+            
+            // Test Phase 3: Assessment Started
+            answers.q1 = 'digital_agency';
+            const result3 = await updateAssessmentStarted();
+            console.log('Phase 3A Result:', result3);
+            
+            // Test Phase 4: Assessment Completed
+            answers.q2 = 'yes';
+            answers.q3 = 'fulltime';
+            userProfile.calculatedScore = 75;
+            recommendedProducts = { products: ['topiko', 'flex'] };
+            const result4 = await updateAssessmentCompleted();
+            console.log('Phase 3B Result:', result4);
+            
+            console.log('✅ Progressive save test completed!');
+        };
+
+        console.log('🎯 PROGRESSIVE SAVING SYSTEM LOADED');
+        console.log('💾 Data will be saved at every step:');
+        console.log('   1. 📞 Contact details (before OTP)');
+        console.log('   2. ✅ OTP verification');
+        console.log('   3. 📝 Assessment progress (every question)');
+        console.log('   4. 🎯 Product recommendations');
+        console.log('   5. 👁️ Product detail views');
+        console.log('   6. 💰 ROI calculations');
+        console.log('   7. 📺 Demo video views');
+        console.log('   8. 🏁 Final submission');
+        console.log('');
+        console.log('🧪 Test functions available:');
+        console.log('   • window.testSendOTP() - Test contact form');
+        console.log('   • window.testVerifyOTP() - Test OTP verification');
+        console.log('   • window.testQuickAnswer() - Simulate quick answers');
+        console.log('   • window.testProgressiveSave() - Test all save phases');
+        console.log('   • window.debugState() - Check current state');
     </script>
 </body>
 </html>
