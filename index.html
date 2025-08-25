@@ -83,6 +83,96 @@
             pointer-events: all;
         }
 
+        /* Cinematic Title Animations */
+        .screen.cinematic-title {
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+        }
+
+        .screen.cinematic-title .container {
+            animation: cinematicReveal 3.5s ease-out forwards;
+        }
+
+        .screen.cinematic-title h1 {
+            animation: titleGlow 3.5s ease-out forwards;
+            text-shadow: 0 0 80px rgba(102, 126, 234, 0.5),
+                         0 0 120px rgba(102, 126, 234, 0.3),
+                         0 0 160px rgba(102, 126, 234, 0.1);
+            transform: scale(0.8);
+            opacity: 0;
+        }
+
+        .screen.cinematic-title .subtitle {
+            animation: subtitleFade 3.5s ease-out forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        @keyframes cinematicReveal {
+            0% {
+                transform: scale(1.5) translateZ(200px);
+                filter: blur(10px);
+            }
+            20% {
+                transform: scale(1.1) translateZ(50px);
+                filter: blur(2px);
+            }
+            40%, 100% {
+                transform: scale(1) translateZ(0);
+                filter: blur(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes titleGlow {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+                letter-spacing: 0.5em;
+            }
+            20% {
+                transform: scale(1.05);
+                opacity: 0.7;
+                letter-spacing: 0.2em;
+            }
+            40%, 100% {
+                transform: scale(1);
+                opacity: 1;
+                letter-spacing: -0.04em;
+            }
+        }
+
+        @keyframes subtitleFade {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            30% {
+                opacity: 0.8;
+                transform: translateY(0);
+            }
+            40%, 100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Fade out for cinematic screens */
+        .screen.cinematic-title.fade-out-cinematic {
+            animation: cinematicFadeOut 0.8s ease-out forwards;
+        }
+
+        @keyframes cinematicFadeOut {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+
         .screen.zoom-out {
             opacity: 0;
             transform: scale(0.8) translateY(0);
@@ -282,7 +372,7 @@
 
         /* Mobile Skills Panel - Updated to show last answer */
         .mobile-skills-float {
-            display: none;
+            display: none !important; /* Force hide by default */
             position: fixed;
             top: 1rem;
             left: 1rem;
@@ -296,6 +386,15 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            visibility: hidden; /* Double protection */
+            opacity: 0;
+        }
+        
+        /* Show mobile float only after contact details are verified */
+        .mobile-skills-float.ready-to-show {
+            display: block !important;
+            visibility: visible;
+            opacity: 1;
         }
 
         .mobile-skills-float:hover {
@@ -923,8 +1022,11 @@
                 display: none;
             }
             
-            .mobile-skills-float {
-                display: block;
+            /* Mobile float only shows when ready-to-show class is added */
+            .mobile-skills-float.ready-to-show {
+                display: block !important;
+                visibility: visible;
+                opacity: 1;
             }
             
             .mobile-skills-inline {
@@ -941,6 +1043,31 @@
                 padding-top: 2rem;
             }
             
+            /* Center cinematic title screens on mobile */
+            .screen.cinematic-title {
+                align-items: center;
+                justify-content: center;
+                padding-top: 1rem;
+            }
+            
+            .screen.cinematic-title .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: auto;
+            }
+            
+            .screen.cinematic-title h1 {
+                font-size: clamp(2rem, 8vw, 3rem);
+                margin-bottom: 1.5rem;
+            }
+            
+            .screen.cinematic-title .subtitle {
+                font-size: clamp(1rem, 4vw, 1.2rem);
+                padding: 0 1rem;
+            }
+            
             .questions-layout {
                 grid-template-columns: 1fr;
                 gap: 0;
@@ -955,8 +1082,11 @@
                 display: none;
             }
             
-            .mobile-skills-float {
-                display: block;
+            /* Mobile float only shows when ready-to-show class is added */
+            .mobile-skills-float.ready-to-show {
+                display: block !important;
+                visibility: visible;
+                opacity: 1;
             }
             
             .mobile-skills-inline {
@@ -1028,6 +1158,25 @@
             .screen {
                 padding: 0.5rem;
                 padding-top: 1rem;
+            }
+            
+            /* Ensure cinematic screens stay centered on small mobile */
+            .screen.cinematic-title {
+                align-items: center;
+                justify-content: center;
+                padding: 1rem;
+            }
+            
+            .screen.cinematic-title h1 {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+            
+            .screen.cinematic-title .subtitle {
+                font-size: 1rem;
+                text-align: center;
+                line-height: 1.5;
             }
             
             .glass-card {
@@ -1111,7 +1260,7 @@
     </div>
 
     <!-- Welcome Screen -->
-    <div id="welcome-screen" class="screen active">
+    <div id="welcome-screen" class="screen active cinematic-title">
         <div class="container">
             <h1>Welcome</h1>
             <p class="subtitle">
@@ -1122,7 +1271,7 @@
     </div>
 
     <!-- About Screen -->
-    <div id="about-screen" class="screen">
+    <div id="about-screen" class="screen cinematic-title">
         <div class="container">
             <h1>About <span style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Topiko</span></h1>
             <p class="subtitle">
@@ -2245,31 +2394,26 @@
             const targetScreen = document.getElementById(screenId);
             
             if (currentActiveScreen) {
-                if (currentActiveScreen.id === 'welcome-screen') {
-                    currentActiveScreen.classList.add('zoom-out');
-                } else if (screenId === 'about-screen') {
-                    targetScreen.classList.add('zoom-in-from');
+                // Special handling for cinematic title screens
+                if (currentActiveScreen.classList.contains('cinematic-title')) {
+                    // Add fade out class for cinematic screens
+                    currentActiveScreen.classList.add('fade-out-cinematic');
+                    
+                    setTimeout(() => {
+                        currentActiveScreen.classList.remove('active', 'fade-out-cinematic');
+                        targetScreen.classList.add('active');
+                        currentScreen = screenId;
+                        handleResize();
+                    }, 800); // Wait for cinematic fade to complete
                 } else {
                     currentActiveScreen.classList.add('fade-out');
-                }
-                
-                setTimeout(() => {
-                    currentActiveScreen.classList.remove('active', 'fade-out', 'zoom-out');
-                    
-                    if (screenId === 'about-screen') {
-                        targetScreen.classList.remove('zoom-in-from');
-                        targetScreen.classList.add('active', 'zoom-in-to');
-                        setTimeout(() => targetScreen.classList.remove('zoom-in-to'), 800);
-                    } else {
+                    setTimeout(() => {
+                        currentActiveScreen.classList.remove('active', 'fade-out');
                         targetScreen.classList.add('active');
-                    }
-                    
-                    currentScreen = screenId;
-                    
-                    // Circular buttons removed
-                    
-                    handleResize();
-                }, 600);
+                        currentScreen = screenId;
+                        handleResize();
+                    }, 600);
+                }
             } else {
                 targetScreen.classList.add('active');
                 currentScreen = screenId;
@@ -2582,6 +2726,15 @@
             if (otp === '1111') {
                 console.log('✅ OTP verified successfully');
                 userProfile.verified = true;
+                
+                // Show mobile skills float only after OTP verification on mobile
+                if (window.innerWidth <= 768) {
+                    const mobileFloat = document.getElementById('mobile-float');
+                    if (mobileFloat) {
+                        mobileFloat.classList.add('ready-to-show');
+                    }
+                }
+                
                 showScreen('questions-screen');
                 renderQuestion();
                 updateSkillsPanel();
@@ -3429,12 +3582,13 @@
             handleResize();
             initializeEventListeners();
             
+            // Cinematic title sequence timing (4 seconds each)
             setTimeout(() => {
                 showScreen('about-screen');
                 setTimeout(() => {
                     showScreen('contact-details-screen');
-                }, 3000);
-            }, 3000);
+                }, 4000); // 4 seconds for About screen animation
+            }, 4000); // 4 seconds for Welcome screen animation
         }
 
         // Window event listeners
