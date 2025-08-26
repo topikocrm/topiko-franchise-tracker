@@ -6,6 +6,9 @@
     <title>Join Topiko Franchise - Indian Digital Revolution</title>
     
     <!-- External Dependencies -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2.38.0/dist/umd/supabase.js"></script>
     
@@ -23,6 +26,27 @@
             color: white;
             overflow: hidden;
             position: relative;
+        }
+
+        /* Poppins font for Topiko brand name */
+        .topiko-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            position: relative;
+            filter: drop-shadow(0 0 12px rgba(102, 126, 234, 0.3)) 
+                    drop-shadow(0 0 24px rgba(118, 75, 162, 0.2));
+            animation: subtleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes subtleGlow {
+            0% {
+                filter: drop-shadow(0 0 12px rgba(102, 126, 234, 0.3)) 
+                        drop-shadow(0 0 24px rgba(118, 75, 162, 0.2));
+            }
+            100% {
+                filter: drop-shadow(0 0 16px rgba(102, 126, 234, 0.4)) 
+                        drop-shadow(0 0 32px rgba(118, 75, 162, 0.3));
+            }
         }
 
         /* Animated Background */
@@ -70,7 +94,7 @@
             padding: 2rem;
             opacity: 0;
             transform: scale(1) translateY(0);
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: opacity 0.5s ease-in-out;
             z-index: 1;
             pointer-events: none;
             overflow-y: auto;
@@ -89,35 +113,38 @@
         }
 
         .screen.cinematic-title .container {
-            animation: cinematicReveal 3.5s ease-out forwards;
+            animation: cinematicReveal 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            will-change: transform, filter, opacity;
         }
 
         .screen.cinematic-title h1 {
-            animation: titleGlow 3.5s ease-out forwards;
-            text-shadow: 0 0 80px rgba(102, 126, 234, 0.5),
-                         0 0 120px rgba(102, 126, 234, 0.3),
-                         0 0 160px rgba(102, 126, 234, 0.1);
-            transform: scale(0.8);
+            animation: titleGlow 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            text-shadow: 0 0 40px rgba(102, 126, 234, 0.3),
+                         0 0 80px rgba(102, 126, 234, 0.2);
+            transform: scale(0.9);
             opacity: 0;
+            will-change: transform, opacity;
         }
 
         .screen.cinematic-title .subtitle {
-            animation: subtitleFade 3.5s ease-out forwards;
-            animation-delay: 0.5s;
+            animation: subtitleFade 2.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: 0.4s;
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(20px);
+            will-change: transform, opacity;
         }
 
         @keyframes cinematicReveal {
             0% {
-                transform: scale(1.5) translateZ(200px);
-                filter: blur(10px);
+                transform: scale(1.1) translateZ(0);
+                filter: blur(4px);
+                opacity: 0;
             }
-            20% {
-                transform: scale(1.1) translateZ(50px);
-                filter: blur(2px);
+            50% {
+                opacity: 0.8;
+                filter: blur(1px);
             }
-            40%, 100% {
+            100% {
                 transform: scale(1) translateZ(0);
                 filter: blur(0);
                 opacity: 1;
@@ -126,32 +153,27 @@
 
         @keyframes titleGlow {
             0% {
-                transform: scale(0.8);
+                transform: scale(0.9);
                 opacity: 0;
-                letter-spacing: 0.5em;
+                letter-spacing: 0.1em;
             }
-            20% {
-                transform: scale(1.05);
-                opacity: 0.7;
-                letter-spacing: 0.2em;
+            60% {
+                transform: scale(1.02);
+                opacity: 0.9;
             }
-            40%, 100% {
+            100% {
                 transform: scale(1);
                 opacity: 1;
-                letter-spacing: -0.04em;
+                letter-spacing: -0.02em;
             }
         }
 
         @keyframes subtitleFade {
             0% {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
-            30% {
-                opacity: 0.8;
-                transform: translateY(0);
-            }
-            40%, 100% {
+            100% {
                 opacity: 1;
                 transform: translateY(0);
             }
@@ -159,17 +181,15 @@
 
         /* Fade out for cinematic screens */
         .screen.cinematic-title.fade-out-cinematic {
-            animation: cinematicFadeOut 0.8s ease-out forwards;
+            animation: cinematicFadeOut 0.4s ease-in forwards;
         }
 
         @keyframes cinematicFadeOut {
             0% {
                 opacity: 1;
-                transform: scale(1);
             }
             100% {
                 opacity: 0;
-                transform: scale(0.95);
             }
         }
 
@@ -1251,6 +1271,224 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Smooth transition classes for video completion */
+        .fade-transition {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .fade-out {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        
+        .fade-in {
+            animation: smoothFadeIn 0.6s ease forwards;
+        }
+        
+        @keyframes smoothFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Video Modal Styles */
+        .video-modal {
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .video-modal.show {
+            opacity: 1;
+        }
+
+        .video-modal.show .video-modal-content {
+            animation: zoomIn 0.4s ease forwards;
+        }
+
+        .video-modal.closing .video-modal-content {
+            animation: zoomOut 0.4s ease forwards;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes zoomOut {
+            from {
+                transform: scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        .video-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 400px; /* Reduced from 900px for YouTube Shorts */
+            max-height: 85vh;
+            background: #000;
+            border-radius: 12px;
+            overflow: visible; /* Changed to show close button */
+            transform: scale(0.7);
+            opacity: 0;
+        }
+
+        .close-video {
+            position: absolute;
+            top: -45px;
+            right: 0;
+            color: #fff;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10000;
+            transition: opacity 0.3s;
+            background: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .close-video:hover {
+            opacity: 0.7;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        #video-container {
+            position: relative;
+            padding-bottom: 177.78%; /* 9:16 aspect ratio for Shorts */
+            height: 0;
+        }
+
+        #video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            #video-container {
+                padding-bottom: 177.78%; /* Maintain aspect ratio for mobile */
+            }
+            
+            .video-modal-content {
+                width: 95%;
+                max-width: 400px;
+            }
+            
+            .close-video {
+                top: -35px;
+                font-size: 30px;
+            }
+        }
+
+        /* Logo Screen Styles */
+        .logo-image {
+            max-width: 300px;
+            max-height: 300px;
+            width: auto;
+            height: auto;
+            animation: logoZoom 3s ease-out forwards;
+            transform: scale(1.8);
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        @keyframes logoZoom {
+            from {
+                transform: scale(1.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .logo-image {
+                max-width: 200px;
+                max-height: 200px;
+            }
+            
+            /* Fix glitchy animations on mobile by forcing GPU acceleration */
+            .screen.cinematic-title .container,
+            .screen.cinematic-title h1,
+            .screen.cinematic-title .subtitle {
+                -webkit-transform: translateZ(0);
+                -webkit-backface-visibility: hidden;
+                -webkit-perspective: 1000px;
+                transform: translateZ(0);
+                backface-visibility: hidden;
+                perspective: 1000px;
+            }
+            
+            /* Adjust heading size on mobile to fit on one line */
+            #welcome-screen h1 {
+                font-size: 1.8rem;
+            }
+            
+            /* Disable blur on mobile for performance */
+            @keyframes cinematicReveal {
+                0% {
+                    transform: scale(1.1) translateZ(0);
+                    opacity: 0;
+                }
+                50% {
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: scale(1) translateZ(0);
+                    opacity: 1;
+                }
+            }
+        }
     </style>
 </head>
 <body>
@@ -1259,27 +1497,55 @@
         <span id="save-status-text">💾 Saving...</span>
     </div>
 
-    <!-- Welcome Screen -->
-    <div id="welcome-screen" class="screen active cinematic-title">
+    <!-- Logo Screen -->
+    <div id="logo-screen" class="screen active cinematic-title">
         <div class="container">
-            <h1>Welcome</h1>
-            <p class="subtitle">
-                Thanks for your interest in joining us to change the face of<br>
-                <span style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Indian digital revolution</span>
+            <img src="logo.png" alt="Topiko Logo" class="logo-image">
+        </div>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen cinematic-title">
+        <div class="container">
+            <h1 style="white-space: nowrap;">Welcome to <span class="topiko-text" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Topiko</span></h1>
+            <p class="subtitle" style="margin-bottom: 0.5rem; white-space: nowrap;">
+                Franchise. Reseller. Partnership opportunities.
             </p>
+            <p class="subtitle" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 500; margin-top: 0;">
+                Explore our products. Pick solutions that fit your market.
+            </p>
+            <button id="welcome-go-btn" class="next-btn" style="margin: 2rem auto 0; min-width: 100px; display: block;">
+                Go
+            </button>
         </div>
     </div>
 
     <!-- About Screen -->
     <div id="about-screen" class="screen cinematic-title">
-        <div class="container">
-            <h1>About <span style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Topiko</span></h1>
-            <p class="subtitle">
-                Our platform offers a seamless, all-in-one solution to power your business growth and innovation.
+        <div class="container" style="text-align: center;">
+            <h1>About <span class="topiko-text" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Topiko</span></h1>
+            <p class="subtitle" style="margin-bottom: 1.5rem;">
+                <span class="topiko-text">Topiko</span> is transforming India's digital ecosystem<br>
+                with innovative and simplified solutions
             </p>
-            <p class="subtitle" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 500;">
-                Here's how we stand apart.
+            <p id="video-cta-text" class="subtitle" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 500;">
+                Watch this 1-minute video to learn about <span class="topiko-text">Topiko</span><br>
+                and discover partnership opportunities
             </p>
+            <button id="play-video-btn" class="next-btn" style="margin: 1.5rem auto; display: block; min-width: 150px;">
+                ▶ Play Video
+            </button>
+            <button id="about-continue-btn" class="next-btn" style="margin: 2rem auto 0; display: none; min-width: 150px;">
+                I am interested
+            </button>
+        </div>
+    </div>
+    
+    <!-- Video Modal -->
+    <div id="video-modal" class="video-modal" style="display: none;">
+        <div class="video-modal-content">
+            <span class="close-video">&times;</span>
+            <div id="video-container"></div>
         </div>
     </div>
 
@@ -2401,10 +2667,30 @@
                     
                     setTimeout(() => {
                         currentActiveScreen.classList.remove('active', 'fade-out-cinematic');
+                        
+                        // Reset animations for cinematic screens
+                        if (targetScreen.classList.contains('cinematic-title')) {
+                            const container = targetScreen.querySelector('.container');
+                            const elements = targetScreen.querySelectorAll('h1, .subtitle, .logo-image');
+                            
+                            // Force animation restart
+                            if (container) {
+                                container.style.animation = 'none';
+                                container.offsetHeight; // Trigger reflow
+                                container.style.animation = '';
+                            }
+                            
+                            elements.forEach(el => {
+                                el.style.animation = 'none';
+                                el.offsetHeight; // Trigger reflow
+                                el.style.animation = '';
+                            });
+                        }
+                        
                         targetScreen.classList.add('active');
                         currentScreen = screenId;
                         handleResize();
-                    }, 800); // Wait for cinematic fade to complete
+                    }, 400); // Faster transition
                 } else {
                     currentActiveScreen.classList.add('fade-out');
                     setTimeout(() => {
@@ -2424,6 +2710,54 @@
         // Event Listeners - Complete and working with PROGRESSIVE SAVING
         function initializeEventListeners() {
             console.log('🔧 Initializing event listeners with progressive saving...');
+            
+            // Welcome Go Button
+            const welcomeGoBtn = document.getElementById('welcome-go-btn');
+            if (welcomeGoBtn) {
+                console.log('✅ Welcome Go button found');
+                welcomeGoBtn.addEventListener('click', function() {
+                    console.log('👉 Welcome Go button clicked');
+                    showScreen('about-screen');
+                });
+            }
+            
+            // Play Video Button
+            const playVideoBtn = document.getElementById('play-video-btn');
+            if (playVideoBtn) {
+                console.log('✅ Play Video button found');
+                playVideoBtn.addEventListener('click', function() {
+                    console.log('🎥 Opening video modal');
+                    openVideoModal();
+                });
+            }
+
+            // About Continue Button (I am interested)
+            const aboutContinueBtn = document.getElementById('about-continue-btn');
+            if (aboutContinueBtn) {
+                console.log('✅ About Continue button found');
+                aboutContinueBtn.addEventListener('click', function() {
+                    console.log('👉 About Continue button clicked');
+                    showScreen('contact-details-screen');
+                });
+            }
+
+            // Close Video Modal for About page
+            const closeAboutVideoBtn = document.querySelector('.close-video');
+            if (closeAboutVideoBtn) {
+                closeAboutVideoBtn.addEventListener('click', function() {
+                    closeVideoModal();
+                });
+            }
+
+            // Close modal on background click for About page
+            const aboutVideoModal = document.getElementById('video-modal');
+            if (aboutVideoModal) {
+                aboutVideoModal.addEventListener('click', function(e) {
+                    if (e.target === aboutVideoModal) {
+                        closeVideoModal();
+                    }
+                });
+            }
             
             // Send OTP Button - ENHANCED with Phase 1 saving
             const sendOtpBtn = document.getElementById('send-otp-btn');
@@ -3068,6 +3402,66 @@
             showScreen('product-detail-screen');
         }
 
+        // Open Video Modal for About Page
+        function openVideoModal() {
+            const modal = document.getElementById('video-modal');
+            const container = document.getElementById('video-container');
+            
+            // Convert YouTube Shorts URL to embed URL
+            const videoId = 'Z_LUzeuXQc0';
+            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+            
+            // Create iframe
+            container.innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
+            
+            // Show modal
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+        }
+
+        // Close Video Modal for About Page
+        function closeVideoModal() {
+            const modal = document.getElementById('video-modal');
+            const container = document.getElementById('video-container');
+            const playVideoBtn = document.getElementById('play-video-btn');
+            const continueBtn = document.getElementById('about-continue-btn');
+            const videoText = document.getElementById('video-cta-text');
+            
+            // Close modal
+            modal.classList.remove('show');
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                container.innerHTML = ''; // Remove iframe
+                
+                // Hide play button
+                if (playVideoBtn) {
+                    playVideoBtn.style.display = 'none';
+                }
+                
+                // Update text content
+                if (videoText) {
+                    // Reset animation first
+                    videoText.style.animation = 'none';
+                    videoText.offsetHeight; // Trigger reflow
+                    
+                    // Update content and apply cinematic animation
+                    videoText.innerHTML = 'We hope this gave you a glimpse of our vision and franchise opportunity.<br>Ready to explore further?';
+                    videoText.style.animation = 'subtitleFade 2s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                }
+                
+                // Show continue button with animation
+                if (continueBtn) {
+                    continueBtn.style.display = 'block';
+                    continueBtn.style.animation = 'none';
+                    continueBtn.offsetHeight; // Trigger reflow
+                    continueBtn.style.animation = 'titleGlow 2s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+                }
+            }, 300);
+        }
+
         // Show ROI Calculator
         function showROICalculator(productKey) {
             const productData = {
@@ -3582,13 +3976,11 @@
             handleResize();
             initializeEventListeners();
             
-            // Cinematic title sequence timing (4 seconds each)
+            // Cinematic title sequence timing - Logo -> Welcome (user must click Go)
             setTimeout(() => {
-                showScreen('about-screen');
-                setTimeout(() => {
-                    showScreen('contact-details-screen');
-                }, 4000); // 4 seconds for About screen animation
-            }, 4000); // 4 seconds for Welcome screen animation
+                showScreen('welcome-screen');
+                // User must click Go button to proceed to About screen
+            }, 3000); // 3 seconds for Logo screen animation
         }
 
         // Window event listeners
