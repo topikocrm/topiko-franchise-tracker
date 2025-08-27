@@ -35,16 +35,20 @@ export default async function handler(req, res) {
         format: 'json'  // IMPORTANT - This was missing!
     };
 
+    // Create the URL-encoded string - this is the correct format!
+    const urlEncodedData = new URLSearchParams(postData).toString();
     console.log('Sending to MagicText:', postData);
+    console.log('URL-encoded body:', urlEncodedData);
+    // This should output: apikey=3NwCuamS0SnyYDUw&senderid=TOPIKO&number=9901396644&message=...
 
     try {
-        // CORRECT implementation - URL-encoded format
+        // POST with URL-encoded body (NOT JSON!)
         const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
-            method: 'POST',
+            method: 'POST',  // ✅ POST method
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'  // ✅ CORRECT
+                'Content-Type': 'application/x-www-form-urlencoded'  // ✅ Form encoded, NOT JSON
             },
-            body: new URLSearchParams(postData).toString()  // ✅ CORRECT - Creates "apikey=xxx&senderid=xxx..."
+            body: urlEncodedData  // ✅ Send the URL-encoded string directly
         });
 
         const result = await response.text();
