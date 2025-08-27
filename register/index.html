@@ -3428,6 +3428,16 @@
                     })
                 });
                 
+                // Check if response is OK and is JSON
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+                
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("API returned non-JSON response");
+                }
+                
                 const result = await response.json();
                 
                 if (result.success) {
@@ -3449,10 +3459,10 @@
                 }
             } catch (error) {
                 console.error('❌ Error sending OTP:', error);
-                // Allow fallback to master OTP
-                showOTPNotification('Network error. Use master OTP: 0827');
-                window.topikoApp.sentOTP = '0827';
-                return { success: false, error: error.message, fallback: true };
+                // Always show the generated OTP as fallback
+                showOTPNotification(`Your OTP is: ${otp} (SMS service unavailable)`);
+                window.topikoApp.sentOTP = otp;
+                return { success: true, otp: otp, fallback: true };
             }
         }
         
