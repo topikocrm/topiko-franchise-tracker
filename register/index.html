@@ -3316,6 +3316,13 @@
         
         async function verifyOTP() {
             console.log('🔐 Verifying OTP...');
+            
+            // Check if already verified
+            if (userProfile.verified) {
+                console.log('✅ Already verified - skipping');
+                return;
+            }
+            
             const otpInputs = document.querySelectorAll('.otp-input');
             const otp = Array.from(otpInputs).map(input => input.value).join('');
             
@@ -3325,6 +3332,17 @@
             }
             
             console.log('📱 Entered OTP:', otp);
+            
+            // Check if OTP was cleared (already verified or expired)
+            if (!window.topikoApp.sentOTP) {
+                console.log('⚠️ No OTP to verify - session already verified or OTP expired');
+                // Since user is already verified, just continue
+                if (userProfile.verified) {
+                    return;
+                }
+                alert('OTP session expired. Please request a new OTP.');
+                return;
+            }
             
             // Verify OTP matches what was sent
             if (otp === window.topikoApp.sentOTP) {
