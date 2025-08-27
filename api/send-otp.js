@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         format: 'json'
     };
 
-    console.log('Sending to MagicText with JSON:', JSON.stringify(postData));
+    console.log('VERSION 2.0 - Sending JSON to MagicText:', JSON.stringify(postData));
 
     try {
         // Send SMS via API - EXACTLY as working version
