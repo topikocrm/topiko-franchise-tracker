@@ -4686,7 +4686,7 @@
             `;
         }
 
-        function confirmBooking() {
+        async function confirmBooking() {
             // Save to database
             const bookingData = {
                 type: bookingType,
@@ -4714,6 +4714,32 @@
                             console.log('✅ Booking saved successfully');
                         }
                     });
+            }
+            
+            // Send SMS confirmation
+            try {
+                console.log('📤 Sending booking confirmation SMS...');
+                const response = await fetch('/api/send-confirmation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mobile: userProfile.phone,
+                        type: bookingType === 'demo' ? 'demo' : 'call',
+                        product: bookingProduct,
+                        dateTime: selectedSlot.isCustom ? new Date().toISOString() : selectedSlot.datetime.toISOString()
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    console.log('✅ Confirmation SMS sent successfully:', result.smsMessage);
+                } else {
+                    console.error('❌ Failed to send confirmation SMS:', result.error);
+                }
+            } catch (error) {
+                console.error('❌ Error sending confirmation SMS:', error);
             }
             
             // Show success view

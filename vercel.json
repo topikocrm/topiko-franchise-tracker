@@ -7,10 +7,17 @@
     {
       "src": "/api/send-otp",
       "dest": "/api/send-otp.js"
+    },
+    {
+      "src": "/api/send-confirmation",
+      "dest": "/api/send-confirmation.js"
     }
   ],
   "functions": {
     "api/send-otp.js": {
+      "maxDuration": 10
+    },
+    "api/send-confirmation.js": {
       "maxDuration": 10
     }
   }
