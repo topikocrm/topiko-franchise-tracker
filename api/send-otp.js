@@ -14,7 +14,8 @@ export default async function handler(req, res) {
 
     const { mobile, otp, message } = req.body;
 
-    if (!mobile || !otp) {
+    // Validate inputs
+    if (!mobile || !otp || !message) {
         return res.status(400).json({ error: 'Missing required parameters' });
     }
 
@@ -23,74 +24,75 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid mobile number' });
     }
 
-    const smsMessage = message || `Your OTP for Topiko Partner Program is ${otp}. Valid for 10 minutes. For support call 885 886 8889`;
+    // EXACT format that works - using JSON!
+    const postData = {
+        apikey: '3NwCuamS0SnyYDUw',  // ✅ HARDCODED, not a variable
+        senderid: 'TOPIKO',
+        number: mobile,
+        message: message,
+        format: 'json'
+    };
 
-    // MANUALLY BUILD THE FORM DATA STRING
-    // Don't use URLSearchParams - build it manually to ensure exact format
-    const formBody = `apikey=3NwCuamS0SnyYDUw&senderid=TOPIKO&number=${mobile}&message=${encodeURIComponent(smsMessage)}&format=json`;
-    
-    console.log('Manual form body:', formBody);
+    console.log('Sending to MagicText with JSON:', JSON.stringify(postData));
 
     try {
+        // Send SMS via API - EXACTLY as working version
         const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': formBody.length.toString()
+                'Content-Type': 'application/json'  // ✅ JSON content type
             },
-            body: formBody
+            body: JSON.stringify(postData)  // ✅ Stringify the object
         });
 
-        const result = await response.text();
-        console.log('MagicText Response:', result);
-
-        // Try to parse response
-        try {
-            const jsonResult = JSON.parse(result);
+        if (response.ok) {
+            const result = await response.text();
+            console.log('SMS API Response:', result);
             
-            // Check for success
-            if (jsonResult.status === 'success' || 
-                jsonResult['SMS-SHOOT-ID'] || 
-                result.includes('SMS-SHOOT-ID')) {
-                return res.status(200).json({
-                    success: true,
-                    message: 'OTP sent successfully',
-                    otp: otp
-                });
-            }
-            
-            // API key error - but still return success so app works
-            if (jsonResult.message === 'Kindly provide apikey') {
-                console.log('API KEY ISSUE - Using fallback mode');
-                console.log('Exact body sent:', formBody);
+            try {
+                const jsonResult = JSON.parse(result);
                 
-                // FALLBACK: Return success anyway
-                return res.status(200).json({
-                    success: true,
-                    message: 'OTP displayed on screen (SMS issue)',
-                    otp: otp,
-                    fallbackMode: true
-                });
+                // Check for success response like in working version
+                if (jsonResult.status === 'OK' || jsonResult.message === 'message Submitted successfully') {
+                    return res.status(200).json({
+                        success: true,
+                        message: 'OTP sent successfully',
+                        otp: otp,  // Return OTP for verification
+                        smsResponse: jsonResult
+                    });
+                }
+                
+                // Handle API errors
+                if (jsonResult.status === 'AZQ01' || jsonResult.message) {
+                    console.error('MagicText Error:', jsonResult.message);
+                    return res.status(500).json({
+                        success: false,
+                        error: jsonResult.message || 'Failed to send SMS',
+                        details: result
+                    });
+                }
+            } catch (parseError) {
+                // Response is not JSON, but might still be successful
+                console.log('Non-JSON response:', result);
             }
-        } catch (e) {
-            // Non-JSON response
+            
+            return res.status(200).json({
+                success: true,
+                message: 'OTP sent successfully',
+                otp: otp
+            });
+        } else {
+            console.error('SMS API Error:', response.status, response.statusText);
+            return res.status(500).json({
+                error: 'Failed to send OTP',
+                details: `API returned ${response.status}`
+            });
         }
-
-        // Always return success so the app works
-        return res.status(200).json({
-            success: true,
-            message: 'OTP ready',
-            otp: otp,
-            fallbackMode: true
-        });
-
     } catch (error) {
-        console.error('Error:', error);
-        return res.status(200).json({
-            success: true,
-            message: 'OTP ready',
-            otp: otp,
-            fallbackMode: true
+        console.error('Failed to send OTP:', error);
+        return res.status(500).json({
+            error: 'Server error',
+            message: error.message
         });
     }
 }

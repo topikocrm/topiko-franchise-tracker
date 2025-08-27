@@ -3319,18 +3319,15 @@
             const otpInputs = document.querySelectorAll('.otp-input');
             const otp = Array.from(otpInputs).map(input => input.value).join('');
             
+            if (otp.length !== 4) {
+                alert('Please enter a 4-digit OTP');
+                return;
+            }
+            
             console.log('📱 Entered OTP:', otp);
             
-            // Check master OTP first
-            const masterOTP = '0827';
-            const testOTP = userProfile.phone === '8272500000' ? '0827' : null;
-            
-            // Verify OTP
-            const isValid = otp === masterOTP || 
-                          otp === testOTP || 
-                          otp === window.topikoApp.sentOTP;
-            
-            if (isValid) {
+            // Verify OTP matches what was sent
+            if (otp === window.topikoApp.sentOTP) {
                 console.log('✅ OTP verified successfully');
                 userProfile.verified = true;
                 
@@ -3352,9 +3349,11 @@
                 showScreen('questions-screen');
                 renderQuestion();
                 updateSkillsPanel();
-                handleResize(); // Show mobile elements if needed
+                handleResize();
             } else {
                 console.log('❌ Invalid OTP');
+                alert('Invalid OTP. Please check and try again.');
+                
                 otpInputs.forEach(input => {
                     input.classList.add('error');
                     setTimeout(() => input.classList.remove('error'), 500);
@@ -3363,7 +3362,7 @@
                 setTimeout(() => {
                     otpInputs.forEach(input => input.value = '');
                     otpInputs[0].focus();
-                }, 500);
+                }, 600);
             }
         }
         
