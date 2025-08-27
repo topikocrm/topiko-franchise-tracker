@@ -64,7 +64,7 @@ export default async function handler(req, res) {
         message = `Your demo for ${productName} is confirmed on ${formattedDateTime}. For assistance, call 885 886 8889. -TOPIKO`;
     } else if (type === 'call') {
         const formattedDateTime = formatDateTime(dateTime);
-        message = `Your call with Topiko team is scheduled for ${formattedDateTime}. For any assistance call 885 886 8889.`;
+        message = `Your call with Topiko  team is scheduled for ${formattedDateTime}. For any assistance call 885 886 8889. -TOPIKO`;
     } else {
         return res.status(400).json({ error: 'Invalid booking type' });
     }
