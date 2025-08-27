@@ -789,17 +789,18 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 20px;
-            padding: 1.2rem 3rem;
+            padding: 1.2rem 2.5rem;
             font-size: 1.1rem; /* Reduced from 1.4rem */
             font-weight: 600;
             color: white;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-top: 3rem;
-            min-width: 200px;
+            margin-top: 0;
+            min-width: 180px;
+            min-height: 56px;
             position: relative;
             overflow: hidden;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
@@ -920,17 +921,18 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px; /* Match next button border-radius */
-            padding: 1.2rem 3rem; /* Match next button padding exactly */
+            padding: 1.2rem 2.5rem; /* Match next button padding */
             color: white;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Match next button transition */
-            margin-right: 1rem;
+            margin-right: 0; /* Remove margin-right since we're using gap */
             font-weight: 600; /* Match next button weight */
             font-size: 1.1rem; /* Match next button size */
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 200px; /* Match next button min-width */
+            min-width: 180px; /* Match next button min-width */
+            min-height: 56px; /* Match next button height */
             position: relative;
             overflow: hidden;
         }
@@ -1428,24 +1430,64 @@
         }
 
         /* Logo Screen Styles */
+        .logo-sequence {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
         .logo-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             max-width: 300px;
             max-height: 300px;
             width: auto;
             height: auto;
-            animation: logoZoom 3s ease-out forwards;
-            transform: scale(1.8);
             opacity: 0;
-            will-change: transform, opacity;
+            will-change: opacity;
         }
 
-        @keyframes logoZoom {
-            from {
-                transform: scale(1.8);
+        /* Cinematic sequence animations */
+        .logo-seq-1 {
+            animation: fadeInOut 1.5s ease-out forwards;
+        }
+
+        .logo-seq-2 {
+            animation: fadeInOut 1.5s ease-out 1.2s forwards;
+        }
+
+        .logo-seq-3 {
+            animation: fadeInOut 1.5s ease-out 2.4s forwards;
+        }
+
+        .logo-seq-4 {
+            animation: fadeInOut 1.5s ease-out 3.6s forwards;
+        }
+
+        .logo-seq-5 {
+            animation: fadeInZoom 2s ease-out 4.8s forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% {
                 opacity: 0;
             }
-            to {
-                transform: scale(1);
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeInZoom {
+            0% {
+                opacity: 0;
+            }
+            50%, 100% {
                 opacity: 1;
             }
         }
@@ -1500,7 +1542,13 @@
     <!-- Logo Screen -->
     <div id="logo-screen" class="screen active cinematic-title">
         <div class="container">
-            <img src="logo.png" alt="Topiko Logo" class="logo-image">
+            <div class="logo-sequence">
+                <img src="topiko-main.png" alt="Topiko Logo" class="logo-image logo-seq-1">
+                <img src="disblay-new.png" alt="Disblay Logo" class="logo-image logo-seq-2">
+                <img src="flex-outline.png" alt="Flex Logo" class="logo-image logo-seq-3">
+                <img src="hebt-new.png" alt="HEBT Logo" class="logo-image logo-seq-4">
+                <img src="topiko-main.png" alt="Topiko Logo" class="logo-image logo-seq-5">
+            </div>
         </div>
     </div>
 
@@ -1597,9 +1645,16 @@
                     <input type="text" class="otp-input" maxlength="1" data-index="3">
                 </div>
                 
-                <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; margin-bottom: 2rem;">
-                    For demo purposes, use OTP: <strong style="color: #667eea;">1111</strong>
+                <p id="otp-helper-text" style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; margin-bottom: 1rem;">
+                    <span id="otp-helper-content">OTP has been sent to your phone</span>
                 </p>
+                
+                <div id="resend-container" style="margin-bottom: 2rem; text-align: center;">
+                    <button id="resend-otp-btn" class="resend-btn" style="background: none; border: none; color: #667eea; cursor: pointer; font-size: 0.9rem; text-decoration: underline;" disabled>
+                        Resend OTP <span id="resend-timer">(30s)</span>
+                    </button>
+                    <p id="resend-attempts" style="color: rgba(255, 255, 255, 0.4); font-size: 0.8rem; margin-top: 0.5rem;"></p>
+                </div>
                 
                 <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                     <button id="back-to-contact" class="back-btn">← Back</button>
@@ -1617,7 +1672,7 @@
         <div class="questions-layout">
             <div class="glass-card">
                 <div style="text-align: center; margin-bottom: 3rem;">
-                    <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🚀 Exclusive Franchise Assessment</h2>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">🚀 Exclusive <span class="topiko-text">Topiko</span> Franchise Assessment</h2>
                     <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.95rem;">Answer a few quick questions to get matched with the best digital opportunity</p>
                 </div>
                 
@@ -1633,7 +1688,7 @@
                     <div id="options-container" class="options"></div>
                 </div>
                 
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem;">
+                <div style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 3rem;">
                     <button id="back-question-btn" class="back-btn" style="display: none;">← Back</button>
                     <button id="next-btn" class="next-btn" disabled>Next Question</button>
                 </div>
@@ -1675,9 +1730,12 @@
     <div id="products-screen" class="screen">
         <div class="container">
             <h2>Recommended Products</h2>
-            <p class="subtitle">Based on your responses, here are the perfect matches for your journey</p>
+            <p class="subtitle">Based on your responses, here are the products that align with your partnership interests</p>
             <div id="products-grid" class="products-grid"></div>
-            <button id="contact-btn" class="next-btn">Speak with Our Team</button>
+            <div style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 2rem;">
+                <button id="explore-all-btn" class="next-btn" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">Explore All Products</button>
+                <button id="contact-btn" class="next-btn">Speak with Our Team</button>
+            </div>
         </div>
     </div>
 
@@ -1691,7 +1749,7 @@
                 
                 <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
                     <button id="demo-btn" class="next-btn" style="background: linear-gradient(135deg, #10b981, #059669);">
-                        <span>📺 See Demo</span>
+                        <span>📺 Know More</span>
                     </button>
                     <button id="roi-btn" class="next-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
                         <span>💰 Calculate ROI</span>
@@ -1709,7 +1767,7 @@
     <div id="roi-calculator-screen" class="screen">
         <div class="container">
             <div class="glass-card">
-                <h2 style="text-align: center; margin-bottom: 2rem;">ROI Calculator</h2>
+                <h2 id="roi-calculator-title" style="text-align: center; margin-bottom: 2rem;">ROI Calculator</h2>
                 
                 <div id="roi-calculator-content">
                     <!-- ROI calculator form will be dynamically populated based on product type -->
@@ -1728,30 +1786,53 @@
         </div>
     </div>
 
-    <!-- Video Popup Modal -->
-    <div id="video-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; align-items: center; justify-content: center;">
-        <div style="position: relative; width: 90%; max-width: 800px; background: #000; border-radius: 16px; overflow: hidden;">
-            <button id="close-video" style="position: absolute; top: 1rem; right: 1rem; z-index: 10001; background: rgba(255, 255, 255, 0.2); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
-            <iframe id="video-iframe" width="100%" height="450" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <!-- Product Demo Video Modal -->
+    <div id="product-video-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; align-items: center; justify-content: center;">
+        <div id="product-video-modal-container" style="position: relative; width: 90%; max-width: 800px; max-height: 90vh; background: #000; border-radius: 16px;">
+            <button id="close-product-video" style="position: absolute; top: 1rem; right: 1rem; z-index: 10001; background: rgba(255, 255, 255, 0.2); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+            <div id="product-video-container" style="width: 100%; height: 450px;"></div>
         </div>
     </div>
 
     <!-- Slot Booking Modal -->
     <div id="slot-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 10000; align-items: center; justify-content: center;">
-        <div style="position: relative; width: 90%; max-width: 600px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px); border-radius: 24px; padding: 3rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+        <div id="slot-modal-content" style="position: relative; width: 90%; max-width: 600px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px); border-radius: 24px; padding: 3rem; border: 1px solid rgba(255, 255, 255, 0.1);">
             <button id="close-slot-modal" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
             
-            <h3 style="color: white; text-align: center; margin-bottom: 2rem; font-size: 1.8rem;">📅 Select Your Preferred Time</h3>
-            <p id="slot-modal-subtitle" style="color: rgba(255, 255, 255, 0.7); text-align: center; margin-bottom: 2rem;">Choose a convenient time for your demo session</p>
-            
-            <div id="slot-days-container" style="margin-bottom: 2rem;">
-                <!-- Days will be populated here -->
+            <!-- Slot Selection View -->
+            <div id="slot-selection-view">
+                <h3 style="color: white; text-align: center; margin-bottom: 2rem; font-size: 1.8rem;">📅 Select Your Preferred Time</h3>
+                <p id="slot-modal-subtitle" style="color: rgba(255, 255, 255, 0.7); text-align: center; margin-bottom: 2rem;">Choose a convenient time for your demo session</p>
+                
+                <div id="slot-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <!-- Time slots will be populated here -->
+                </div>
             </div>
             
-            <div style="text-align: center;">
-                <button id="confirm-slot-btn" class="next-btn" disabled style="opacity: 0.5;">
-                    <span>Confirm Booking</span>
-                </button>
+            <!-- Confirmation View -->
+            <div id="slot-confirmation-view" style="display: none;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 2rem;">✓</div>
+                </div>
+                <h3 style="color: white; text-align: center; margin-bottom: 1.5rem; font-size: 1.6rem;">Confirm Your Booking</h3>
+                <div id="booking-summary" style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+                    <!-- Booking details will be shown here -->
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button id="cancel-booking-btn" class="back-btn">← Change Time</button>
+                    <button id="confirm-booking-btn" class="next-btn" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <span>Confirm Booking</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Success View -->
+            <div id="slot-success-view" style="display: none; text-align: center;">
+                <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 3rem;">🎉</div>
+                <h3 style="color: white; margin-bottom: 1rem; font-size: 1.8rem;">Booking Confirmed!</h3>
+                <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem;">We've sent a confirmation to your phone number. Our team will connect with you at the scheduled time.</p>
+                <button id="close-success-btn" class="next-btn">Done</button>
             </div>
         </div>
     </div>
@@ -1841,15 +1922,14 @@
         
         function initializeSupabase() {
             try {
-                if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+                if (typeof window.supabase !== 'undefined') {
                     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                     console.log('✅ Supabase initialized successfully');
                 } else {
-                    console.warn('⚠️ Supabase not configured. Running in demo mode.');
+                    console.error('❌ Supabase library not loaded');
                 }
             } catch (error) {
                 console.error('❌ Error initializing Supabase:', error);
-                console.warn('⚠️ Running in demo mode without database');
             }
         }
 
@@ -1867,6 +1947,14 @@
             city: '',
             verified: false,
             calculatedScore: 0
+        };
+        
+        // OTP Management State
+        window.topikoApp = {
+            sentOTP: null,
+            resendAttempts: 0,
+            maxResendAttempts: 3,
+            resendTimer: null
         };
 
         // =====================================================================
@@ -2792,8 +2880,50 @@
                     // 💾 PROGRESSIVE SAVE: Phase 1 - Save contact details immediately
                     const saveResult = await saveContactDetails();
                     
+                    // Send OTP
+                    try {
+                        const otpResult = await sendOTP(phone);
+                        console.log('📱 OTP Send Result:', otpResult);
+                        
+                        // Display phone number with masking
+                        const displayPhone = phone.replace(/(\d{2})\d{6}(\d{2})/, '$1******$2');
+                        document.getElementById('phone-display').textContent = `+91 ${displayPhone}`;
+                        
+                        // Reset resend attempts for new OTP session
+                        window.topikoApp.resendAttempts = 0;
+                        
+                        // Start resend timer
+                        const resendBtn = document.getElementById('resend-otp-btn');
+                        const resendTimer = document.getElementById('resend-timer');
+                        if (resendBtn) {
+                            let seconds = 30;
+                            resendBtn.disabled = true;
+                            
+                            window.topikoApp.resendTimer = setInterval(() => {
+                                seconds--;
+                                if (resendTimer) {
+                                    resendTimer.textContent = `(${seconds}s)`;
+                                }
+                                
+                                if (seconds <= 0) {
+                                    clearInterval(window.topikoApp.resendTimer);
+                                    resendBtn.disabled = false;
+                                    if (resendTimer) {
+                                        resendTimer.textContent = '';
+                                    }
+                                }
+                            }, 1000);
+                        }
+                    } catch (error) {
+                        console.error('Error sending OTP:', error);
+                        alert(error.message || 'Failed to send OTP. Please try again.');
+                        sendOtpBtn.disabled = false;
+                        sendText.classList.remove('hidden');
+                        sendLoading.classList.add('hidden');
+                        return;
+                    }
+                    
                     setTimeout(() => {
-                        document.getElementById('phone-display').textContent = phone;
                         showScreen('otp-screen');
                         
                         // Setup OTP inputs and focus first one
@@ -2809,7 +2939,7 @@
                         sendOtpBtn.disabled = false;
                         sendText.classList.remove('hidden');
                         sendLoading.classList.add('hidden');
-                    }, 1500);
+                    }, 1000);
                 });
             }
 
@@ -2848,7 +2978,20 @@
                 backToContactBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     console.log('← Back to contact clicked');
+                    clearInterval(window.topikoApp.resendTimer);
+                    window.topikoApp.resendAttempts = 0;
                     showScreen('contact-details-screen');
+                });
+            }
+            
+            // Resend OTP Button
+            const resendOtpBtn = document.getElementById('resend-otp-btn');
+            if (resendOtpBtn) {
+                console.log('✅ Resend OTP button found');
+                resendOtpBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔄 Resending OTP');
+                    resendOTP();
                 });
             }
 
@@ -2905,6 +3048,76 @@
                 });
             }
 
+            // Explore All Products Button
+            const exploreAllBtn = document.getElementById('explore-all-btn');
+            if (exploreAllBtn) {
+                console.log('✅ Explore All button found');
+                exploreAllBtn.addEventListener('click', function() {
+                    console.log('🔍 Showing all products');
+                    // Show all 4 products
+                    const allProducts = ['disblay', 'topiko', 'flex', 'hebt'];
+                    
+                    // Temporarily override recommendedProducts to show all
+                    const originalRecommended = recommendedProducts;
+                    recommendedProducts = {
+                        products: allProducts,
+                        tags: ['🚀 Starter', '🏆 Premium', '💼 Enterprise', '🛠️ Agency']
+                    };
+                    
+                    // Re-render products with all 4
+                    renderAllProducts();
+                    
+                    // Restore original recommendations
+                    recommendedProducts = originalRecommended;
+                    
+                    // Hide the explore button after clicking
+                    exploreAllBtn.style.display = 'none';
+                    // Update the title and subtitle
+                    const titleElement = document.querySelector('#products-screen h2');
+                    const subtitleElement = document.querySelector('#products-screen .subtitle');
+                    if (titleElement) titleElement.textContent = 'All Products';
+                    if (subtitleElement) subtitleElement.textContent = 'Explore our complete range of franchise products';
+                    
+                    // Show back button and hide contact button
+                    const contactBtn = document.getElementById('contact-btn');
+                    if (contactBtn) contactBtn.style.display = 'none';
+                    
+                    // Create and show back button if it doesn't exist
+                    let backBtn = document.getElementById('back-to-recommended');
+                    if (!backBtn) {
+                        backBtn = document.createElement('button');
+                        backBtn.id = 'back-to-recommended';
+                        backBtn.className = 'next-btn';
+                        backBtn.style.background = 'linear-gradient(135deg, #6b7280, #4b5563)';
+                        backBtn.textContent = '← Back to Recommendations';
+                        backBtn.addEventListener('click', function() {
+                            // Reset to recommended products
+                            renderProducts();
+                            
+                            // Reset title and subtitle
+                            const titleEl = document.querySelector('#products-screen h2');
+                            const subtitleEl = document.querySelector('#products-screen .subtitle');
+                            if (titleEl) titleEl.textContent = 'Recommended Products';
+                            if (subtitleEl) subtitleEl.textContent = 'Based on your responses, here are the products that align with your partnership interests';
+                            
+                            // Show explore and contact buttons, hide back button
+                            const exploreBtn = document.getElementById('explore-all-btn');
+                            const contactButton = document.getElementById('contact-btn');
+                            if (exploreBtn) exploreBtn.style.display = 'inline-block';
+                            if (contactButton) contactButton.style.display = 'inline-block';
+                            this.style.display = 'none';
+                        });
+                        
+                        const buttonContainer = document.querySelector('#products-screen .container > div:last-child');
+                        if (buttonContainer) {
+                            buttonContainer.insertBefore(backBtn, buttonContainer.firstChild);
+                        }
+                    } else {
+                        backBtn.style.display = 'inline-block';
+                    }
+                });
+            }
+
             // Submit Button - ENHANCED with Phase 8 saving
             const submitBtn = document.getElementById('submit-btn');
             if (submitBtn) {
@@ -2940,7 +3153,7 @@
                     // 💾 PROGRESSIVE SAVE: Demo viewed
                     await updateDemoViewed(selectedProduct);
                     
-                    showVideoDemo();
+                    showVideoDemo(selectedProduct);
                 });
             }
 
@@ -2972,11 +3185,50 @@
                 });
             }
 
-            // Close Video Button
-            const closeVideoBtn = document.getElementById('close-video');
-            if (closeVideoBtn) {
-                console.log('✅ Close video button found');
-                closeVideoBtn.addEventListener('click', closeVideoDemo);
+            // Request Demo Button (ROI Screen)
+            const requestDemoBtn = document.getElementById('request-demo-btn');
+            if (requestDemoBtn) {
+                console.log('✅ Request demo button found');
+                requestDemoBtn.addEventListener('click', function() {
+                    showSlotBookingModal('demo', selectedProduct);
+                });
+            }
+
+            // Let's Talk Button (ROI Screen)
+            const letsTalkBtn = document.getElementById('lets-talk-btn');
+            if (letsTalkBtn) {
+                console.log('✅ Let\'s talk button found');
+                letsTalkBtn.addEventListener('click', function() {
+                    showSlotBookingModal('call', selectedProduct);
+                });
+            }
+
+            // Slot Modal Event Listeners
+            const closeSlotBtn = document.getElementById('close-slot-modal');
+            if (closeSlotBtn) {
+                closeSlotBtn.addEventListener('click', closeSlotModal);
+            }
+
+            const confirmBookingBtn = document.getElementById('confirm-booking-btn');
+            if (confirmBookingBtn) {
+                confirmBookingBtn.addEventListener('click', confirmBooking);
+            }
+
+            const cancelBookingBtn = document.getElementById('cancel-booking-btn');
+            if (cancelBookingBtn) {
+                cancelBookingBtn.addEventListener('click', cancelBooking);
+            }
+
+            const closeSuccessBtn = document.getElementById('close-success-btn');
+            if (closeSuccessBtn) {
+                closeSuccessBtn.addEventListener('click', closeSlotModal);
+            }
+
+            // Close Product Video Button
+            const closeProductVideoBtn = document.getElementById('close-product-video');
+            if (closeProductVideoBtn) {
+                console.log('✅ Close product video button found');
+                closeProductVideoBtn.addEventListener('click', closeVideoDemo);
             }
 
             // Close video modal when clicking outside
@@ -3042,24 +3294,40 @@
             if (verifyBtn) {
                 verifyBtn.disabled = otp.length !== 4;
                 
-                // Auto-submit if 4 digits and correct OTP
-                if (otp.length === 4 && otp === '1111') {
-                    console.log('🚀 Auto-submitting correct OTP');
+                // Auto-submit if 4 digits
+                if (otp.length === 4) {
+                    console.log('🚀 Auto-verifying OTP');
                     setTimeout(() => verifyOTP(), 300);
                 }
             }
         }
         
-        function verifyOTP() {
+        async function verifyOTP() {
             console.log('🔐 Verifying OTP...');
             const otpInputs = document.querySelectorAll('.otp-input');
             const otp = Array.from(otpInputs).map(input => input.value).join('');
             
             console.log('📱 Entered OTP:', otp);
             
-            if (otp === '1111') {
+            // Check master OTP first
+            const masterOTP = '0827';
+            const testOTP = userProfile.phone === '8272500000' ? '0827' : null;
+            
+            // Verify OTP
+            const isValid = otp === masterOTP || 
+                          otp === testOTP || 
+                          otp === window.topikoApp.sentOTP;
+            
+            if (isValid) {
                 console.log('✅ OTP verified successfully');
                 userProfile.verified = true;
+                
+                // Clear OTP state
+                window.topikoApp.sentOTP = null;
+                clearInterval(window.topikoApp.resendTimer);
+                
+                // 💾 PROGRESSIVE SAVE: Phase 2 - Update OTP verified status
+                await updateOTPVerified();
                 
                 // Show mobile skills float only after OTP verification on mobile
                 if (window.innerWidth <= 768) {
@@ -3086,51 +3354,178 @@
                 }, 500);
             }
         }
+        
+        // Phone number validation
+        function validatePhoneNumber(phone) {
+            // Remove spaces, dashes, and country code
+            const cleanPhone = phone.replace(/[\s\-]/g, '').replace(/^\+91/, '').replace(/^91/, '');
+            
+            // Check if it's 10 digits
+            if (!/^\d{10}$/.test(cleanPhone)) {
+                return { valid: false, formatted: null, error: 'Please enter a valid 10-digit mobile number' };
+            }
+            
+            return { valid: true, formatted: cleanPhone, error: null };
+        }
+        
+        // Send OTP function
+        async function sendOTP(phoneNumber) {
+            console.log('📤 Sending OTP to:', phoneNumber);
+            
+            // Validate phone number
+            const validation = validatePhoneNumber(phoneNumber);
+            if (!validation.valid) {
+                throw new Error(validation.error);
+            }
+            
+            const cleanPhone = validation.formatted;
+            
+            // Generate random 4-digit OTP
+            const otp = Math.floor(1000 + Math.random() * 9000).toString();
+            window.topikoApp.sentOTP = otp;
+            
+            // Check if running locally (file:// protocol)
+            const isLocal = window.location.protocol === 'file:';
+            
+            // Test number check
+            if (cleanPhone === '8272500000') {
+                console.log('📱 Test number detected');
+                window.topikoApp.sentOTP = '0827';
+                showOTPNotification('Test Mode: Use OTP 0827');
+                return { success: true, otp: '0827', testMode: true };
+            }
+            
+            // Local testing
+            if (isLocal) {
+                console.log('🏠 Local testing mode');
+                showOTPNotification(`Local Mode: Your OTP is ${otp}`);
+                return { success: true, otp: otp, localMode: true };
+            }
+            
+            // Production: Send via API
+            try {
+                const response = await fetch('/api/send-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mobile: cleanPhone,
+                        otp: otp,
+                        message: `Your OTP for Topiko Partner Program is ${otp}. Valid for 10 minutes. For support call 885 886 8889`
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('✅ OTP sent successfully');
+                    return { success: true, otp: otp };
+                } else {
+                    console.error('❌ Failed to send OTP:', result.error);
+                    // Allow fallback to master OTP
+                    showOTPNotification('SMS service issue. Use master OTP: 0827');
+                    window.topikoApp.sentOTP = '0827';
+                    return { success: false, error: result.error, fallback: true };
+                }
+            } catch (error) {
+                console.error('❌ Error sending OTP:', error);
+                // Allow fallback to master OTP
+                showOTPNotification('Network error. Use master OTP: 0827');
+                window.topikoApp.sentOTP = '0827';
+                return { success: false, error: error.message, fallback: true };
+            }
+        }
+        
+        // Show OTP notification for local/test mode
+        function showOTPNotification(message) {
+            const helperText = document.getElementById('otp-helper-content');
+            if (helperText) {
+                helperText.innerHTML = `<strong style="color: #667eea;">${message}</strong>`;
+            }
+        }
+        
+        // Resend OTP function
+        async function resendOTP() {
+            if (window.topikoApp.resendAttempts >= window.topikoApp.maxResendAttempts) {
+                alert('Maximum resend attempts reached. Please try again later.');
+                return;
+            }
+            
+            window.topikoApp.resendAttempts++;
+            
+            const resendBtn = document.getElementById('resend-otp-btn');
+            const resendTimer = document.getElementById('resend-timer');
+            const resendAttempts = document.getElementById('resend-attempts');
+            
+            // Update attempts display
+            if (resendAttempts) {
+                resendAttempts.textContent = `Attempt ${window.topikoApp.resendAttempts} of ${window.topikoApp.maxResendAttempts}`;
+            }
+            
+            // Send OTP
+            try {
+                const result = await sendOTP(userProfile.phone);
+                if (result.success) {
+                    showOTPNotification('OTP resent successfully');
+                }
+            } catch (error) {
+                console.error('Error resending OTP:', error);
+            }
+            
+            // Start countdown timer
+            let seconds = 30;
+            resendBtn.disabled = true;
+            
+            window.topikoApp.resendTimer = setInterval(() => {
+                seconds--;
+                if (resendTimer) {
+                    resendTimer.textContent = `(${seconds}s)`;
+                }
+                
+                if (seconds <= 0) {
+                    clearInterval(window.topikoApp.resendTimer);
+                    resendBtn.disabled = false;
+                    if (resendTimer) {
+                        resendTimer.textContent = '';
+                    }
+                }
+            }, 1000);
+        }
 
         // Products Data
         const products = {
             disblay: {
                 name: "Disblay",
                 description: "Disblay is ideal for micro and early-stage businesses who feel a website or app is too much. It lets them create a clean, mobile-ready mini-site to showcase products or services with images and contact options - all through a single link. It's the simplest way to start building online credibility.",
-                logo: `<div style="width: 80px; height: 80px; background: #405266; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; position: relative;">
-                    <span style="font-size: 48px; font-weight: bold; color: white;">D</span>
-                    <div style="position: absolute; bottom: 8px; width: 20px; height: 3px; background: #ef4444; border-radius: 2px;"></div>
-                </div>`,
-                color: "linear-gradient(135deg, #405266, #3b4856)"
+                logo: `<img src="disblay-new.png" alt="Disblay" style="width: 100px; height: auto; max-height: 100px; object-fit: contain;">`,
+                color: "linear-gradient(135deg, #405266, #3b4856)",
+                videoUrl: "https://youtu.be/55P_Z1dUOA4",
+                isShorts: false
             },
             topiko: {
                 name: "Topiko",
                 description: "Topiko is the all-in-one platform for small and medium businesses ready to grow online. It includes a website, app interface, CRM, loyalty tools, and SEO features - all fully managed. No tech expertise needed, just plug and grow.",
-                logo: `<div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b2ca8, #5b1a6b); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto; position: relative;">
-                    <div style="color: white; font-size: 24px; font-weight: 300; letter-spacing: -0.5px; margin-bottom: -2px;">Topiko</div>
-                    <div style="position: absolute; top: 15px; right: 15px; width: 20px; height: 20px;">
-                        <div style="width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 12px solid white; transform: rotate(45deg);"></div>
-                    </div>
-                </div>`,
-                color: "linear-gradient(135deg, #8b2ca8, #5b1a6b)"
+                logo: `<img src="topikologo.png" alt="Topiko" style="width: 100px; height: auto; max-height: 100px; object-fit: contain;">`,
+                color: "linear-gradient(135deg, #8b2ca8, #5b1a6b)",
+                videoUrl: "https://youtube.com/shorts/6Yr8jVKHJ3c?si=CeTRaUrMWvVMQ4vG",
+                isShorts: true
             },
             flex: {
                 name: "Topiko Flex",
                 description: "Topiko Flex is a white-label solution that allows businesses to launch under their own brand, with a custom domain and branded apps. Delivered by resellers using the Flex platform, it's perfect for those who want the functionality but the brand is 100% theirs.",
-                logo: `<div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b2ca8, #5b1a6b); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto; position: relative;">
-                    <div style="color: white; font-size: 16px; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 2px;">Topiko</div>
-                    <div style="color: #f59e0b; font-size: 14px; font-weight: bold; letter-spacing: 1px;">FLEX</div>
-                </div>`,
-                color: "linear-gradient(135deg, #8b2ca8, #5b1a6b)"
+                logo: `<img src="flex-outline.png" alt="Topiko Flex" style="width: 100px; height: auto; max-height: 100px; object-fit: contain;">`,
+                color: "linear-gradient(135deg, #8b2ca8, #5b1a6b)",
+                videoUrl: "https://youtu.be/MGEILxIyQUs",
+                isShorts: false
             },
             hebt: {
                 name: "HEBT",
                 description: "HEBT is a no-code platform built for digital agencies and IT firms. It enables users to build websites, mobile apps, or custom platforms — and download full source code for hosting or advanced customization. It's for those who want full control without development delays.",
-                logo: `<div style="width: 80px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto; position: relative;">
-                    <div style="font-size: 36px; font-weight: bold; color: white; margin-bottom: 4px; position: relative;">
-                        H
-                        <div style="position: absolute; top: -5px; right: -15px; width: 0; height: 0; border-left: 8px solid #f56500; border-top: 6px solid transparent; border-bottom: 6px solid transparent;"></div>
-                    </div>
-                    <div style="font-size: 16px; font-weight: bold; color: white; letter-spacing: 2px;">
-                        HE<span style="color: #f56500;">B</span>T
-                    </div>
-                </div>`,
-                color: "linear-gradient(135deg, #2d3748, #f56500)"
+                logo: `<img src="hebt-new.png" alt="HEBT" style="width: 100px; height: auto; max-height: 100px; object-fit: contain;">`,
+                color: "linear-gradient(135deg, #2d3748, #f56500)",
+                videoUrl: "https://youtu.be/t_3Vfw9BIpE",
+                isShorts: false
             }
         };
 
@@ -3267,6 +3662,107 @@
             };
         }
 
+        // Render All Products (for Explore All)
+        function renderAllProducts() {
+            console.log('🚀 renderAllProducts called - showing all 4 products');
+            
+            const productsGrid = document.getElementById('products-grid');
+            if (!productsGrid) {
+                console.error('❌ Products grid not found');
+                return;
+            }
+            
+            productsGrid.innerHTML = '';
+            
+            // All 4 products with appropriate tags
+            const allProducts = ['disblay', 'topiko', 'flex', 'hebt'];
+            const allTags = ['🚀 Starter', '🏆 Premium', '💼 Enterprise', '🛠️ Agency'];
+            
+            // Add products grid styles for 4 products
+            productsGrid.style.cssText = `
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+                margin: 3rem 0;
+            `;
+            
+            allProducts.forEach((productKey, index) => {
+                const product = products[productKey];
+                
+                if (!product) {
+                    console.warn(`❓ Product not found: ${productKey}`);
+                    return;
+                }
+                
+                console.log(`✅ Rendering product: ${product.name}`);
+                
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.style.cssText = `
+                    background: rgba(255, 255, 255, 0.05);
+                    backdrop-filter: blur(10px);
+                    border-radius: 24px;
+                    padding: 2rem;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    position: relative;
+                    overflow: hidden;
+                `;
+                
+                productCard.innerHTML = `
+                    <div style="position: absolute; top: 1rem; right: 1rem; background: ${product.color}; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                        ${allTags[index]}
+                    </div>
+                    
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        ${product.logo}
+                    </div>
+                    
+                    <h3 style="color: white; margin-bottom: 1rem; font-size: 1.5rem;">${product.name}</h3>
+                    <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.95rem;">
+                        ${product.description}
+                    </p>
+                    
+                    <button class="product-learn-more" data-product="${productKey}" style="
+                        background: ${product.color};
+                        color: white;
+                        padding: 0.75rem 2rem;
+                        border-radius: 12px;
+                        border: none;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        font-weight: 600;
+                        width: 100%;
+                        transition: opacity 0.3s;
+                    ">
+                        Learn More →
+                    </button>
+                `;
+                
+                productCard.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.3)';
+                });
+                
+                productCard.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+                
+                const learnMoreBtn = productCard.querySelector('.product-learn-more');
+                learnMoreBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const selectedProduct = this.getAttribute('data-product');
+                    showProductDetail(selectedProduct);
+                });
+                
+                productsGrid.appendChild(productCard);
+            });
+            
+            console.log('✅ All 4 products rendered successfully');
+        }
+
         // Product Rendering - Complete and FIXED
         function renderProducts() {
             console.log('🚀 renderProducts called');
@@ -3390,6 +3886,9 @@
             const product = products[productKey];
             if (!product) return;
             
+            // Set the global selectedProduct
+            selectedProduct = productKey;
+            
             const productDetailContent = document.getElementById('product-detail-content');
             productDetailContent.innerHTML = `
                 <div style="text-align: center; margin-bottom: 2rem;">
@@ -3471,7 +3970,7 @@
                     subscription: 9999,
                     commission: 4999,
                     minStaff: 2,
-                    minPerDay: 1,
+                    minPerMonth: 20, // 20 onboards per month per staff
                     salaryPerStaff: 25000
                 },
                 disblay: {
@@ -3480,7 +3979,7 @@
                     subscription: 1499,
                     commission: 799,
                     minStaff: 2,
-                    minPerDay: 1,
+                    minPerMonth: 100, // 100 onboards per month per staff
                     salaryPerStaff: 25000
                 },
                 flex: {
@@ -3505,16 +4004,25 @@
             
             const data = productData[productKey] || productData.topiko;
             
+            // Store data for calculations FIRST
+            window.currentROIData = data;
+            
+            // Show screen
+            showScreen('roi-calculator-screen');
+            
+            // Update title with product name
+            const roiTitle = document.getElementById('roi-calculator-title');
+            if (roiTitle) {
+                roiTitle.textContent = `ROI Calculator - ${data.name}`;
+            }
+            
             // Update form fields based on product type
             updateROIForm(data);
             
-            // Store data for calculations
-            window.currentROIData = data;
-            
-            // Initial calculation
-            calculateROI();
-            
-            showScreen('roi-calculator-screen');
+            // Wait for DOM to be ready, then calculate
+            setTimeout(() => {
+                calculateROI();
+            }, 100);
         }
 
         // Update ROI Form based on product type
@@ -3549,9 +4057,10 @@
                             </div>
                             
                             <div class="form-group">
-                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Onboards per Day</label>
-                                <input type="number" id="roi-onboards" class="form-input" min="${data.minPerDay}" value="${data.minPerDay}" placeholder="Minimum ${data.minPerDay}">
-                                <div id="onboards-alert" style="color: #f59e0b; font-size: 0.8rem; margin-top: 0.5rem; display: none;">Minimum requirement is ${data.minPerDay}</div>
+                                <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Onboards per Staff per Month</label>
+                                <input type="number" id="roi-onboards" class="form-input" min="${data.minPerMonth}" value="${data.minPerMonth}" placeholder="Minimum ${data.minPerMonth} per staff">
+                                <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; margin-top: 0.25rem; font-style: italic;">Note: Minimum ${data.minPerMonth} onboards per staff per month required</div>
+                                <div id="onboards-alert" style="color: #f59e0b; font-size: 0.8rem; margin-top: 0.5rem; display: none;">Minimum requirement is ${data.minPerMonth} per staff</div>
                             </div>
                             
                             <div class="form-group">
@@ -3625,6 +4134,7 @@
                             <div class="form-group">
                                 <label style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Projects per Month</label>
                                 <input type="number" id="roi-projects" class="form-input" min="${data.minProjectsPerMonth}" value="${data.minProjectsPerMonth}" placeholder="Minimum ${data.minProjectsPerMonth}">
+                                <div style="color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; margin-top: 0.25rem; font-style: italic;">Note: Minimum ${data.minProjectsPerMonth} projects per month required</div>
                                 <div id="projects-alert" style="color: #f59e0b; font-size: 0.8rem; margin-top: 0.5rem; display: none;">Minimum requirement is ${data.minProjectsPerMonth}</div>
                             </div>
                             
@@ -3678,7 +4188,7 @@
             if (data.type === 'subscription') {
                 // Subscription-based calculation (Topiko, Disblay)
                 let staffCount = parseInt(document.getElementById('roi-staff').value) || data.minStaff;
-                let onboardsPerDay = parseInt(document.getElementById('roi-onboards').value) || data.minPerDay;
+                let onboardsPerMonth = parseInt(document.getElementById('roi-onboards').value) || data.minPerMonth;
                 const otherExpenses = parseInt(document.getElementById('roi-other-expenses').value) || 0;
                 
                 // Validate and enforce minimums
@@ -3690,20 +4200,25 @@
                     hideAlert('staff-alert');
                 }
                 
-                if (onboardsPerDay < data.minPerDay) {
-                    onboardsPerDay = data.minPerDay;
-                    document.getElementById('roi-onboards').value = onboardsPerDay;
-                    showAlert('onboards-alert', `Minimum requirement is ${data.minPerDay}`);
+                if (onboardsPerMonth < data.minPerMonth) {
+                    onboardsPerMonth = data.minPerMonth;
+                    document.getElementById('roi-onboards').value = onboardsPerMonth;
+                    showAlert('onboards-alert', `Minimum requirement is ${data.minPerMonth} per staff per month`);
                 } else {
                     hideAlert('onboards-alert');
                 }
                 
-                // Calculations
-                const totalOnboards = staffCount * onboardsPerDay * 30;
+                // Calculations - Using per month values
+                const totalOnboards = staffCount * onboardsPerMonth;
                 const projectedRevenue = totalOnboards * data.commission;
                 const salaryExpenses = staffCount * data.salaryPerStaff;
                 const totalExpenses = salaryExpenses + otherExpenses;
                 const netProfit = projectedRevenue - totalExpenses;
+                
+                console.log('ROI Calc (Subscription):', {
+                    staffCount, onboardsPerMonth, totalOnboards,
+                    projectedRevenue, salaryExpenses, netProfit
+                });
                 
                 // Update fields
                 document.getElementById('roi-total-onboards').value = totalOnboards.toLocaleString();
@@ -3715,7 +4230,7 @@
                 // 💾 PROGRESSIVE SAVE: ROI calculated
                 const roiCalculations = {
                     staffCount,
-                    onboardsPerDay,
+                    onboardsPerMonth,
                     totalOnboards,
                     projectedRevenue,
                     salaryExpenses,
@@ -3755,6 +4270,11 @@
                 const salaryExpenses = staffCount * data.salaryPerStaff;
                 const totalExpenses = salaryExpenses + otherExpenses;
                 const netProfit = projectedRevenue - totalExpenses;
+                
+                console.log('ROI Calc (Project):', {
+                    staffCount, projectsPerMonth,
+                    projectedRevenue, salaryExpenses, netProfit
+                });
                 
                 // Update fields
                 document.getElementById('roi-revenue').value = `₹${projectedRevenue.toLocaleString()}`;
@@ -3854,26 +4374,318 @@
         }
 
         // Show Video Popup
-        function showVideoDemo() {
-            const videoModal = document.getElementById('video-modal');
-            const videoIframe = document.getElementById('video-iframe');
+        function showVideoDemo(productKey) {
+            const videoModal = document.getElementById('product-video-modal');
+            const videoContainer = document.getElementById('product-video-container');
+            const modalContainer = document.getElementById('product-video-modal-container');
             
-            // Convert YouTube Shorts URL to embeddable format
-            const videoUrl = 'https://www.youtube.com/embed/LKuxfquja-o?si=qwUGrs6C9JoZo89g&autoplay=1';
-            videoIframe.src = videoUrl;
+            // Get product info
+            const product = products[productKey];
+            if (!product || !product.videoUrl) {
+                console.error('No video URL for product:', productKey);
+                return;
+            }
             
+            // Convert YouTube URL to embeddable format
+            let embedUrl = '';
+            let videoHeight = '450px';
+            
+            if (product.videoUrl.includes('shorts')) {
+                // Extract video ID from shorts URL
+                const videoId = product.videoUrl.split('/shorts/')[1]?.split('?')[0];
+                embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                
+                // Set vertical orientation for shorts (9:16 aspect ratio)
+                modalContainer.style.maxWidth = '400px';
+                videoHeight = '711px';
+            } else {
+                // Extract video ID from regular YouTube URL
+                const videoId = product.videoUrl.split('youtu.be/')[1]?.split('?')[0] || 
+                                product.videoUrl.split('v=')[1]?.split('&')[0];
+                embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                
+                // Set horizontal orientation for regular videos (16:9)
+                modalContainer.style.maxWidth = '800px';
+                videoHeight = '450px';
+            }
+            
+            // Create iframe using innerHTML like the working About page
+            videoContainer.style.height = videoHeight;
+            videoContainer.innerHTML = `<iframe src="${embedUrl}" style="width: 100%; height: 100%; border: none; border-radius: 16px;" allowfullscreen></iframe>`;
+            
+            console.log('Loading video:', embedUrl);
             videoModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
 
         // Close Video Popup
         function closeVideoDemo() {
-            const videoModal = document.getElementById('video-modal');
-            const videoIframe = document.getElementById('video-iframe');
+            const videoModal = document.getElementById('product-video-modal');
+            const videoContainer = document.getElementById('product-video-container');
+            const modalContainer = document.getElementById('product-video-modal-container');
             
             videoModal.style.display = 'none';
-            videoIframe.src = '';
+            videoContainer.innerHTML = ''; // Clear the iframe
             document.body.style.overflow = 'auto';
+            
+            // Reset container styles
+            modalContainer.style.maxWidth = '800px';
+            videoContainer.style.height = '450px';
+        }
+
+        // Time Slot Booking Functions
+        let selectedSlot = null;
+        let bookingType = 'demo'; // 'demo' or 'call'
+        let bookingProduct = null;
+
+        function generateTimeSlots() {
+            const slots = [];
+            const now = new Date();
+            let currentTime = new Date(now);
+            
+            // Round up to next hour and add 2 hours
+            currentTime.setHours(now.getHours() + 2, 0, 0, 0);
+            if (now.getMinutes() > 0) {
+                currentTime.setHours(currentTime.getHours() + 1);
+            }
+            
+            // Generate 8 slots within business hours (10am-6pm)
+            let slotsAdded = 0;
+            let daysChecked = 0;
+            const maxDays = 7; // Check up to 7 days ahead
+            
+            while (slotsAdded < 8 && daysChecked < maxDays) {
+                const hour = currentTime.getHours();
+                
+                // Check if within business hours (10am to 6pm)
+                if (hour >= 10 && hour <= 17) { // 17 = 5pm (last slot at 5pm to end by 6pm)
+                    const slotTime = new Date(currentTime);
+                    
+                    // Format the slot
+                    const day = slotTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    const time = slotTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                    
+                    slots.push({
+                        datetime: slotTime,
+                        display: `${day} - ${time}`,
+                        day: day,
+                        time: time,
+                        isCustom: false
+                    });
+                    
+                    slotsAdded++;
+                }
+                
+                // Move to next hour
+                currentTime.setHours(currentTime.getHours() + 1);
+                
+                // If we've gone past business hours, move to next day at 10am
+                if (currentTime.getHours() >= 18) {
+                    currentTime.setDate(currentTime.getDate() + 1);
+                    currentTime.setHours(10, 0, 0, 0);
+                    daysChecked++;
+                }
+            }
+            
+            // Add custom preference option as 9th slot
+            slots.push({
+                datetime: null,
+                display: 'Custom Time',
+                day: 'Enter your',
+                time: 'preference',
+                isCustom: true
+            });
+            
+            return slots;
+        }
+
+        function showSlotBookingModal(type = 'demo', productKey = null) {
+            bookingType = type;
+            bookingProduct = productKey;
+            
+            const modal = document.getElementById('slot-modal');
+            const subtitle = document.getElementById('slot-modal-subtitle');
+            const slotGrid = document.getElementById('slot-grid');
+            
+            // Update subtitle based on type
+            if (type === 'demo') {
+                subtitle.textContent = 'Choose a convenient time for your product demo';
+            } else {
+                subtitle.textContent = 'Choose a convenient time for your consultation call';
+            }
+            
+            // Generate and display time slots
+            const slots = generateTimeSlots();
+            slotGrid.innerHTML = '';
+            
+            slots.forEach((slot, index) => {
+                if (slot.isCustom) {
+                    // Create custom preference input
+                    const customDiv = document.createElement('div');
+                    customDiv.style.cssText = `
+                        background: rgba(255, 255, 255, 0.05);
+                        border: 2px dashed rgba(255, 255, 255, 0.3);
+                        border-radius: 12px;
+                        padding: 1rem;
+                        text-align: center;
+                    `;
+                    
+                    customDiv.innerHTML = `
+                        <div style="color: rgba(255, 255, 255, 0.8); margin-bottom: 0.5rem; font-size: 0.9rem;">
+                            <span style="font-size: 1.2rem;">✍️</span> Custom Preference
+                        </div>
+                        <textarea id="custom-time-input" placeholder="Enter your preferred date and time..." 
+                            style="width: 100%; min-height: 60px; background: rgba(255, 255, 255, 0.1); 
+                            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; 
+                            color: white; padding: 0.5rem; resize: none; font-size: 0.9rem;"></textarea>
+                        <button id="custom-time-btn" style="margin-top: 0.5rem; padding: 0.5rem 1.5rem; 
+                            background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; 
+                            border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">
+                            Select Custom Time
+                        </button>
+                    `;
+                    
+                    slotGrid.appendChild(customDiv);
+                    
+                    // Add event listener for custom button
+                    setTimeout(() => {
+                        const customBtn = document.getElementById('custom-time-btn');
+                        if (customBtn) {
+                            customBtn.addEventListener('click', function() {
+                                const customInput = document.getElementById('custom-time-input');
+                                if (customInput && customInput.value.trim()) {
+                                    selectedSlot = {
+                                        datetime: null,
+                                        display: customInput.value.trim(),
+                                        isCustom: true
+                                    };
+                                    showBookingConfirmation();
+                                } else {
+                                    customInput.style.border = '1px solid #f59e0b';
+                                    setTimeout(() => {
+                                        customInput.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                                    }, 2000);
+                                }
+                            });
+                        }
+                    }, 100);
+                } else {
+                    // Regular time slot button
+                    const slotBtn = document.createElement('button');
+                    slotBtn.className = 'slot-btn';
+                    slotBtn.style.cssText = `
+                        background: rgba(255, 255, 255, 0.05);
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                        border-radius: 12px;
+                        padding: 1rem;
+                        color: white;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        text-align: center;
+                    `;
+                    
+                    slotBtn.innerHTML = `
+                        <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.25rem;">${slot.day}</div>
+                        <div style="font-size: 1rem; font-weight: 600;">${slot.time}</div>
+                    `;
+                    
+                    slotBtn.addEventListener('click', function() {
+                        // Remove previous selection
+                        document.querySelectorAll('.slot-btn').forEach(btn => {
+                            btn.style.background = 'rgba(255, 255, 255, 0.05)';
+                            btn.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                        });
+                        
+                        // Highlight selected slot
+                        this.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                        this.style.border = '1px solid #10b981';
+                        
+                        selectedSlot = slot;
+                        showBookingConfirmation();
+                    });
+                    
+                    slotGrid.appendChild(slotBtn);
+                }
+            });
+            
+            // Show modal
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Reset views
+            document.getElementById('slot-selection-view').style.display = 'block';
+            document.getElementById('slot-confirmation-view').style.display = 'none';
+            document.getElementById('slot-success-view').style.display = 'none';
+        }
+
+        function showBookingConfirmation() {
+            if (!selectedSlot) return;
+            
+            const product = products[bookingProduct];
+            const userName = userProfile.firstName || 'User';
+            
+            // Hide selection view, show confirmation
+            document.getElementById('slot-selection-view').style.display = 'none';
+            document.getElementById('slot-confirmation-view').style.display = 'block';
+            
+            // Update booking summary
+            const summary = document.getElementById('booking-summary');
+            summary.innerHTML = `
+                <div style="color: rgba(255, 255, 255, 0.9); line-height: 1.8;">
+                    <p style="margin-bottom: 0.5rem;"><strong>Name:</strong> ${userName}</p>
+                    <p style="margin-bottom: 0.5rem;"><strong>Product:</strong> ${product ? product.name : 'All Products'}</p>
+                    <p style="margin-bottom: 0.5rem;"><strong>Type:</strong> ${bookingType === 'demo' ? 'Product Demo' : 'Consultation Call'}</p>
+                    <p><strong>Time:</strong> ${selectedSlot.display}</p>
+                </div>
+            `;
+        }
+
+        function confirmBooking() {
+            // Save to database
+            const bookingData = {
+                type: bookingType,
+                product: bookingProduct,
+                slot: selectedSlot.isCustom ? null : selectedSlot.datetime.toISOString(),
+                slot_display: selectedSlot.display,
+                is_custom: selectedSlot.isCustom || false,
+                user_name: userProfile.firstName + ' ' + userProfile.lastName,
+                phone: userProfile.phone,
+                booked_at: new Date().toISOString()
+            };
+            
+            // Save booking (simulate for now)
+            console.log('💾 Saving booking:', bookingData);
+            
+            // If Supabase is configured, save to database
+            if (supabase) {
+                supabase
+                    .from('demo_bookings')
+                    .insert([bookingData])
+                    .then(({ error }) => {
+                        if (error) {
+                            console.error('Error saving booking:', error);
+                        } else {
+                            console.log('✅ Booking saved successfully');
+                        }
+                    });
+            }
+            
+            // Show success view
+            document.getElementById('slot-confirmation-view').style.display = 'none';
+            document.getElementById('slot-success-view').style.display = 'block';
+        }
+
+        function cancelBooking() {
+            // Go back to slot selection
+            document.getElementById('slot-confirmation-view').style.display = 'none';
+            document.getElementById('slot-selection-view').style.display = 'block';
+        }
+
+        function closeSlotModal() {
+            const modal = document.getElementById('slot-modal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            selectedSlot = null;
         }
 
         function renderQuestion() {
@@ -3980,7 +4792,7 @@
             setTimeout(() => {
                 showScreen('welcome-screen');
                 // User must click Go button to proceed to About screen
-            }, 3000); // 3 seconds for Logo screen animation
+            }, 7000); // 7 seconds for complete logo sequence animation
         }
 
         // Window event listeners
