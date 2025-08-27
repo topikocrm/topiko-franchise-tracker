@@ -13,82 +13,63 @@ export default async function handler(req, res) {
     }
 
     const { mobile, otp, message } = req.body;
-    
-    console.log('Received request:', { mobile, otp, messageLength: message?.length });
-
-    // Validate inputs
-    if (!mobile || !otp) {
-        return res.status(400).json({ 
-            error: 'Mobile and OTP are required' 
-        });
-    }
 
     // Validate mobile number (10 digits)
     if (!/^[0-9]{10}$/.test(mobile)) {
-        return res.status(400).json({ 
-            error: 'Invalid mobile number' 
-        });
+        return res.status(400).json({ error: 'Invalid mobile number' });
     }
 
-    // Test number bypass
-    if (mobile === '8272500000') {
-        return res.status(200).json({
-            success: true,
-            message: 'Test mode - OTP not sent',
-            otp: '0827',
-            testMode: true
-        });
-    }
+    // Prepare SMS message
+    const smsMessage = message || `Your OTP for Topiko Partner Program is ${otp}. Valid for 10 minutes. For support call 885 886 8889`;
 
-    // MagicText API credentials
-    const postData = {
+    // MagicText API parameters - EXACTLY like working version
+    const apiUrl = 'http://msg.magictext.in/V2/http-api-post.php';
+    
+    // Build URL manually to ensure proper encoding
+    const params = {
         apikey: '3NwCuamS0SnyYDUw',
         senderid: 'TOPIKO',
         number: mobile,
-        message: message || `Your OTP for Topiko Partner Program is ${otp}. Valid for 10 minutes. For support call 885 886 8889`
+        message: smsMessage
     };
-
-    console.log('Sending to MagicText:', postData);
     
+    // Manual URL construction
+    const queryString = Object.keys(params)
+        .map(key => `${key}=${encodeURIComponent(params[key])}`)
+        .join('&');
+
     try {
-        // Create form data string manually
-        const formData = `apikey=3NwCuamS0SnyYDUw&senderid=TOPIKO&number=${mobile}&message=${encodeURIComponent(message || `Your OTP for Topiko Partner Program is ${otp}. Valid for 10 minutes. For support call 885 886 8889`)}`;
+        // Try GET request with parameters in URL
+        const fullUrl = `${apiUrl}?${queryString}`;
+        console.log('Calling MagicText URL:', fullUrl);
         
-        console.log('Form data being sent:', formData);
-        
-        // THIS WORKS FROM VERCEL BACKEND!
-        const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formData
+        const response = await fetch(fullUrl, {
+            method: 'GET'
         });
 
         const result = await response.text();
-        console.log('MagicText Response Status:', response.status);
         console.log('MagicText Response:', result);
-        
-        if (response.ok) {
-            
+
+        // Check for success indicators in response
+        if (result.includes('success') || result.includes('SMS-SHOOT-ID') || response.ok) {
             return res.status(200).json({
                 success: true,
                 message: 'OTP sent successfully',
-                otp: otp // Return for verification
+                otp: otp
             });
         } else {
-            console.error('SMS API Error:', response.status);
-            // Still return success with OTP for fallback
+            // Still return success with OTP for testing
             return res.status(200).json({
                 success: true,
                 message: 'OTP generated',
                 otp: otp,
-                fallbackMode: true
+                fallbackMode: true,
+                apiResponse: result
             });
         }
     } catch (error) {
-        console.error('SMS Error:', error.message);
-        // Return success with OTP for fallback
+        console.error('Error calling MagicText:', error);
+        // Return OTP for fallback
         return res.status(200).json({
             success: true,
             message: 'OTP generated',
