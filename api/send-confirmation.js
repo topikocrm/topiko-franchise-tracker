@@ -61,7 +61,7 @@ export default async function handler(req, res) {
     if (type === 'demo') {
         const productName = formatProductName(product);
         const formattedDateTime = formatDateTime(dateTime);
-        message = `Your demo for ${productName} is confirmed on ${formattedDateTime}. For assistance, call 885 886 8889. -TOPIKO`;
+        message = `Your demo for ${productName} is confirmed on ${formattedDateTime}. For assistance, call 885 886 8889 - Topiko -TOPIKO`;
     } else if (type === 'call') {
         const formattedDateTime = formatDateTime(dateTime);
         message = `Your call with Topiko  team is scheduled for ${formattedDateTime}. For any assistance call 885 886 8889. -TOPIKO`;
