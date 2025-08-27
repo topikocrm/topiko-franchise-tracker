@@ -3,6 +3,7 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Content-Type', 'application/json');
     
     // Handle preflight
     if (req.method === 'OPTIONS') {
@@ -10,11 +11,23 @@ export default async function handler(req, res) {
     }
     
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        return res.status(405).json({ 
+            success: false,
+            error: 'Method not allowed' 
+        });
     }
     
     try {
-        const { mobile, otp, message } = req.body;
+        // Parse body if needed
+        let body = req.body;
+        if (!body && req.method === 'POST') {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Request body is missing' 
+            });
+        }
+        
+        const { mobile, otp, message } = body;
         
         // Validate inputs
         if (!mobile || !otp) {
