@@ -3,14 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topiko Partner Program - Start Your Digital Franchise Journey</title>
-    <meta name="description" content="Join Topiko's exclusive partner program. Build your digital franchise with proven business models and comprehensive support.">
-    
-    <!-- Open Graph tags -->
-    <meta property="og:title" content="Topiko Partner Program">
-    <meta property="og:description" content="Start your digital franchise journey with Topiko's proven business models">
-    <meta property="og:image" content="https://topikopartner.com/topiko-main.png">
-    <meta property="og:url" content="https://topikopartner.com">
+    <title>Topiko Partner - Digital Franchise Opportunities in India</title>
+    <meta name="description" content="Partner with Topiko to bring digital transformation to businesses across India. Join our franchise network with proven products and comprehensive support.">
     
     <style>
         * {
@@ -18,250 +12,924 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #1d1d1f;
+            background: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #1d1d1f;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: opacity 0.3s;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white !important;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .cta-button::after {
+            display: none;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Hero Section */
+        .hero {
+            margin-top: 70px;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background: radial-gradient(ellipse at top, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom, rgba(118, 75, 162, 0.08) 0%, transparent 50%);
+            position: relative;
+        }
+        
+        .hero-content {
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #1d1d1f 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: #6e6e73;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        
+        .primary-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .primary-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        .secondary-button {
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .secondary-button:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+        
+        /* Products Section */
+        .products {
+            padding: 6rem 2rem;
+            background: #f5f5f7;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1d1d1f;
+        }
+        
+        .section-subtitle {
+            color: #6e6e73;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .product-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .product-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .product-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #1d1d1f;
+        }
+        
+        .product-tagline {
+            color: #667eea;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .product-description {
+            color: #6e6e73;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .product-features {
+            list-style: none;
+        }
+        
+        .product-features li {
+            padding: 0.6rem 0;
+            color: #1d1d1f;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            font-size: 0.95rem;
+        }
+        
+        .product-features li::before {
+            content: '✓';
+            color: #34c759;
+            font-weight: bold;
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+        
+        /* Benefits Section */
+        .benefits {
+            padding: 6rem 2rem;
+            background: white;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+        
+        .benefit-card {
+            text-align: center;
             padding: 2rem;
+        }
+        
+        .benefit-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .benefit-card:hover .benefit-icon {
+            transform: scale(1.1);
+        }
+        
+        .benefit-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #1d1d1f;
+        }
+        
+        .benefit-card p {
+            color: #6e6e73;
+            line-height: 1.7;
+        }
+        
+        /* Stats Section */
+        .stats {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-item {
+            padding: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-label {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        
+        /* CTA Section */
+        .final-cta {
+            padding: 6rem 2rem;
+            text-align: center;
+            background: linear-gradient(to bottom, #f5f5f7, white);
+        }
+        
+        .final-cta h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+            color: #1d1d1f;
+        }
+        
+        .final-cta p {
+            font-size: 1.3rem;
+            color: #6e6e73;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-highlight {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            background: #1d1d1f;
             color: white;
             text-align: center;
         }
-
-        .container {
-            max-width: 800px;
-            width: 100%;
-            animation: fadeIn 1s ease-out;
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
         }
-
-        @keyframes fadeIn {
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .footer p {
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-contact {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
-        .logo {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 2rem;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .logo img {
-            width: 150px;
-            height: auto;
-            object-fit: contain;
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
-
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        
+        .fade-in-delay-1 {
+            transition-delay: 0.1s;
         }
-
-        .tagline {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-            line-height: 1.6;
+        
+        .fade-in-delay-2 {
+            transition-delay: 0.2s;
         }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin: 3rem 0;
+        
+        .fade-in-delay-3 {
+            transition-delay: 0.3s;
         }
-
-        .feature {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1.5rem;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        
+        .fade-in-delay-4 {
+            transition-delay: 0.4s;
         }
-
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+        
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
         }
-
-        .feature-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+        
+        .mobile-menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #1d1d1f;
+            margin: 5px 0;
+            transition: all 0.3s;
+            border-radius: 2px;
         }
-
-        .feature-desc {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .cta-section {
-            margin-top: 3rem;
-        }
-
-        .btn-primary {
-            display: inline-block;
-            background: white;
-            color: #667eea;
-            padding: 1.2rem 3rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 50px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            margin: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-secondary {
-            display: inline-block;
-            background: transparent;
-            color: white;
-            padding: 1rem 2rem;
-            font-size: 1rem;
-            text-decoration: none;
-            border: 2px solid white;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            margin: 0.5rem;
-        }
-
-        .btn-secondary:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        .footer {
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: all 0.3s ease;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
             }
-            .tagline {
-                font-size: 1.2rem;
+            
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
             }
-            .features {
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .hero {
+                min-height: 80vh;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .primary-button,
+            .secondary-button {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .products-grid {
                 grid-template-columns: 1fr;
             }
-            .btn-primary {
-                padding: 1rem 2rem;
-                font-size: 1.1rem;
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
             }
         }
-
-        /* Loading animation */
-        .loading-redirect {
-            display: none;
-            margin-top: 2rem;
-            font-size: 1.1rem;
-        }
-
-        .loading-redirect.active {
-            display: block;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 0.6;
+        
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 1rem;
             }
-            50% {
-                opacity: 1;
+            
+            .hero {
+                padding: 2rem 1rem;
+            }
+            
+            .products,
+            .benefits,
+            .final-cta {
+                padding: 4rem 1rem;
+            }
+            
+            .product-card {
+                padding: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <img src="topiko-main.png" alt="Topiko Logo">
-        </div>
-        
-        <h1>Welcome to Topiko Partner Program</h1>
-        <p class="tagline">Transform Your Business Journey with India's Leading Digital Franchise Platform</p>
-        
-        <div class="features">
-            <div class="feature">
-                <div class="feature-icon">🚀</div>
-                <div class="feature-title">Proven Business Model</div>
-                <div class="feature-desc">Start with tested strategies that work</div>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">Topiko Partner</div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="#products">Products</a>
+                <a href="#benefits">Why Partner</a>
+                <a href="#stats">Success</a>
+                <a href="/register" class="cta-button">Start Assessment</a>
             </div>
-            <div class="feature">
-                <div class="feature-icon">💼</div>
-                <div class="feature-title">Multiple Products</div>
-                <div class="feature-desc">Choose from our suite of digital solutions</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">📈</div>
-                <div class="feature-title">High ROI Potential</div>
-                <div class="feature-desc">Earn up to ₹15L+ monthly revenue</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🤝</div>
-                <div class="feature-title">Full Support</div>
-                <div class="feature-desc">Training, marketing, and technical assistance</div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Partner with India's Digital Revolution</h1>
+            <p>Build a profitable franchise business by bringing digital transformation to millions of Indian businesses.</p>
+            <div class="hero-buttons">
+                <a href="/register" class="primary-button">Explore Partnership</a>
+                <a href="#products" class="secondary-button">View Products</a>
             </div>
         </div>
-        
-        <div class="cta-section">
-            <a href="/register" class="btn-primary" id="register-btn">Start Your Journey</a>
-            <a href="https://topiko.app" class="btn-secondary" target="_blank">Learn More</a>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products" id="products">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title fade-in">Our Product Portfolio</h2>
+                <p class="section-subtitle fade-in">Four powerful solutions designed for different market segments</p>
+            </div>
+            
+            <div class="products-grid">
+                <!-- Disblay -->
+                <div class="product-card fade-in fade-in-delay-1">
+                    <div class="product-icon">📱</div>
+                    <h3>Disblay</h3>
+                    <p class="product-tagline">India's Simplest Digital Storefront</p>
+                    <p class="product-description">
+                        Perfect for small businesses, freelancers, and homepreneurs. Create a digital presence in minutes - add products, get a permanent link, share instantly on WhatsApp.
+                    </p>
+                    <ul class="product-features">
+                        <li>5-minute setup, zero technical skills</li>
+                        <li>Direct WhatsApp & social sharing</li>
+                        <li>Perfect for first-time digital adopters</li>
+                    </ul>
+                </div>
+
+                <!-- Topiko -->
+                <div class="product-card fade-in fade-in-delay-2">
+                    <div class="product-icon">🚀</div>
+                    <h3>Topiko</h3>
+                    <p class="product-tagline">All-in-One Digital Platform</p>
+                    <p class="product-description">
+                        Complete digital ecosystem at ₹6,999/year. Website, mobile app space, QR codes, catalog, orders, loyalty programs, and marketing tools - everything included.
+                    </p>
+                    <ul class="product-features">
+                        <li>Complete business digitization</li>
+                        <li>Affordable annual pricing</li>
+                        <li>Integrated customer management</li>
+                    </ul>
+                </div>
+
+                <!-- Topiko Flex -->
+                <div class="product-card fade-in fade-in-delay-3">
+                    <div class="product-icon">🎨</div>
+                    <h3>Topiko Flex</h3>
+                    <p class="product-tagline">White-Label Digital Solution</p>
+                    <p class="product-description">
+                        For businesses wanting their own brand identity. Custom domain, branded website, Android/iOS apps under their name with all Topiko features.
+                    </p>
+                    <ul class="product-features">
+                        <li>Complete brand ownership</li>
+                        <li>Custom apps on Play Store & App Store</li>
+                        <li>Enterprise-grade features</li>
+                    </ul>
+                </div>
+
+                <!-- HEBT -->
+                <div class="product-card fade-in fade-in-delay-4">
+                    <div class="product-icon">🤖</div>
+                    <h3>HEBT</h3>
+                    <p class="product-tagline">AI App & Website Builder</p>
+                    <p class="product-description">
+                        For IT firms and agencies. AI-powered generation of websites and apps with full source code access. Scale faster, deliver cost-effectively.
+                    </p>
+                    <ul class="product-features">
+                        <li>AI-guided development</li>
+                        <li>Complete source code access</li>
+                        <li>Agency-focused workflows</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        
-        <div class="loading-redirect" id="loading-msg">
-            Redirecting to registration...
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits" id="benefits">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title fade-in">Why Partner with Topiko?</h2>
+                <p class="section-subtitle fade-in">Everything you need to build a successful digital franchise</p>
+            </div>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">💼</div>
+                    <h3>Proven Business Model</h3>
+                    <p>Established products with clear revenue streams and demonstrated market demand. Start earning from your very first customer.</p>
+                </div>
+                
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">📚</div>
+                    <h3>Complete Training & Support</h3>
+                    <p>Comprehensive onboarding, product training, sales techniques, and ongoing support to ensure your success as a partner.</p>
+                </div>
+                
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">🛡️</div>
+                    <h3>Protected Territory</h3>
+                    <p>Exclusive rights in your designated area with territory protection to maximize your market potential and growth.</p>
+                </div>
+                
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">🎯</div>
+                    <h3>Marketing Excellence</h3>
+                    <p>Professional marketing materials, digital campaigns, and proven strategies to help you acquire and retain customers.</p>
+                </div>
+                
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">🔧</div>
+                    <h3>Technical Backbone</h3>
+                    <p>24/7 technical support, regular product updates, and robust infrastructure so you can focus on growing your business.</p>
+                </div>
+                
+                <div class="benefit-card fade-in">
+                    <div class="benefit-icon">📈</div>
+                    <h3>Unlimited Growth</h3>
+                    <p>Multiple product lines, cross-selling opportunities, and expansion possibilities to scale as you grow.</p>
+                </div>
+            </div>
         </div>
-        
-        <div class="footer">
-            <p>© 2024 Topiko. All rights reserved.</p>
-            <p>Questions? Call us at 885 886 8889</p>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats" id="stats">
+        <div class="stats-grid">
+            <div class="stat-item fade-in">
+                <div class="stat-number">10,000+</div>
+                <div class="stat-label">Active Businesses</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Partner Network</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Cities Covered</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number">4.8/5</div>
+                <div class="stat-label">Partner Rating</div>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <h2 class="fade-in">Ready to Build Your <span class="cta-highlight">Digital Empire?</span></h2>
+        <p class="fade-in">Take our personalized assessment to discover which products match your market, expertise, and investment capacity.</p>
+        <a href="/register" class="primary-button fade-in">Start Your Journey →</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">Topiko Partner</div>
+            <p>Empowering entrepreneurs to digitize India</p>
+            <div class="footer-contact">
+                <p>For partnership inquiries: <strong>885 886 8889</strong></p>
+                <p>&copy; 2024 Topiko Partner. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Optional: Auto-redirect to registration after a delay
-        // Uncomment the following lines if you want automatic redirect
-        /*
-        setTimeout(() => {
-            document.getElementById('loading-msg').classList.add('active');
-            setTimeout(() => {
-                window.location.href = '/register';
-            }, 1500);
-        }, 3000);
-        */
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
 
-        // Track button clicks
-        document.getElementById('register-btn').addEventListener('click', function(e) {
-            // You can add analytics tracking here
-            console.log('Registration initiated');
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('active');
+            });
         });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offset = 80; // Header height
+                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Stop observing after animation
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Header scroll effect
+        let lastScroll = 0;
+        const header = document.querySelector('.header');
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            // Add shadow on scroll
+            if (currentScroll > 50) {
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                header.style.boxShadow = 'none';
+                header.style.background = 'rgba(255, 255, 255, 0.94)';
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Counter animation for stats
+        function animateCounter(element, target) {
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                
+                // Format the number
+                if (target === 4.8) {
+                    element.textContent = current.toFixed(1) + '/5';
+                } else if (target >= 1000) {
+                    element.textContent = Math.floor(current).toLocaleString() + '+';
+                } else {
+                    element.textContent = Math.floor(current) + '+';
+                }
+            }, 16);
+        }
+
+        // Trigger counter animation when stats section is visible
+        const statsSection = document.querySelector('.stats');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Animate each stat number
+                    const statNumbers = [
+                        { element: document.querySelectorAll('.stat-number')[0], value: 10000 },
+                        { element: document.querySelectorAll('.stat-number')[1], value: 500 },
+                        { element: document.querySelectorAll('.stat-number')[2], value: 100 },
+                        { element: document.querySelectorAll('.stat-number')[3], value: 4.8 }
+                    ];
+                    
+                    statNumbers.forEach((stat, index) => {
+                        setTimeout(() => {
+                            animateCounter(stat.element, stat.value);
+                        }, index * 200);
+                    });
+                    
+                    // Stop observing after animation
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // Add subtle parallax to hero on desktop
+        if (window.innerWidth > 768) {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector('.hero-content');
+                if (hero && scrolled < window.innerHeight) {
+                    hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+                    hero.style.opacity = 1 - (scrolled / 1000);
+                }
+            });
+        }
     </script>
 </body>
 </html>

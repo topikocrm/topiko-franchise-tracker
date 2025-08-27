@@ -3721,9 +3721,20 @@
             
             productsGrid.innerHTML = '';
             
-            // All 4 products with appropriate tags
+            // All 4 products
             const allProducts = ['disblay', 'topiko', 'flex', 'hebt'];
-            const allTags = ['🚀 Starter', '🏆 Premium', '💼 Enterprise', '🛠️ Agency'];
+            
+            // Get the recommended products to determine tags
+            const recommended = recommendedProducts?.products || [];
+            const allTags = allProducts.map(product => {
+                if (recommended[0] === product) {
+                    return '⭐ Best Match';
+                } else if (recommended[1] === product) {
+                    return '👍 Also Recommended';
+                } else {
+                    return '🔍 Explore Product';
+                }
+            });
             
             // Add products grid styles for 4 products
             productsGrid.style.cssText = `
@@ -3956,6 +3967,13 @@
                         exploreAllLink.addEventListener('click', function(e) {
                             e.preventDefault();
                             console.log('🔍 Showing all products');
+                            
+                            // Update title to show all products
+                            const titleElement = document.querySelector('#products-screen h2');
+                            const subtitleElement = document.querySelector('#products-screen .subtitle');
+                            if (titleElement) titleElement.textContent = 'All Products';
+                            if (subtitleElement) subtitleElement.textContent = 'Explore our complete range based on your assessment';
+                            
                             renderAllProducts();
                         });
                     }
