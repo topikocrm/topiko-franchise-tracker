@@ -49,43 +49,56 @@ export default async function handler(req, res) {
         // Prepare message
         const smsMessage = message || `Your OTP for Topiko Partner Program is ${otp}. Valid for 10 minutes. For support call 885 886 8889`;
         
-        // MagicText API parameters
-        const params = new URLSearchParams({
+        // MagicText API parameters (matching working version)
+        const postData = {
             apikey: '3NwCuamS0SnyYDUw',
             senderid: 'TOPIKO',
             number: cleanMobile,
-            message: smsMessage
-        });
+            message: smsMessage,
+            format: 'json'
+        };
         
-        // For production, always return success with the OTP
-        // The actual SMS sending can be done later when SSL is properly configured
-        console.log('Would send SMS to:', cleanMobile, 'with OTP:', otp);
-        
-        // Try to send SMS but don't fail if it doesn't work
         try {
+            // Send SMS via API (using JSON format like the working version)
             const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json'
                 },
-                body: params.toString()
+                body: JSON.stringify(postData)
             });
             
-            const responseText = await response.text();
-            console.log('MagicText Response:', responseText);
-        } catch (smsError) {
-            console.log('SMS sending failed (expected on HTTPS):', smsError.message);
+            if (response.ok) {
+                const result = await response.text();
+                console.log('SMS API Response:', result);
+                
+                return res.status(200).json({
+                    success: true,
+                    message: 'OTP sent successfully',
+                    otp: otp // Return OTP for verification
+                });
+            } else {
+                console.error('SMS API Error:', response.status, response.statusText);
+                // Still return success but with fallback mode
+                return res.status(200).json({
+                    success: true,
+                    message: 'OTP generated',
+                    otp: otp,
+                    fallbackMode: true,
+                    note: 'SMS service issue. Use OTP shown on screen.'
+                });
+            }
+        } catch (error) {
+            console.error('Failed to send SMS:', error);
+            // Return success with fallback mode
+            return res.status(200).json({
+                success: true,
+                message: 'OTP generated',
+                otp: otp,
+                fallbackMode: true,
+                note: 'Use OTP shown on screen.'
+            });
         }
-        
-        // Always return success with OTP for now
-        // In production, the OTP will be shown in the UI as a fallback
-        return res.status(200).json({
-            success: true,
-            message: 'OTP generated successfully',
-            otp: otp, // Return OTP for verification
-            fallbackMode: true,
-            note: 'SMS service temporarily unavailable. Use the OTP shown on screen.'
-        });
         
     } catch (error) {
         console.error('Error in send-otp API:', error);
