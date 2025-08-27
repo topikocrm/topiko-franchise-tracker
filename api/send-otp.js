@@ -51,8 +51,10 @@ export default async function handler(req, res) {
     console.log('Sending to MagicText:', postData);
     
     try {
-        // Convert to URL-encoded format
-        const params = new URLSearchParams(postData);
+        // Create form data string manually
+        const formData = `apikey=3NwCuamS0SnyYDUw&senderid=TOPIKO&number=${mobile}&message=${encodeURIComponent(message || `Your OTP for Topiko Partner Program is ${otp}. Valid for 10 minutes. For support call 885 886 8889`)}`;
+        
+        console.log('Form data being sent:', formData);
         
         // THIS WORKS FROM VERCEL BACKEND!
         const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
@@ -60,7 +62,7 @@ export default async function handler(req, res) {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: params.toString()
+            body: formData
         });
 
         const result = await response.text();
