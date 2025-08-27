@@ -1732,10 +1732,11 @@
             <h2>Recommended Products</h2>
             <p class="subtitle">Based on your responses, here are the products that align with your partnership interests</p>
             <div id="products-grid" class="products-grid"></div>
+            <!-- Commented out Speak with Our Team button for now
             <div style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 2rem;">
-                <button id="explore-all-btn" class="next-btn" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">Explore All Products</button>
                 <button id="contact-btn" class="next-btn">Speak with Our Team</button>
             </div>
+            -->
         </div>
     </div>
 
@@ -1753,6 +1754,12 @@
                     </button>
                     <button id="roi-btn" class="next-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
                         <span>💰 Calculate ROI</span>
+                    </button>
+                    <button id="request-demo-btn-detail" class="next-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                        <span>📅 Request Demo</span>
+                    </button>
+                    <button id="lets-talk-btn-detail" class="next-btn" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        <span>💬 Let's Talk</span>
                     </button>
                 </div>
                 
@@ -1775,12 +1782,6 @@
                 
                 <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
                     <button id="back-to-product-detail" class="back-btn">← Back to Product</button>
-                    <button id="request-demo-btn" class="next-btn" style="background: linear-gradient(135deg, #10b981, #059669);">
-                        <span>📅 Request Demo</span>
-                    </button>
-                    <button id="lets-talk-btn" class="next-btn" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-                        <span>💬 Let's Talk</span>
-                    </button>
                 </div>
             </div>
         </div>
@@ -3197,20 +3198,20 @@
                 });
             }
 
-            // Request Demo Button (ROI Screen)
-            const requestDemoBtn = document.getElementById('request-demo-btn');
-            if (requestDemoBtn) {
-                console.log('✅ Request demo button found');
-                requestDemoBtn.addEventListener('click', function() {
+            // Request Demo Button (Product Detail Screen)
+            const requestDemoBtnDetail = document.getElementById('request-demo-btn-detail');
+            if (requestDemoBtnDetail) {
+                console.log('✅ Request demo button (detail) found');
+                requestDemoBtnDetail.addEventListener('click', function() {
                     showSlotBookingModal('demo', selectedProduct);
                 });
             }
 
-            // Let's Talk Button (ROI Screen)
-            const letsTalkBtn = document.getElementById('lets-talk-btn');
-            if (letsTalkBtn) {
-                console.log('✅ Let\'s talk button found');
-                letsTalkBtn.addEventListener('click', function() {
+            // Let's Talk Button (Product Detail Screen)
+            const letsTalkBtnDetail = document.getElementById('lets-talk-btn-detail');
+            if (letsTalkBtnDetail) {
+                console.log('✅ Let\'s talk button (detail) found');
+                letsTalkBtnDetail.addEventListener('click', function() {
                     showSlotBookingModal('call', selectedProduct);
                 });
             }
@@ -3923,6 +3924,43 @@
                 
                 productsGrid.appendChild(productCard);
             });
+            
+            // Add "Explore All Products" link after the second card (Also Recommended)
+            if (productsList.length >= 2) {
+                const exploreLink = document.createElement('div');
+                exploreLink.style.cssText = `
+                    position: relative;
+                    grid-column: 2;
+                    text-align: right;
+                    margin-top: -1rem;
+                    padding-right: 1rem;
+                `;
+                exploreLink.innerHTML = `
+                    <a id="explore-all-link" href="#" style="
+                        color: rgba(255, 255, 255, 0.5);
+                        font-size: 0.9rem;
+                        text-decoration: none;
+                        transition: color 0.3s ease;
+                        cursor: pointer;
+                    " onmouseover="this.style.color='rgba(255, 255, 255, 0.8)'" 
+                       onmouseout="this.style.color='rgba(255, 255, 255, 0.5)'">
+                        Explore All Products →
+                    </a>
+                `;
+                productsGrid.appendChild(exploreLink);
+                
+                // Add event listener for explore all link
+                setTimeout(() => {
+                    const exploreAllLink = document.getElementById('explore-all-link');
+                    if (exploreAllLink) {
+                        exploreAllLink.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            console.log('🔍 Showing all products');
+                            renderAllProducts();
+                        });
+                    }
+                }, 100);
+            }
             
             console.log('✅ Products rendered successfully');
         }
