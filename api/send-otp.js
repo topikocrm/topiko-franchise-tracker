@@ -13,6 +13,8 @@ export default async function handler(req, res) {
     }
 
     const { mobile, otp, message } = req.body;
+    
+    console.log('Received request:', { mobile, otp, messageLength: message?.length });
 
     // Validate inputs
     if (!mobile || !otp) {
@@ -43,23 +45,29 @@ export default async function handler(req, res) {
         apikey: '3NwCuamS0SnyYDUw',
         senderid: 'TOPIKO',
         number: mobile,
-        message: message || `Your OTP for Topiko Partner Program is ${otp}. Valid for 10 minutes. For support call 885 886 8889`,
-        format: 'json'
+        message: message || `Your OTP for Topiko Partner Program is ${otp}. Valid for 10 minutes. For support call 885 886 8889`
     };
 
+    console.log('Sending to MagicText:', postData);
+    
     try {
+        // Convert to URL-encoded format
+        const params = new URLSearchParams(postData);
+        
         // THIS WORKS FROM VERCEL BACKEND!
         const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: JSON.stringify(postData)
+            body: params.toString()
         });
 
+        const result = await response.text();
+        console.log('MagicText Response Status:', response.status);
+        console.log('MagicText Response:', result);
+        
         if (response.ok) {
-            const result = await response.text();
-            console.log('SMS API Response:', result);
             
             return res.status(200).json({
                 success: true,
