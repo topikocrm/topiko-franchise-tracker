@@ -3419,8 +3419,15 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    console.log('✅ OTP sent successfully');
-                    return { success: true, otp: otp };
+                    if (result.fallbackMode) {
+                        // Show OTP on screen when SMS service is unavailable
+                        console.log('📱 Fallback mode - showing OTP on screen');
+                        showOTPNotification(`Your OTP is: ${result.otp}`);
+                        window.topikoApp.sentOTP = result.otp;
+                    } else {
+                        console.log('✅ OTP sent via SMS');
+                    }
+                    return { success: true, otp: result.otp };
                 } else {
                     console.error('❌ Failed to send OTP:', result.error);
                     // Allow fallback to master OTP
