@@ -133,72 +133,47 @@
             justify-content: center;
             padding: 4rem 2rem;
             position: relative;
-            overflow: hidden;
-            background: linear-gradient(180deg, rgba(102, 126, 234, 0.02) 0%, rgba(245, 245, 247, 0.5) 100%);
+            background: 
+                radial-gradient(ellipse 1000px 800px at 50% 0%, rgba(120, 119, 198, 0.15), transparent),
+                radial-gradient(ellipse 800px 600px at 0% 50%, rgba(102, 126, 234, 0.1), transparent),
+                radial-gradient(ellipse 900px 700px at 100% 50%, rgba(240, 93, 251, 0.1), transparent),
+                linear-gradient(180deg, #fafaff 0%, #f8f6ff 50%, #fefefe 100%);
         }
         
         /* Animated gradient mesh */
         .hero::before {
             content: '';
             position: absolute;
-            top: -100%;
-            left: -100%;
-            width: 300%;
-            height: 300%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: 
-                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 70%),
-                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.25) 0%, transparent 70%),
-                radial-gradient(circle at 40% 20%, rgba(102, 126, 234, 0.25) 0%, transparent 70%),
-                radial-gradient(circle at 60% 60%, rgba(245, 158, 11, 0.15) 0%, transparent 70%),
-                radial-gradient(circle at 90% 30%, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+                radial-gradient(circle 800px at 20% 50%, rgba(120, 119, 198, 0.2), transparent),
+                radial-gradient(circle 700px at 80% 80%, rgba(255, 119, 198, 0.15), transparent),
+                radial-gradient(circle 600px at 40% 20%, rgba(102, 126, 234, 0.15), transparent);
+            opacity: 0.7;
             animation: gradientDrift 30s ease-in-out infinite;
             z-index: 0;
-            filter: blur(40px);
         }
         
         @keyframes gradientDrift {
             0%, 100% { 
-                transform: translate(0, 0) rotate(0deg) scale(1.2);
+                transform: scale(1) translateX(0);
             }
             25% { 
-                transform: translate(-5%, 3%) rotate(90deg) scale(1.3);
+                transform: scale(1.1) translateX(-30px);
             }
             50% { 
-                transform: translate(3%, -5%) rotate(180deg) scale(1.2);
+                transform: scale(1.05) translateX(20px);
             }
             75% { 
-                transform: translate(5%, 5%) rotate(270deg) scale(1.3);
+                transform: scale(1.1) translateX(-20px);
             }
         }
         
-        /* Floating orbs */
-        .hero::after {
-            content: '';
-            position: absolute;
-            width: 120%;
-            height: 120%;
-            top: -10%;
-            left: -10%;
-            background-image: 
-                radial-gradient(circle 600px at 10% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 70%),
-                radial-gradient(circle 500px at 90% 80%, rgba(240, 93, 251, 0.1) 0%, transparent 70%),
-                radial-gradient(circle 400px at 50% 50%, rgba(245, 87, 108, 0.08) 0%, transparent 70%);
-            animation: orbFloat 25s ease-in-out infinite;
-            z-index: 0;
-            filter: blur(20px);
-        }
+        /* Remove second animated layer to simplify */
         
-        @keyframes orbFloat {
-            0%, 100% { 
-                transform: translate(0, 0);
-            }
-            33% { 
-                transform: translate(30px, -30px);
-            }
-            66% { 
-                transform: translate(-20px, 20px);
-            }
-        }
         
         .hero-content {
             text-align: center;
