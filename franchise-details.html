@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Franchise Details - Topiko Partner Program</title>
+    <meta name="description" content="Complete pricing structure and franchise opportunities for Topiko products">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+            animation: backgroundShift 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundShift {
+            0% { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+            100% { background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #667eea 100%); }
+        }
+        
+        /* Fixed Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #1d1d1f;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: opacity 0.3s;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white !important;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .cta-button::after {
+            display: none;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: white;
+            padding: 5rem 3rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            animation: patternMove 20s linear infinite;
+        }
+        
+        @keyframes patternMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #ffffff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: containerFloat 6s ease-in-out infinite alternate;
+        }
+        
+        @keyframes containerFloat {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(-5px) scale(1.002); }
+        }
+        
+        /* Table Container */
+        .table-container {
+            margin-top: 2rem;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #667eea #f1f1f1;
+        }
+        
+        .table-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 4px;
+        }
+        
+        /* Pricing Table */
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        
+        .pricing-table th {
+            background: #f8fafc;
+            color: #2d3748;
+            padding: 1.5rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .pricing-table td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+        
+        /* Product Headers */
+        .product-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            font-weight: 700;
+            color: #2d3748;
+            text-align: center;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .product-header:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transition: left 0.5s;
+        }
+        
+        .product-header:hover::before {
+            left: 100%;
+        }
+        
+        .product-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        .disblay-col { border-left: 4px solid #405266; }
+        .topiko-col { border-left: 4px solid #8b2ca8; }
+        .flex-col { border-left: 4px solid #764ba2; }
+        .hebt-col { border-left: 4px solid #f56500; }
+        
+        /* Price Styling */
+        .price-primary {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .price-secondary {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .commission {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        /* ROI Highlight */
+        .roi-highlight {
+            background: #f0fff4;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+            padding: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .roi-value {
+            color: #10b981;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.3rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+            color: #4a5568;
+        }
+        
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            background: #2d3748;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        /* Note Cards */
+        .note {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-left: 6px solid #667eea;
+            padding: 1.5rem;
+            margin: 1.5rem;
+            border-radius: 0 16px 16px 0;
+            font-size: 0.95rem;
+            color: #4a5568;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+        
+        .note::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea, #764ba2, #f093fb);
+            animation: colorFlow 3s linear infinite;
+        }
+        
+        @keyframes colorFlow {
+            0% { background: linear-gradient(180deg, #667eea, #764ba2, #f093fb); }
+            33% { background: linear-gradient(180deg, #764ba2, #f093fb, #667eea); }
+            66% { background: linear-gradient(180deg, #f093fb, #667eea, #764ba2); }
+            100% { background: linear-gradient(180deg, #667eea, #764ba2, #f093fb); }
+        }
+        
+        .note:hover {
+            transform: translateX(5px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Highlight Row */
+        .highlight-row {
+            background: #fffbf0;
+        }
+        
+        /* Target Audience Badge */
+        .target-audience {
+            background: #f0fff4;
+            color: #22543d;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .mobile-menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #1d1d1f;
+            margin: 5px 0;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: all 0.3s ease;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .hero {
+                padding: 2rem 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+            
+            .pricing-table {
+                font-size: 0.75rem;
+                min-width: 900px;
+            }
+            
+            .pricing-table th,
+            .pricing-table td {
+                padding: 0.6rem 0.3rem;
+            }
+            
+            .product-header {
+                font-size: 0.9rem;
+            }
+            
+            .product-logo {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .price-primary {
+                font-size: 1rem;
+            }
+            
+            .price-secondary {
+                font-size: 0.85rem;
+            }
+            
+            .feature-list li {
+                font-size: 0.75rem;
+                padding: 0.2rem 0;
+            }
+            
+            .note-card {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Topiko Product Portfolio</h1>
+        <p>Complete Pricing Structure & Franchise Opportunities</p>
+    </section>
+
+    <div class="container">
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Pricing Details</th>
+                            <th class="product-header disblay-col" style="width: 20%;">
+                                <div style="font-size: 1.3rem; margin-bottom: 0.5rem;">
+                                    <img src="disblaylogo.png" alt="Disblay" class="product-logo">
+                                    Disblay
+                                </div>
+                                <div style="font-size: 0.8rem; opacity: 0.8;">Micro Business Solution</div>
+                            </th>
+                            <th class="product-header topiko-col" style="width: 20%;">
+                                <div style="font-size: 1.3rem; margin-bottom: 0.5rem;">
+                                    <img src="topikologo.png" alt="Topiko" class="product-logo">
+                                    Topiko
+                                </div>
+                                <div style="font-size: 0.8rem; opacity: 0.8;">SMB Growth Platform</div>
+                            </th>
+                            <th class="product-header flex-col" style="width: 20%;">
+                                <div style="font-size: 1.3rem; margin-bottom: 0.5rem;">
+                                    <img src="flexlogo.png" alt="Topiko Flex" class="product-logo">
+                                    Topiko Flex
+                                </div>
+                                <div style="font-size: 0.8rem; opacity: 0.8;">White-label Solution</div>
+                            </th>
+                            <th class="product-header hebt-col" style="width: 20%;">
+                                <div style="font-size: 1.3rem; margin-bottom: 0.5rem;">
+                                    <img src="hebtlogo.png" alt="HEBT" class="product-logo">
+                                    HEBT
+                                </div>
+                                <div style="font-size: 0.8rem; opacity: 0.8;">No-code Platform</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <!-- Business Model -->
+                        <tr class="section-header">
+                            <td colspan="5">💼 Business Model</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Revenue Type</strong></td>
+                            <td class="disblay-col">Subscription-based</td>
+                            <td class="topiko-col">Subscription-based</td>
+                            <td class="flex-col">Project-based</td>
+                            <td class="hebt-col">Project-based</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Target Market</strong></td>
+                            <td class="disblay-col">
+                                <span class="target-audience">Micro Businesses</span>
+                            </td>
+                            <td class="topiko-col">
+                                <span class="target-audience">SMB Owners</span>
+                            </td>
+                            <td class="flex-col">
+                                <span class="target-audience">Mid & Big Size Businesses</span>
+                            </td>
+                            <td class="hebt-col">
+                                <span class="target-audience">Any Business (IT Solutions)</span>
+                            </td>
+                        </tr>
+
+                        <!-- Customer Pricing -->
+                        <tr class="section-header" id="pricing">
+                            <td colspan="5">💰 Topiko Cost</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>You pay to Topiko</strong><br><div style="font-size: 0.75rem; color: #718096; margin-top: 0.2rem; word-wrap: break-word; line-height: 1.2;">(per Subscription/<br>Onboard/Project)</div></td>
+                            <td class="disblay-col">
+                                <div class="price-primary">₹1,499 <span style="font-size: 0.8rem;">(Initial)</span></div>
+                                <div class="price-secondary">₹999 <span style="font-size: 0.8rem;">(Renewal)</span></div>
+                                <div style="font-size: 0.8rem; color: #718096;">per year</div>
+                            </td>
+                            <td class="topiko-col">
+                                <div class="price-primary">₹9,999 <span style="font-size: 0.8rem;">(Initial)</span></div>
+                                <div class="price-secondary">₹5,999 <span style="font-size: 0.8rem;">(Renewal)</span></div>
+                                <div style="font-size: 0.8rem; color: #718096;">per year</div>
+                            </td>
+                            <td class="flex-col">
+                                <div class="price-primary">₹19,999 <span style="font-size: 0.8rem;">(Initial)</span></div>
+                                <div class="price-secondary">₹9,999 <span style="font-size: 0.8rem;">(Renewal)</span></div>
+                                <div style="font-size: 0.8rem; color: #718096;">Web + Android</div>
+                                <div class="price-secondary" style="margin-top: 0.5rem;">₹24,999 <span style="font-size: 0.8rem;">(Initial)</span></div>
+                                <div class="price-secondary">₹14,999 <span style="font-size: 0.8rem;">(Renewal)</span></div>
+                                <div style="font-size: 0.8rem; color: #718096;">Web + Android + iOS</div>
+                            </td>
+                            <td class="hebt-col">
+                                <div class="price-primary" style="font-size: 1.1rem;">Depends on</div>
+                                <div style="font-size: 0.9rem; color: #718096;">Project requirement</div>
+                            </td>
+                        </tr>
+
+                        <!-- Franchise Revenue -->
+                        <tr class="section-header" id="revenue">
+                            <td colspan="5">🎯 Franchise Partner Revenue</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Your Commission</strong></td>
+                            <td class="disblay-col">
+                                <div class="price-secondary commission">₹799 <span style="font-size: 0.8rem;">(Initial)</span></div>
+                                <div class="price-secondary commission">₹399 <span style="font-size: 0.8rem;">(Renewal)</span></div>
+                                <div style="font-size: 0.8rem;">per subscription</div>
+                            </td>
+                            <td class="topiko-col">
+                                <div class="price-secondary commission">₹4,999 <span style="font-size: 0.8rem;">(Initial)</span></div>
+                                <div class="price-secondary commission">₹2,499 <span style="font-size: 0.8rem;">(Renewal)</span></div>
+                                <div style="font-size: 0.8rem;">per subscription</div>
+                            </td>
+                            <td class="flex-col">
+                                <div class="price-secondary commission">Open *</div>
+                                <div style="font-size: 0.8rem;"></div>
+                            </td>
+                            <td class="hebt-col">
+                                <div class="price-secondary commission">Open</div>
+                                <div style="font-size: 0.8rem;">Topiko team will guide</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Commission %</strong></td>
+                            <td class="disblay-col">53% <span style="font-size: 0.8rem;">(Initial)</span> / 40% <span style="font-size: 0.8rem;">(Renewal)</span></td>
+                            <td class="topiko-col">50% <span style="font-size: 0.8rem;">(Initial)</span> / 42% <span style="font-size: 0.8rem;">(Renewal)</span></td>
+                            <td class="flex-col">Depends on end customer cost, minimum 60%</td>
+                            <td class="hebt-col">Case by case</td>
+                        </tr>
+
+                        <!-- Franchise Requirements -->
+                        <tr class="section-header">
+                            <td colspan="5">📋 Your Responsibilities</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Required Setup</strong></td>
+                            <td class="disblay-col">
+                                <ul class="feature-list">
+                                    <li>Small office space</li>
+                                    <li>2 sales staff</li>
+                                    <li>Basic telemarketing</li>
+                                    <li>Client onboarding</li>
+                                </ul>
+                            </td>
+                            <td class="topiko-col">
+                                <ul class="feature-list">
+                                    <li>Professional office</li>
+                                    <li>2 sales staff</li>
+                                    <li>Lead generation team</li>
+                                    <li>Customer support</li>
+                                </ul>
+                            </td>
+                            <td class="flex-col">
+                                <ul class="feature-list">
+                                    <li>Professional office</li>
+                                    <li>2 technical staff</li>
+                                    <li>Project management</li>
+                                    <li>Client relationships</li>
+                                </ul>
+                            </td>
+                            <td class="hebt-col">
+                                <ul class="feature-list">
+                                    <li>Premium office space</li>
+                                    <li>3 technical staff</li>
+                                    <li>Senior developers</li>
+                                    <li>Agency operations</li>
+                                </ul>
+                            </td>
+                        </tr>
+
+                        <!-- Revenue Potential -->
+                        <tr class="section-header">
+                            <td colspan="5">📈 Monthly Revenue Potential</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Minimum Target</strong></td>
+                            <td class="disblay-col">
+                                <div>120 subscriptions</div>
+                                <div class="roi-highlight">
+                                    <div class="roi-value">₹95,880</div>
+                                    <div style="font-size: 0.8rem;">monthly revenue</div>
+                                </div>
+                            </td>
+                            <td class="topiko-col">
+                                <div>60 subscriptions</div>
+                                <div class="roi-highlight">
+                                    <div class="roi-value">₹299,940</div>
+                                    <div style="font-size: 0.8rem;">monthly revenue</div>
+                                </div>
+                            </td>
+                            <td class="flex-col">
+                                <div>15 projects</div>
+                                <div class="roi-highlight">
+                                    <div class="roi-value">Variable (minimum 4L+)</div>
+                                    <div style="font-size: 0.8rem;">based on project size</div>
+                                </div>
+                            </td>
+                            <td class="hebt-col">
+                                <div>5+ projects</div>
+                                <div class="roi-highlight">
+                                    <div class="roi-value">Variable (depends on project scope. Min. 1L per project)</div>
+                                    <div style="font-size: 0.8rem;">depends on requirements</div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Product Features -->
+                        <tr class="section-header">
+                            <td colspan="5">🛍️ What Customer Gets</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Core Features</strong></td>
+                            <td class="disblay-col">
+                                <ul class="feature-list">
+                                    <li>Mobile-ready mini-sites</li>
+                                    <li>Single link showcase</li>
+                                    <li>Image galleries</li>
+                                    <li>Contact integration</li>
+                                    <li>Basic analytics</li>
+                                </ul>
+                            </td>
+                            <td class="topiko-col">
+                                <ul class="feature-list">
+                                    <li>Complete website + app</li>
+                                    <li>CRM system</li>
+                                    <li>Loyalty programs</li>
+                                    <li>SEO tools</li>
+                                    <li>Payment integration</li>
+                                    <li>Analytics dashboard</li>
+                                </ul>
+                            </td>
+                            <td class="flex-col">
+                                <ul class="feature-list">
+                                    <li>White-label solution</li>
+                                    <li>Custom domain</li>
+                                    <li>Branded mobile apps</li>
+                                    <li>Full customization</li>
+                                    <li>Reseller tools</li>
+                                </ul>
+                            </td>
+                            <td class="hebt-col">
+                                <ul class="feature-list">
+                                    <li>No-code platform access</li>
+                                    <li>Full source code download</li>
+                                    <li>Custom development tools</li>
+                                    <li>Agency-grade features</li>
+                                    <li>Unlimited projects</li>
+                                </ul>
+                            </td>
+                        </tr>
+
+                        <!-- Market Positioning -->
+                        <tr class="section-header">
+                            <td colspan="5">🎯 Market Positioning</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ideal For</strong></td>
+                            <td class="disblay-col">
+                                <div>• Part-time entrepreneurs</div>
+                                <div>• Low investment start</div>
+                                <div>• Testing market demand</div>
+                            </td>
+                            <td class="topiko-col">
+                                <div>• Serious entrepreneurs</div>
+                                <div>• Moderate investment</div>
+                                <div>• Full-time commitment</div>
+                            </td>
+                            <td class="flex-col">
+                                <div>• Digital agencies</div>
+                                <div>• Brand builders</div>
+                                <div>• White-label seekers</div>
+                            </td>
+                            <td class="hebt-col">
+                                <div>• Technical experts</div>
+                                <div>• High investment capacity</div>
+                                <div>• Enterprise clients</div>
+                            </td>
+                        </tr>
+
+                        <!-- Scale Potential -->
+                        <tr class="section-header">
+                            <td colspan="5">⏰ Scale Potential</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scale Potential</strong></td>
+                            <td class="disblay-col">
+                                <div style="color: #ed8936;">Moderate</div>
+                                <div style="font-size: 0.8rem;">Local market focus</div>
+                            </td>
+                            <td class="topiko-col">
+                                <div style="color: #10b981;">High</div>
+                                <div style="font-size: 0.8rem;">Regional expansion</div>
+                            </td>
+                            <td class="flex-col">
+                                <div style="color: #10b981;">Very High</div>
+                                <div style="font-size: 0.8rem;">Multiple markets</div>
+                            </td>
+                            <td class="hebt-col">
+                                <div style="color: #667eea;">Premium</div>
+                                <div style="font-size: 0.8rem;">Enterprise focus</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>💡 Note:</strong>
+            <ul style="margin-left: 1.2rem; margin-top: 0.5rem;">
+                <li>All pricing is in Indian Rupees (₹)</li>
+                <li>All costs include GST</li>
+                <li>Commission percentages are calculated on customer pricing</li>
+                <li>Investment ranges include office setup, initial staff salaries, and working capital requirements</li>
+                <li>Revenue potentials are based on minimum targets - actual performance may vary based on market conditions and effort</li>
+            </ul>
+        </div>
+
+        <div class="note" style="background: #f0fff4; border-color: #10b981;">
+            <strong>🚀 Recommendation:</strong> 
+            <strong>Disblay</strong> is ideal for smart entrepreneurs seeking strategic low investment with high growth potential. 
+            <strong>Topiko</strong> offers the best balance of investment vs returns for most franchise partners. 
+            <strong>Topiko Flex</strong> is ideal for those with existing business networks. 
+            <strong>HEBT</strong> targets premium market with higher technical requirements.
+        </div>
+    </div>
+
+</body>
+</html>
