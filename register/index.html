@@ -1933,6 +1933,45 @@
                 console.error('❌ Error initializing Supabase:', error);
             }
         }
+        
+        // ============================================
+        // PARTNER UTM TRACKING SYSTEM
+        // ============================================
+        
+        // Auto-capture UTM parameters on page load
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Capture all UTM parameters
+            const utmData = {
+                // Standard UTM parameters
+                utm_source: urlParams.get('utm_source'),
+                utm_medium: urlParams.get('utm_medium'),
+                utm_campaign: urlParams.get('utm_campaign'),
+                utm_content: urlParams.get('utm_content'),
+                utm_term: urlParams.get('utm_term'),
+                
+                // Partner-specific UTM parameters
+                utm_partner_type: urlParams.get('utm_partner_type'),
+                utm_partner_region: urlParams.get('utm_partner_region'),
+                
+                // Custom parameters
+                utm_referral_code: urlParams.get('utm_referral_code'),
+                utm_target_city: urlParams.get('utm_target_city'),
+                utm_target_product: urlParams.get('utm_target_product')
+            };
+            
+            // Remove null values
+            Object.keys(utmData).forEach(key => {
+                if (utmData[key] === null) delete utmData[key];
+            });
+            
+            // Store in sessionStorage
+            if (Object.keys(utmData).length > 0) {
+                sessionStorage.setItem('partnerUTMData', JSON.stringify(utmData));
+                console.log('📊 UTM Parameters captured:', utmData);
+            }
+        })();
 
         // Application State
         let currentScreen = 'welcome';
@@ -1995,14 +2034,34 @@
         }
 
         function captureUTMParameters() {
+            // First check sessionStorage for captured UTM data
+            const storedUTM = JSON.parse(sessionStorage.getItem('partnerUTMData') || '{}');
+            
+            // Also capture directly from URL as fallback
             const urlParams = new URLSearchParams(window.location.search);
+            
+            // Merge stored and URL params (URL params take precedence)
             return {
-                utm_source: urlParams.get('utm_source'),
-                utm_medium: urlParams.get('utm_medium'),
-                utm_campaign: urlParams.get('utm_campaign'),
-                utm_content: urlParams.get('utm_content'),
-                utm_term: urlParams.get('utm_term'),
-                referrer: document.referrer
+                // Standard UTM parameters
+                utm_source: urlParams.get('utm_source') || storedUTM.utm_source,
+                utm_medium: urlParams.get('utm_medium') || storedUTM.utm_medium,
+                utm_campaign: urlParams.get('utm_campaign') || storedUTM.utm_campaign,
+                utm_content: urlParams.get('utm_content') || storedUTM.utm_content,
+                utm_term: urlParams.get('utm_term') || storedUTM.utm_term,
+                
+                // Partner-specific UTM parameters
+                utm_partner_type: urlParams.get('utm_partner_type') || storedUTM.utm_partner_type,
+                utm_partner_region: urlParams.get('utm_partner_region') || storedUTM.utm_partner_region,
+                
+                // Custom parameters for JSON storage
+                utm_referral_code: urlParams.get('utm_referral_code') || storedUTM.utm_referral_code,
+                utm_target_city: urlParams.get('utm_target_city') || storedUTM.utm_target_city,
+                utm_target_product: urlParams.get('utm_target_product') || storedUTM.utm_target_product,
+                
+                // Additional metadata
+                referrer: document.referrer,
+                landing_url: window.location.href,
+                landing_page: window.location.pathname
             };
         }
 
@@ -2045,6 +2104,20 @@
             console.log('💾 Phase 1: Saving contact details...');
             showSaveStatus('💾 Saving your details...', 'saving');
 
+            const utmData = captureUTMParameters();
+            
+            // Separate custom parameters for JSON storage
+            const customParams = {
+                utm_referral_code: utmData.utm_referral_code,
+                utm_target_city: utmData.utm_target_city,
+                utm_target_product: utmData.utm_target_product
+            };
+            
+            // Remove undefined values from customParams
+            Object.keys(customParams).forEach(key => {
+                if (!customParams[key]) delete customParams[key];
+            });
+            
             const leadData = {
                 first_name: document.getElementById('firstName').value.trim(),
                 last_name: document.getElementById('lastName').value.trim(),
@@ -2054,11 +2127,35 @@
                 contact_entered_at: new Date().toISOString(),
                 session_id: generateSessionId(),
                 browser_info: getBrowserInfo(),
-                utm_data: captureUTMParameters(),
+                
+                // Standard UTM parameters
+                utm_source: utmData.utm_source || 'direct',
+                utm_medium: utmData.utm_medium || 'organic',
+                utm_campaign: utmData.utm_campaign,
+                utm_content: utmData.utm_content,
+                utm_term: utmData.utm_term,
+                
+                // Partner-specific UTM parameters
+                utm_partner_type: utmData.utm_partner_type,
+                utm_partner_region: utmData.utm_partner_region,
+                
+                // Custom parameters in JSON field
+                custom_params: Object.keys(customParams).length > 0 ? customParams : null,
+                
+                // Additional tracking data
+                utm_data: utmData, // Keep full UTM data for backward compatibility
                 campaign_source: 'topikopartner.com',
+                source: 'partner', // Mark as partner lead
+                lead_type: 'partner',
+                partner_status: 'Pending Review',
+                
+                // Other fields
                 answers: {},
                 recommended_products: [],
-                lead_score: 0
+                lead_score: 0,
+                landing_url: utmData.landing_url,
+                landing_page: utmData.landing_page,
+                referrer: utmData.referrer
             };
             
             if (!supabase) {
