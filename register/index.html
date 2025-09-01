@@ -2059,9 +2059,7 @@
                 utm_target_product: urlParams.get('utm_target_product') || storedUTM.utm_target_product,
                 
                 // Additional metadata
-                referrer: document.referrer,
-                landing_url: window.location.href,
-                landing_page: window.location.pathname
+                referrer: document.referrer
             };
         }
 
@@ -2181,8 +2179,6 @@
                 answers: {},
                 recommended_products: [],
                 lead_score: 0,
-                landing_url: utmData.landing_url,
-                landing_page: utmData.landing_page,
                 referrer: utmData.referrer
             };
             
