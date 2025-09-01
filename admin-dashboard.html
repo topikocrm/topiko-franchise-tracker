@@ -359,6 +359,7 @@
                             <button class="filter-btn" data-filter="high-score">High Score</button>
                         </div>
                         <button class="refresh-btn" onclick="loadLeads()" style="margin-left: 1rem;">Refresh</button>
+                        <button class="refresh-btn" onclick="addTestData()" style="margin-left: 0.5rem; background: linear-gradient(135deg, #f59e0b, #ef4444);">Add Test Data</button>
                     </div>
                 </div>
                 
@@ -396,7 +397,7 @@
     <script>
         // Configuration
         const SUPABASE_URL = 'https://uyaubwfmxmxelcshuyaf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YXVid2ZteG14ZWxjc2h1eWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NDA0MTksImV4cCI6MjA2OTUxNjQxOX';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YXVid2ZteG14ZWxjc2h1eWFmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1Mzk0MDQxOSwiZXhwIjoyMDY5NTE2NDE5fQ.ldo2yTTOq5iOGZY6rXMcabDVIY7tBXr40x7_Wf5bvxk';
         
         // Initialize Supabase with error handling
         let supabase = null;
@@ -441,8 +442,24 @@
                             .select('*')
                             .order('created_at', { ascending: false });
 
-                        if (!error && data) {
+                        if (error) {
+                            console.error('Supabase error:', error);
+                            if (error.message && error.message.includes('401')) {
+                                console.log('⚠️ Supabase authentication failed. Check your API key or table permissions.');
+                                document.getElementById('leads-content').innerHTML = `
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">⚠️</div>
+                                        <div>Supabase connection failed (401 Unauthorized)</div>
+                                        <div style="margin-top: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.6);">
+                                            Using local storage only. Your existing leads may not be visible.<br>
+                                            Please check Supabase table permissions or API key.
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        } else if (data) {
                             supabaseLeads = data;
+                            console.log(`✅ Loaded ${data.length} leads from Supabase`);
                         }
                     } catch (error) {
                         console.log('Supabase fetch failed, will use local data:', error);
@@ -761,6 +778,11 @@
 
         // Update charts with data
         function updateCharts() {
+            if (!productChart || !dailyChart) {
+                console.log('Charts not initialized yet');
+                return;
+            }
+            
             // Product Interest Data
             const productCounts = {};
             allLeads.forEach(lead => {
@@ -769,9 +791,11 @@
                 });
             });
 
-            productChart.data.labels = Object.keys(productCounts);
-            productChart.data.datasets[0].data = Object.values(productCounts);
-            productChart.update();
+            if (productChart && productChart.data) {
+                productChart.data.labels = Object.keys(productCounts);
+                productChart.data.datasets[0].data = Object.values(productCounts);
+                productChart.update();
+            }
 
             // Daily Leads Data (last 7 days)
             const last7Days = [];
@@ -790,9 +814,11 @@
                 );
             }
 
-            dailyChart.data.labels = last7Days;
-            dailyChart.data.datasets[0].data = dailyCounts;
-            dailyChart.update();
+            if (dailyChart && dailyChart.data) {
+                dailyChart.data.labels = last7Days;
+                dailyChart.data.datasets[0].data = dailyCounts;
+                dailyChart.update();
+            }
         }
 
         // Auto-refresh every 30 seconds (only if supabase is configured)
@@ -811,6 +837,88 @@
                 closeModal();
             }
         });
+        
+        // Add test data function
+        function addTestData() {
+            const testLeads = [
+                {
+                    id: 'test_' + Date.now(),
+                    first_name: 'Rajesh',
+                    last_name: 'Kumar',
+                    email: 'rajesh.kumar@example.com',
+                    phone: '+91-9876543210',
+                    business_goals: 'Want to start digital services business in Bangalore',
+                    recommended_products: ['topiko', 'disblay'],
+                    selected_product: 'topiko',
+                    lead_score: 85,
+                    campaign_source: 'google',
+                    created_at: new Date().toISOString(),
+                    answers: {
+                        q1: 'yes',
+                        q2: 'fulltime',
+                        q3: ['business_owners', 'startups'],
+                        q4: ['digital_marketing'],
+                        q5: 'topiko_brand',
+                        q6: '3l_5l'
+                    }
+                },
+                {
+                    id: 'test_' + (Date.now() + 1),
+                    first_name: 'Priya',
+                    last_name: 'Sharma',
+                    email: 'priya.sharma@example.com',
+                    phone: '+91-9988776655',
+                    business_goals: 'Expand existing IT consultancy with new products',
+                    recommended_products: ['hebt', 'topiko_flex'],
+                    selected_product: 'hebt',
+                    lead_score: 92,
+                    campaign_source: 'facebook',
+                    created_at: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+                    answers: {
+                        q1: 'yes',
+                        q2: 'fulltime',
+                        q3: ['it_companies', 'business_owners'],
+                        q4: ['it_services', 'digital_marketing'],
+                        q5: 'own_brand',
+                        q6: '5l_10l'
+                    }
+                },
+                {
+                    id: 'test_' + (Date.now() + 2),
+                    first_name: 'Amit',
+                    last_name: 'Patel',
+                    email: 'amit.patel@example.com',
+                    phone: '+91-9123456789',
+                    business_goals: 'Start part-time franchise business',
+                    recommended_products: ['disblay'],
+                    selected_product: 'disblay',
+                    lead_score: 68,
+                    campaign_source: 'direct',
+                    created_at: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+                    answers: {
+                        q1: 'no',
+                        q2: 'parttime',
+                        q3: ['small_businesses'],
+                        q4: ['none'],
+                        q5: 'topiko_brand',
+                        q6: 'less_1l'
+                    }
+                }
+            ];
+            
+            // Get existing leads
+            const existingLeads = JSON.parse(localStorage.getItem('franchise_leads') || '[]');
+            
+            // Add test leads
+            const updatedLeads = [...existingLeads, ...testLeads];
+            localStorage.setItem('franchise_leads', JSON.stringify(updatedLeads));
+            
+            console.log('✅ Added 3 test leads to localStorage');
+            alert('Test data added successfully! The page will now refresh.');
+            
+            // Reload the page to show new data
+            location.reload();
+        }
     </script>
 </body>
 </html>
