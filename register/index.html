@@ -2067,6 +2067,17 @@
 
         // Robust update function with retry logic
         async function updateLeadData(updateData, retries = 3) {
+            // Update localStorage backup
+            if (currentLeadId && currentLeadId.startsWith('local_lead_')) {
+                const existingLeads = JSON.parse(localStorage.getItem('franchise_leads') || '[]');
+                const leadIndex = existingLeads.findIndex(lead => lead.id === currentLeadId);
+                if (leadIndex !== -1) {
+                    existingLeads[leadIndex] = { ...existingLeads[leadIndex], ...updateData };
+                    localStorage.setItem('franchise_leads', JSON.stringify(existingLeads));
+                    console.log('📝 Updated localStorage backup:', updateData);
+                }
+            }
+            
             if (!supabase || !currentLeadId) {
                 console.log('💾 Demo mode: Simulating data save:', updateData);
                 return { success: true, data: updateData };
@@ -2082,6 +2093,13 @@
                         
                     if (!error) {
                         console.log('✅ Data saved successfully:', updateData);
+                        // Also update localStorage if it exists
+                        const existingLeads = JSON.parse(localStorage.getItem('franchise_leads') || '[]');
+                        const leadIndex = existingLeads.findIndex(lead => lead.id === currentLeadId);
+                        if (leadIndex !== -1) {
+                            existingLeads[leadIndex] = { ...existingLeads[leadIndex], ...updateData };
+                            localStorage.setItem('franchise_leads', JSON.stringify(existingLeads));
+                        }
                         return { success: true, data };
                     }
                     
@@ -2181,9 +2199,17 @@
                 }
             } catch (error) {
                 console.error('❌ Failed to save contact details:', error);
-                // Don't show error to user, just log it
-                // Data will be saved locally and can be synced later
+                // Save to localStorage as backup
                 currentLeadId = 'local_lead_' + Date.now();
+                leadData.id = currentLeadId;
+                leadData.created_at = new Date().toISOString();
+                
+                // Get existing leads from localStorage
+                const existingLeads = JSON.parse(localStorage.getItem('franchise_leads') || '[]');
+                existingLeads.push(leadData);
+                localStorage.setItem('franchise_leads', JSON.stringify(existingLeads));
+                
+                console.log('📝 Data saved to localStorage with ID:', currentLeadId);
                 showSaveStatus('✅ Details saved locally', 'saved');
                 return { success: true, leadId: currentLeadId, localOnly: true };
             }

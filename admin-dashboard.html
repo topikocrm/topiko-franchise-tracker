@@ -430,46 +430,47 @@
         // Load leads from Supabase
         async function loadLeads() {
             try {
+                let supabaseLeads = [];
+                let localLeads = [];
+                
+                // Try to load from Supabase
                 if (supabase) {
-                    const { data, error } = await supabase
-                        .from('franchise_leads')
-                        .select('*')
-                        .order('created_at', { ascending: false });
+                    try {
+                        const { data, error } = await supabase
+                            .from('franchise_leads')
+                            .select('*')
+                            .order('created_at', { ascending: false });
 
-                    if (error) throw error;
-
-                    allLeads = data || [];
-                } else {
-                    // Demo mode - load from localStorage
-                    const demoLeads = JSON.parse(localStorage.getItem('demo_leads') || '[]');
-                    allLeads = demoLeads;
-                    
-                    if (allLeads.length === 0) {
-                        // Add some demo data
-                        allLeads = [
-                            {
-                                id: '1',
-                                first_name: 'Demo',
-                                last_name: 'User',
-                                email: 'demo@example.com',
-                                phone: '+91-9876543210',
-                                business_goals: 'Looking to expand digital services',
-                                recommended_products: ['topiko', 'disblay'],
-                                selected_product: 'topiko',
-                                lead_score: 85,
-                                campaign_source: 'demo',
-                                created_at: new Date().toISOString(),
-                                answers: {
-                                    q1: 'yes',
-                                    q2: 'fulltime',
-                                    q3: ['business_owners', 'startups'],
-                                    q4: ['digital_marketing'],
-                                    q5: 'topiko_brand',
-                                    q6: '1l_3l'
-                                }
-                            }
-                        ];
+                        if (!error && data) {
+                            supabaseLeads = data;
+                        }
+                    } catch (error) {
+                        console.log('Supabase fetch failed, will use local data:', error);
                     }
+                }
+                
+                // Always load from localStorage as well
+                localLeads = JSON.parse(localStorage.getItem('franchise_leads') || '[]');
+                
+                // Merge leads, prioritizing Supabase data but including local-only leads
+                const mergedLeads = [...supabaseLeads];
+                const supabaseIds = new Set(supabaseLeads.map(lead => lead.id));
+                
+                // Add local leads that aren't in Supabase
+                localLeads.forEach(localLead => {
+                    if (!supabaseIds.has(localLead.id)) {
+                        mergedLeads.push(localLead);
+                    }
+                });
+                
+                // Sort by created_at descending
+                allLeads = mergedLeads.sort((a, b) => 
+                    new Date(b.created_at || 0) - new Date(a.created_at || 0)
+                );
+                
+                // If still no leads, show helpful message
+                if (allLeads.length === 0) {
+                    console.log('No leads found in Supabase or localStorage');
                 }
                 
                 updateStats();
@@ -546,7 +547,12 @@
                         ${filteredLeads.map(lead => `
                             <tr class="lead-row" onclick="showLeadDetail('${lead.id}')">
                                 <td>
-                                    <div style="font-weight: 500;">${lead.first_name} ${lead.last_name}</div>
+                                    <div style="font-weight: 500;">
+                                        ${lead.first_name} ${lead.last_name}
+                                        ${lead.id && lead.id.startsWith('local_lead_') ? 
+                                            '<span style="background: rgba(245,158,11,0.2); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 6px;">LOCAL</span>' : 
+                                            ''}
+                                    </div>
                                 </td>
                                 <td>
                                     <div>${lead.email}</div>
