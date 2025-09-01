@@ -2148,16 +2148,21 @@
             });
             
             const leadData = {
+                // Core contact details
                 first_name: document.getElementById('firstName').value.trim(),
                 last_name: document.getElementById('lastName').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 city: document.getElementById('city').value.trim(),
+                email: '', // Add email field even if empty
+                
+                // Status and timing
                 lead_status: 'contact_entered',
+                created_at: new Date().toISOString(),
                 contact_entered_at: new Date().toISOString(),
                 session_id: generateSessionId(),
                 browser_info: getBrowserInfo(),
                 
-                // Standard UTM parameters
+                // Standard UTM tracking
                 utm_source: utmData.utm_source || 'direct',
                 utm_medium: utmData.utm_medium || 'organic',
                 utm_campaign: utmData.utm_campaign,
@@ -2169,17 +2174,23 @@
                 utm_partner_region: utmData.utm_partner_region,
                 
                 // Additional tracking data
-                utm_data: utmData, // Keep full UTM data for backward compatibility
+                utm_data: utmData, // Full UTM data in JSON
                 campaign_source: 'topikopartner.com',
-                source: 'partner', // Mark as partner lead
                 lead_type: 'partner',
                 partner_status: 'Pending Review',
+                
+                // Landing page data
+                landing_url: window.location.href,
+                landing_page: window.location.pathname,
+                referrer: document.referrer,
+                
+                // Custom parameters
+                custom_params: Object.keys(customParams).length > 0 ? customParams : null,
                 
                 // Other fields
                 answers: {},
                 recommended_products: [],
-                lead_score: 0,
-                referrer: utmData.referrer
+                lead_score: 0
             };
             
             if (!supabase) {
