@@ -2067,8 +2067,8 @@
 
         // Robust update function with retry logic
         async function updateLeadData(updateData, retries = 3) {
-            // Update localStorage backup
-            if (currentLeadId && currentLeadId.startsWith('local_lead_')) {
+            // Update localStorage backup for local leads
+            if (currentLeadId && String(currentLeadId).startsWith('local_')) {
                 const existingLeads = JSON.parse(localStorage.getItem('franchise_leads') || '[]');
                 const leadIndex = existingLeads.findIndex(lead => lead.id === currentLeadId);
                 if (leadIndex !== -1) {
@@ -2076,10 +2076,23 @@
                     localStorage.setItem('franchise_leads', JSON.stringify(existingLeads));
                     console.log('📝 Updated localStorage backup:', updateData);
                 }
+                return { success: true, data: updateData };
             }
             
             if (!supabase || !currentLeadId) {
                 console.log('💾 Demo mode: Simulating data save:', updateData);
+                return { success: true, data: updateData };
+            }
+
+            // Only try to update in Supabase if we have a numeric ID
+            if (typeof currentLeadId !== 'number' && !Number.isInteger(Number(currentLeadId))) {
+                console.log('📝 Local-only lead, updating localStorage');
+                const existingLeads = JSON.parse(localStorage.getItem('franchise_leads') || '[]');
+                const leadIndex = existingLeads.findIndex(lead => lead.id === currentLeadId);
+                if (leadIndex !== -1) {
+                    existingLeads[leadIndex] = { ...existingLeads[leadIndex], ...updateData };
+                    localStorage.setItem('franchise_leads', JSON.stringify(existingLeads));
+                }
                 return { success: true, data: updateData };
             }
 
@@ -2157,9 +2170,6 @@
                 utm_partner_type: utmData.utm_partner_type,
                 utm_partner_region: utmData.utm_partner_region,
                 
-                // Custom parameters in JSON field
-                custom_params: Object.keys(customParams).length > 0 ? customParams : null,
-                
                 // Additional tracking data
                 utm_data: utmData, // Keep full UTM data for backward compatibility
                 campaign_source: 'topikopartner.com',
@@ -2184,9 +2194,13 @@
             }
 
             try {
+                // Don't send an ID, let Supabase auto-generate it
+                const leadDataForInsert = { ...leadData };
+                delete leadDataForInsert.id; // Remove id field to let database auto-generate
+                
                 const { data, error } = await supabase
                     .from('franchise_leads')
-                    .insert([leadData])
+                    .insert([leadDataForInsert])
                     .select('id');
                 
                 if (!error && data && data.length > 0) {
@@ -2199,9 +2213,10 @@
                 }
             } catch (error) {
                 console.error('❌ Failed to save contact details:', error);
-                // Save to localStorage as backup
-                currentLeadId = 'local_lead_' + Date.now();
-                leadData.id = currentLeadId;
+                // Save to localStorage as backup with a temporary string ID
+                const tempId = 'local_' + Date.now();
+                currentLeadId = tempId;
+                leadData.id = tempId;
                 leadData.created_at = new Date().toISOString();
                 
                 // Get existing leads from localStorage
@@ -2209,9 +2224,9 @@
                 existingLeads.push(leadData);
                 localStorage.setItem('franchise_leads', JSON.stringify(existingLeads));
                 
-                console.log('📝 Data saved to localStorage with ID:', currentLeadId);
+                console.log('📝 Data saved to localStorage with ID:', tempId);
                 showSaveStatus('✅ Details saved locally', 'saved');
-                return { success: true, leadId: currentLeadId, localOnly: true };
+                return { success: true, leadId: tempId, localOnly: true };
             }
         }
 
