@@ -1368,11 +1368,15 @@
             let scheduledDemos = 0;
             let nextDemoTime = 'None';
             
+            console.log('🔍 Checking scheduled demos in', allLeads.length, 'leads');
+            
             allLeads.forEach(lead => {
                 if (lead.follow_up_notes) {
+                    console.log('📝 Lead has follow_up_notes:', lead.first_name, '-', lead.follow_up_notes);
                     const bookingMatch = lead.follow_up_notes.match(/(Demo|Call)\s+booked\s+for\s+(.+)/i);
                     if (bookingMatch) {
                         scheduledDemos++;
+                        console.log('✅ Found scheduled demo/call:', bookingMatch[2]);
                         // Show the first scheduled demo time
                         if (nextDemoTime === 'None') {
                             nextDemoTime = bookingMatch[2];
@@ -1380,8 +1384,11 @@
                     }
                 } else if (lead.demo_viewed_at) {
                     scheduledDemos++;
+                    console.log('⏰ Lead has demo_viewed_at but no follow_up_notes:', lead.first_name);
                 }
             });
+            
+            console.log('📊 Total scheduled demos:', scheduledDemos, 'Next demo:', nextDemoTime);
 
             // Update DOM elements
             document.getElementById('total-leads').textContent = totalLeads;
@@ -1457,9 +1464,11 @@
                                         ${(() => {
                                             // Extract demo slot from follow_up_notes
                                             if (lead.follow_up_notes) {
+                                                console.log('🔍 Table row - checking follow_up_notes for', lead.first_name, ':', lead.follow_up_notes);
                                                 const bookingMatch = lead.follow_up_notes.match(/(Demo|Call)\s+booked\s+for\s+(.+)/i);
                                                 if (bookingMatch) {
                                                     const [, type, time] = bookingMatch;
+                                                    console.log('✅ Table row - found booking:', type, time);
                                                     return `
                                                         <div style="color: var(--success); font-weight: 500;">
                                                             ${type === 'Demo' ? '🖥️' : '📞'} ${time}
@@ -1468,8 +1477,10 @@
                                                 }
                                             }
                                             if (lead.demo_viewed_at) {
+                                                console.log('⏰ Table row - has demo_viewed_at for', lead.first_name);
                                                 return `<div style="color: var(--warning);">⏰ Scheduled (time not recorded)</div>`;
                                             }
+                                            console.log('❌ Table row - no demo scheduled for', lead.first_name);
                                             return `<div style="color: var(--text-muted);">Not scheduled</div>`;
                                         })()}
                                     </td>
