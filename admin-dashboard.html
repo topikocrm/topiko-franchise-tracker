@@ -913,6 +913,11 @@
                     <div class="stat-change positive" id="quality-change">15% of total</div>
                 </div>
                 <div class="neu-card stat-card">
+                    <div class="stat-number" id="scheduled-demos">-</div>
+                    <div class="stat-label">📅 Scheduled Demos</div>
+                    <div class="stat-change" id="demo-timing" style="color: var(--primary);">Next: <span id="next-demo-time">None</span></div>
+                </div>
+                <div class="neu-card stat-card">
                     <div class="stat-number" id="completed-assessments">-</div>
                     <div class="stat-label">Completed Assessments</div>
                     <div class="stat-change positive" id="assessment-change">78% completion</div>
@@ -1358,12 +1363,33 @@
             const highQualityLeads = allLeads.filter(lead => lead.lead_score >= 80).length;
             const completedAssessments = allLeads.filter(lead => lead.assessment_completed_at).length;
             const conversionRate = totalLeads > 0 ? ((completedAssessments / totalLeads) * 100).toFixed(1) : 0;
+            
+            // Calculate scheduled demos
+            let scheduledDemos = 0;
+            let nextDemoTime = 'None';
+            
+            allLeads.forEach(lead => {
+                if (lead.follow_up_notes) {
+                    const bookingMatch = lead.follow_up_notes.match(/(Demo|Call)\s+booked\s+for\s+(.+)/i);
+                    if (bookingMatch) {
+                        scheduledDemos++;
+                        // Show the first scheduled demo time
+                        if (nextDemoTime === 'None') {
+                            nextDemoTime = bookingMatch[2];
+                        }
+                    }
+                } else if (lead.demo_viewed_at) {
+                    scheduledDemos++;
+                }
+            });
 
             // Update DOM elements
             document.getElementById('total-leads').textContent = totalLeads;
             document.getElementById('today-leads').textContent = todayLeads;
             document.getElementById('avg-score').textContent = avgScore;
             document.getElementById('high-quality-leads').textContent = highQualityLeads;
+            document.getElementById('scheduled-demos').textContent = scheduledDemos;
+            document.getElementById('next-demo-time').textContent = nextDemoTime;
             document.getElementById('completed-assessments').textContent = completedAssessments;
             document.getElementById('conversion-rate').textContent = conversionRate + '%';
         }
@@ -1397,6 +1423,7 @@
                             <th>📱 Contact</th>
                             <th>📊 Status</th>
                             <th>🎯 Score</th>
+                            <th>📅 Demo Slot</th>
                             <th>🛍️ Products</th>
                             <th>📍 Source</th>
                             <th>📅 Timeline</th>
@@ -1425,6 +1452,26 @@
                                         <span class="lead-score ${getScoreClass(lead.lead_score)}">
                                             ${Math.round(lead.lead_score || 0)}
                                         </span>
+                                    </td>
+                                    <td>
+                                        ${(() => {
+                                            // Extract demo slot from follow_up_notes
+                                            if (lead.follow_up_notes) {
+                                                const bookingMatch = lead.follow_up_notes.match(/(Demo|Call)\s+booked\s+for\s+(.+)/i);
+                                                if (bookingMatch) {
+                                                    const [, type, time] = bookingMatch;
+                                                    return `
+                                                        <div style="color: var(--success); font-weight: 500;">
+                                                            ${type === 'Demo' ? '🖥️' : '📞'} ${time}
+                                                        </div>
+                                                    `;
+                                                }
+                                            }
+                                            if (lead.demo_viewed_at) {
+                                                return `<div style="color: var(--warning);">⏰ Scheduled (time not recorded)</div>`;
+                                            }
+                                            return `<div style="color: var(--text-muted);">Not scheduled</div>`;
+                                        })()}
                                     </td>
                                     <td>
                                         <div class="product-tags">

@@ -4794,43 +4794,69 @@
 
         function generateTimeSlots() {
             const slots = [];
-            // Get current time
+            
+            // Get current time and convert to IST components
             const now = new Date();
             
-            // Start from 2 hours from now
-            let currentTime = new Date(now);
-            currentTime.setHours(currentTime.getHours() + 2, 0, 0, 0);
-            if (now.getMinutes() > 0) {
-                currentTime.setHours(currentTime.getHours() + 1);
+            // Get IST offset (5.5 hours ahead of UTC)
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
+            const istTime = new Date(utcTime + istOffset);
+            
+            // Start from IST time + 2 hours
+            let currentHour = istTime.getHours() + 2;
+            let currentDate = istTime.getDate();
+            let currentMonth = istTime.getMonth();
+            let currentYear = istTime.getFullYear();
+            
+            // Round up to next hour if there are minutes
+            if (istTime.getMinutes() > 0) {
+                currentHour++;
             }
+            
+            // Handle hour overflow
+            if (currentHour >= 24) {
+                currentDate++;
+                currentHour = currentHour - 24;
+            }
+            
+            // Create slot time starting point
+            let slotDate = new Date(currentYear, currentMonth, currentDate, currentHour, 0, 0);
             
             // Generate 8 slots within business hours (10am-6pm IST)
             let slotsAdded = 0;
             let daysChecked = 0;
-            const maxDays = 7; // Check up to 7 days ahead
+            const maxDays = 7;
             
             while (slotsAdded < 8 && daysChecked < maxDays) {
-                // Check what time this would be in IST
-                const istTimeString = currentTime.toLocaleString('en-US', { 
-                    timeZone: 'Asia/Kolkata',
-                    hour: 'numeric',
-                    hour12: false 
-                });
-                const istHour = parseInt(istTimeString);
+                const hour = slotDate.getHours();
                 
                 // Check if within business hours (10am to 6pm IST)
-                if (istHour >= 10 && istHour <= 17) { // 17 = 5pm (last slot at 5pm to end by 6pm)
-                    const slotTime = new Date(currentTime);
+                if (hour >= 10 && hour <= 17) {
+                    // This date is already in IST-equivalent local time
+                    // Convert back to actual date for storage
+                    const actualDate = new Date(slotDate.getTime() - istOffset + (now.getTimezoneOffset() * 60 * 1000));
                     
-                    // Format the slot in IST
-                    const day = formatInIST(slotTime, { weekday: 'short', month: 'short', day: 'numeric' });
-                    const time = formatInIST(slotTime, { hour: 'numeric', minute: '2-digit', hour12: true });
+                    // Format for display - explicitly in IST
+                    const dayStr = actualDate.toLocaleDateString('en-IN', { 
+                        timeZone: 'Asia/Kolkata',
+                        weekday: 'short', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    
+                    const timeStr = actualDate.toLocaleTimeString('en-IN', { 
+                        timeZone: 'Asia/Kolkata',
+                        hour: 'numeric', 
+                        minute: '2-digit',
+                        hour12: true 
+                    });
                     
                     slots.push({
-                        datetime: slotTime,  // Store the actual JavaScript Date object
-                        display: `${day} - ${time} IST`,
-                        day: day,
-                        time: time + ' IST',
+                        datetime: actualDate,  // Store the actual date that will convert to IST
+                        display: `${dayStr} - ${timeStr} IST`,
+                        day: dayStr,
+                        time: timeStr + ' IST',
                         isCustom: false
                     });
                     
@@ -4838,15 +4864,18 @@
                 }
                 
                 // Move to next hour
-                currentTime.setHours(currentTime.getHours() + 1);
+                slotDate.setHours(slotDate.getHours() + 1);
                 
-                // If we've checked too many hours for today, move to next day
-                if (istHour >= 18 || (istHour < 10 && currentTime.getDate() === now.getDate())) {
-                    // Move to next day at 10am IST
-                    currentTime.setDate(currentTime.getDate() + 1);
-                    // Set to approximately 10am IST (this is rough, will be refined by the IST check above)
-                    currentTime.setHours(4, 30, 0, 0); // 10am IST is roughly 4:30am UTC
+                // If past business hours, move to next day at 10am
+                if (slotDate.getHours() >= 18) {
+                    slotDate.setDate(slotDate.getDate() + 1);
+                    slotDate.setHours(10, 0, 0, 0);
                     daysChecked++;
+                }
+                
+                // If before business hours, jump to 10am
+                if (slotDate.getHours() < 10) {
+                    slotDate.setHours(10, 0, 0, 0);
                 }
             }
             
