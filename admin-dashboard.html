@@ -1689,37 +1689,75 @@
                         <div class="detail-item">
                             <div class="detail-label">Demo Status</div>
                             <div class="detail-value">
-                                ${lead.demo_viewed_at ? 
-                                    `✅ Demo scheduled` : 
-                                    `❌ Not Scheduled`}
+                                ${(() => {
+                                    // Check multiple conditions for demo scheduling
+                                    if (lead.demo_viewed_at) return `✅ Demo scheduled`;
+                                    if (lead.follow_up_notes && (
+                                        lead.follow_up_notes.toLowerCase().includes('demo') ||
+                                        lead.follow_up_notes.toLowerCase().includes('call') ||
+                                        lead.follow_up_notes.toLowerCase().includes('booked') ||
+                                        lead.follow_up_notes.toLowerCase().includes('scheduled')
+                                    )) return `✅ Scheduled`;
+                                    if (lead.demo_booked_at) return `✅ Demo scheduled`;
+                                    return `❌ Not Scheduled`;
+                                })()}
                             </div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Scheduled Time</div>
                             <div class="detail-value">
-                                ${lead.follow_up_notes ? 
-                                    (lead.follow_up_notes.includes('Demo booked') || lead.follow_up_notes.includes('Call booked') ? 
-                                        lead.follow_up_notes.replace(/^(Demo|Call) booked for /, '') : 
-                                        'Not scheduled') : 
-                                    'Not scheduled'}
+                                ${(() => {
+                                    if (lead.follow_up_notes) {
+                                        // Try to extract time from follow_up_notes
+                                        const notes = lead.follow_up_notes;
+                                        
+                                        // Check for "Demo booked for" or "Call booked for" pattern
+                                        const bookingMatch = notes.match(/(Demo|Call)\s+booked\s+for\s+(.+)/i);
+                                        if (bookingMatch) return bookingMatch[2];
+                                        
+                                        // Check if entire notes might be a time/date
+                                        if (notes.includes(':') || notes.includes('AM') || notes.includes('PM') || 
+                                            notes.includes('am') || notes.includes('pm') || notes.match(/\d{1,2}\/\d{1,2}/)) {
+                                            return notes;
+                                        }
+                                        
+                                        // If notes contain scheduling info but not in expected format
+                                        if (notes.toLowerCase().includes('scheduled') || 
+                                            notes.toLowerCase().includes('booked') ||
+                                            notes.toLowerCase().includes('demo') ||
+                                            notes.toLowerCase().includes('call')) {
+                                            return notes; // Return the full note
+                                        }
+                                    }
+                                    
+                                    // Check if demo_booked_at exists
+                                    if (lead.demo_booked_at) {
+                                        return new Date(lead.demo_booked_at).toLocaleString();
+                                    }
+                                    
+                                    return 'Not scheduled';
+                                })()}
                             </div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Type</div>
                             <div class="detail-value">
-                                ${lead.follow_up_notes ? 
-                                    (lead.follow_up_notes.includes('Demo booked') ? '🖥️ Product Demo' : 
-                                     lead.follow_up_notes.includes('Call booked') ? '📞 Consultation Call' : 
-                                     'Not specified') : 
-                                    'Not scheduled'}
+                                ${(() => {
+                                    if (lead.follow_up_notes) {
+                                        const notes = lead.follow_up_notes.toLowerCase();
+                                        if (notes.includes('demo')) return '🖥️ Product Demo';
+                                        if (notes.includes('call') || notes.includes('consultation')) return '📞 Consultation Call';
+                                        if (notes.includes('scheduled') || notes.includes('booked')) return '📅 Scheduled Meeting';
+                                    }
+                                    if (lead.demo_booked_at || lead.demo_viewed_at) return '🖥️ Product Demo';
+                                    return 'Not scheduled';
+                                })()}
                             </div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-label">Demo Viewed At</div>
+                            <div class="detail-label">Follow-up Notes</div>
                             <div class="detail-value">
-                                ${lead.demo_viewed_at ? 
-                                    new Date(lead.demo_viewed_at).toLocaleString() : 
-                                    'Not viewed yet'}
+                                ${lead.follow_up_notes || 'No notes available'}
                             </div>
                         </div>
                     </div>
