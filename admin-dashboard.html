@@ -1690,15 +1690,26 @@
                             <div class="detail-label">Demo Status</div>
                             <div class="detail-value">
                                 ${(() => {
+                                    // Debug: Log what we're checking
+                                    console.log('🔍 Checking demo status for lead:', {
+                                        id: lead.id,
+                                        name: lead.first_name,
+                                        demo_viewed_at: lead.demo_viewed_at,
+                                        follow_up_notes: lead.follow_up_notes,
+                                        demo_booked_at: lead.demo_booked_at,
+                                        lead_status: lead.lead_status
+                                    });
+                                    
                                     // Check multiple conditions for demo scheduling
-                                    if (lead.demo_viewed_at) return `✅ Demo scheduled`;
+                                    if (lead.demo_viewed_at) return `✅ Demo scheduled (demo_viewed_at: ${lead.demo_viewed_at})`;
                                     if (lead.follow_up_notes && (
                                         lead.follow_up_notes.toLowerCase().includes('demo') ||
                                         lead.follow_up_notes.toLowerCase().includes('call') ||
                                         lead.follow_up_notes.toLowerCase().includes('booked') ||
                                         lead.follow_up_notes.toLowerCase().includes('scheduled')
-                                    )) return `✅ Scheduled`;
-                                    if (lead.demo_booked_at) return `✅ Demo scheduled`;
+                                    )) return `✅ Scheduled (from notes)`;
+                                    if (lead.demo_booked_at) return `✅ Demo scheduled (demo_booked_at)`;
+                                    if (lead.lead_status === 'demo_viewed' || lead.lead_status === 'demo_scheduled') return `✅ Demo scheduled (status: ${lead.lead_status})`;
                                     return `❌ Not Scheduled`;
                                 })()}
                             </div>
@@ -1758,6 +1769,19 @@
                             <div class="detail-label">Follow-up Notes</div>
                             <div class="detail-value">
                                 ${lead.follow_up_notes || 'No notes available'}
+                            </div>
+                        </div>
+                        <div class="detail-item" style="grid-column: 1 / -1;">
+                            <div class="detail-label">Debug: All Demo-Related Fields</div>
+                            <div class="detail-value" style="font-family: monospace; font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                                <div>lead_status: ${lead.lead_status || 'null'}</div>
+                                <div>demo_viewed_at: ${lead.demo_viewed_at || 'null'}</div>
+                                <div>demo_booked_at: ${lead.demo_booked_at || 'null'}</div>
+                                <div>follow_up_notes: ${lead.follow_up_notes || 'null'}</div>
+                                <div>demo_requested_at: ${lead.demo_requested_at || 'null'}</div>
+                                <div>call_scheduled_at: ${lead.call_scheduled_at || 'null'}</div>
+                                <div>appointment_date: ${lead.appointment_date || 'null'}</div>
+                                <div>booking_details: ${lead.booking_details || 'null'}</div>
                             </div>
                         </div>
                     </div>
