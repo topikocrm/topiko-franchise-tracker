@@ -4776,18 +4776,36 @@
         let bookingType = 'demo'; // 'demo' or 'call'
         let bookingProduct = null;
 
+        // Convert any date to IST
+        function toIST(date) {
+            // Create a new date object to avoid modifying the original
+            const d = new Date(date);
+            // Get UTC time in milliseconds
+            const utcTime = d.getTime() + (d.getTimezoneOffset() * 60000);
+            // IST is UTC+5:30
+            const istOffset = 5.5 * 60 * 60000;
+            return new Date(utcTime + istOffset);
+        }
+        
+        // Format date in IST
+        function formatInIST(date, options) {
+            return date.toLocaleString('en-IN', { ...options, timeZone: 'Asia/Kolkata' });
+        }
+
         function generateTimeSlots() {
             const slots = [];
+            // Get current time in IST
             const now = new Date();
-            let currentTime = new Date(now);
+            const nowIST = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+            let currentTime = new Date(nowIST);
             
             // Round up to next hour and add 2 hours
-            currentTime.setHours(now.getHours() + 2, 0, 0, 0);
-            if (now.getMinutes() > 0) {
+            currentTime.setHours(nowIST.getHours() + 2, 0, 0, 0);
+            if (nowIST.getMinutes() > 0) {
                 currentTime.setHours(currentTime.getHours() + 1);
             }
             
-            // Generate 8 slots within business hours (10am-6pm)
+            // Generate 8 slots within business hours (10am-6pm IST)
             let slotsAdded = 0;
             let daysChecked = 0;
             const maxDays = 7; // Check up to 7 days ahead
@@ -4795,19 +4813,19 @@
             while (slotsAdded < 8 && daysChecked < maxDays) {
                 const hour = currentTime.getHours();
                 
-                // Check if within business hours (10am to 6pm)
+                // Check if within business hours (10am to 6pm IST)
                 if (hour >= 10 && hour <= 17) { // 17 = 5pm (last slot at 5pm to end by 6pm)
                     const slotTime = new Date(currentTime);
                     
-                    // Format the slot
-                    const day = slotTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                    const time = slotTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                    // Format the slot in IST
+                    const day = formatInIST(slotTime, { weekday: 'short', month: 'short', day: 'numeric' });
+                    const time = formatInIST(slotTime, { hour: 'numeric', minute: '2-digit', hour12: true });
                     
                     slots.push({
                         datetime: slotTime,
-                        display: `${day} - ${time}`,
+                        display: `${day} - ${time} IST`,
                         day: day,
-                        time: time,
+                        time: time + ' IST',
                         isCustom: false
                     });
                     
@@ -4847,9 +4865,9 @@
             
             // Update subtitle based on type
             if (type === 'demo') {
-                subtitle.textContent = 'Choose a convenient time for your product demo';
+                subtitle.textContent = 'Choose a convenient time for your product demo (IST)';
             } else {
-                subtitle.textContent = 'Choose a convenient time for your consultation call';
+                subtitle.textContent = 'Choose a convenient time for your consultation call (IST)';
             }
             
             // Generate and display time slots
@@ -4968,12 +4986,15 @@
             
             // Update slot summary
             const summary = document.getElementById('booking-summary');
+            // Ensure IST is shown in confirmation
+            const displayTime = selectedSlot.display.includes('IST') ? selectedSlot.display : selectedSlot.display + ' IST';
             summary.innerHTML = `
                 <div style="color: rgba(255, 255, 255, 0.9); line-height: 1.8;">
                     <p style="margin-bottom: 0.5rem;"><strong>Name:</strong> ${userName}</p>
                     <p style="margin-bottom: 0.5rem;"><strong>Product:</strong> ${product ? product.name : 'All Products'}</p>
                     <p style="margin-bottom: 0.5rem;"><strong>Type:</strong> ${bookingType === 'demo' ? 'Product Demo' : 'Consultation Call'}</p>
-                    <p><strong>Time:</strong> ${selectedSlot.display}</p>
+                    <p><strong>Time:</strong> ${displayTime}</p>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">All times are in Indian Standard Time (IST)</p>
                 </div>
             `;
         }
@@ -4993,20 +5014,21 @@
                 return names[key] || key;
             };
             
-            // Format date for SMS
+            // Format date for SMS in IST
             const formatDateTime = (dt) => {
                 const date = new Date(dt);
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                const month = months[date.getMonth()];
-                const day = date.getDate();
-                let hours = date.getHours();
-                const minutes = date.getMinutes();
-                const ampm = hours >= 12 ? 'pm' : 'am';
-                hours = hours % 12 || 12;
-                let timeStr = `${hours}`;
-                if (minutes > 0) timeStr += `:${minutes.toString().padStart(2, '0')}`;
-                timeStr += ampm;
-                return `${month} ${day} ${timeStr}`;
+                // Format in IST
+                const istOptions = { 
+                    timeZone: 'Asia/Kolkata',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                };
+                const istString = date.toLocaleString('en-IN', istOptions);
+                // Add IST suffix for clarity
+                return istString + ' IST';
             };
             
             // Generate SMS message based on booking type
