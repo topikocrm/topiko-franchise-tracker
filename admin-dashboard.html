@@ -1682,6 +1682,49 @@
                     </div>
                 </div>
 
+                <!-- Scheduled Demo/Call Information -->
+                <div class="detail-section">
+                    <h3>📅 Scheduled Demo/Call</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Demo Status</div>
+                            <div class="detail-value">
+                                ${lead.demo_viewed_at ? 
+                                    `✅ Demo scheduled` : 
+                                    `❌ Not Scheduled`}
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Scheduled Time</div>
+                            <div class="detail-value">
+                                ${lead.follow_up_notes ? 
+                                    (lead.follow_up_notes.includes('Demo booked') || lead.follow_up_notes.includes('Call booked') ? 
+                                        lead.follow_up_notes.replace(/^(Demo|Call) booked for /, '') : 
+                                        'Not scheduled') : 
+                                    'Not scheduled'}
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Type</div>
+                            <div class="detail-value">
+                                ${lead.follow_up_notes ? 
+                                    (lead.follow_up_notes.includes('Demo booked') ? '🖥️ Product Demo' : 
+                                     lead.follow_up_notes.includes('Call booked') ? '📞 Consultation Call' : 
+                                     'Not specified') : 
+                                    'Not scheduled'}
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Demo Viewed At</div>
+                            <div class="detail-value">
+                                ${lead.demo_viewed_at ? 
+                                    new Date(lead.demo_viewed_at).toLocaleString() : 
+                                    'Not viewed yet'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Campaign & Technical Data -->
                 <div class="detail-section">
                     <h3>📊 Campaign & Technical Data</h3>
