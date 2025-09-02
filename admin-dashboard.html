@@ -866,7 +866,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>🏢 Franchise Management Hub</h1>
+        <h1>🏢 Franchise Lead Tracker</h1>
         <div class="subtitle">Comprehensive lead tracking and analytics dashboard</div>
         <div class="skills-info">
             💡 <strong>Skills Panel View:</strong> Click on any lead row to see their complete skills analysis (same as franchise tracker)
@@ -1014,9 +1014,35 @@
         <!-- Conversion Funnel Tab -->
         <div id="funnel-tab" class="tab-content">
             <div class="neu-card funnel-container">
-                <h2 style="margin-bottom: 2rem; text-align: center;">🔄 Lead Conversion Funnel</h2>
+                <h2 style="margin-bottom: 1rem; text-align: center;">🔄 Lead Conversion Funnel</h2>
+                
+                <!-- Date Filter Controls -->
+                <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                    <button class="neu-button funnel-filter active" data-period="all">All Time</button>
+                    <button class="neu-button funnel-filter" data-period="today">Today</button>
+                    <button class="neu-button funnel-filter" data-period="week">This Week</button>
+                    <button class="neu-button funnel-filter" data-period="month">This Month</button>
+                    <button class="neu-button funnel-filter" data-period="custom">Custom Range</button>
+                    
+                    <!-- Custom Date Range (hidden by default) -->
+                    <div id="custom-date-range" style="display: none; gap: 0.5rem; align-items: center;">
+                        <input type="date" id="funnel-start-date" class="neu-input" style="padding: 0.5rem;">
+                        <span>to</span>
+                        <input type="date" id="funnel-end-date" class="neu-input" style="padding: 0.5rem;">
+                        <button class="neu-button primary" onclick="applyCustomDateRange()">Apply</button>
+                    </div>
+                </div>
+                
                 <div id="conversion-funnel">
                     <!-- Funnel steps will be populated here -->
+                </div>
+                
+                <!-- Product Interest Breakdown -->
+                <div id="product-breakdown" style="margin-top: 3rem; padding: 2rem; background: rgba(102, 126, 234, 0.05); border-radius: 16px;">
+                    <h3 style="text-align: center; margin-bottom: 1.5rem;">📦 Product Interest Distribution</h3>
+                    <div id="product-interest-bars" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <!-- Product bars will be populated here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -1787,33 +1813,46 @@
             }
         }
 
-        // Update conversion funnel visualization
+        // Funnel date filter state
+        let funnelDateFilter = 'all';
+        let funnelStartDate = null;
+        let funnelEndDate = null;
+        
+        // Update conversion funnel visualization with date filtering
         function updateConversionFunnel() {
             const funnelContainer = document.getElementById('conversion-funnel');
             
+            // Filter leads based on selected date range
+            const filteredLeads = filterLeadsByDate(allLeads);
+            
             const stages = [
-                { key: 'contact_entered', name: 'Contact Entered', icon: '📝', color: '#ed8936' },
-                { key: 'otp_verified', name: 'OTP Verified', icon: '✅', color: '#4299e1' },
-                { key: 'assessment_started', name: 'Assessment Started', icon: '📋', color: '#667eea' },
-                { key: 'assessment_completed', name: 'Assessment Completed', icon: '📊', color: '#764ba2' },
-                { key: 'products_viewed', name: 'Products Viewed', icon: '👀', color: '#48bb78' },
-                { key: 'final_submitted', name: 'Final Submission', icon: '🎯', color: '#38a169' }
+                { key: 'site_visits', name: 'Site Visits', icon: '🌐', color: '#9f7aea', 
+                  count: filteredLeads.length }, // All leads represent site visits
+                { key: 'contact_entered', name: 'Contact Entered', icon: '📝', color: '#ed8936',
+                  count: filteredLeads.filter(l => l.contact_entered_at).length },
+                { key: 'video_views', name: 'Video Views', icon: '▶️', color: '#3182ce',
+                  count: filteredLeads.filter(l => l.video_viewed_at || l.demo_viewed_at).length },
+                { key: 'interested_clicks', name: '"I am Interested" Clicks', icon: '💡', color: '#38a169',
+                  count: filteredLeads.filter(l => l.interest_shown_at || l.otp_verified_at).length },
+                { key: 'otp_verified', name: 'OTP Verified', icon: '✅', color: '#4299e1',
+                  count: filteredLeads.filter(l => l.otp_verified_at).length },
+                { key: 'assessment_started', name: 'Assessment Started', icon: '📋', color: '#667eea',
+                  count: filteredLeads.filter(l => l.assessment_started_at).length },
+                { key: 'assessment_completed', name: 'Assessment Completed', icon: '📊', color: '#764ba2',
+                  count: filteredLeads.filter(l => l.assessment_completed_at).length },
+                { key: 'products_viewed', name: 'Products Viewed', icon: '👀', color: '#48bb78',
+                  count: filteredLeads.filter(l => l.products_viewed_at).length },
+                { key: 'final_submitted', name: 'Final Submission', icon: '🎯', color: '#38a169',
+                  count: filteredLeads.filter(l => l.final_submitted_at).length }
             ];
             
-            const totalLeads = allLeads.length;
+            const totalLeads = filteredLeads.length;
             
             funnelContainer.innerHTML = stages.map((stage, index) => {
-                let count;
-                if (stage.key === 'contact_entered') {
-                    count = totalLeads;
-                } else if (stage.key === 'final_submitted') {
-                    count = allLeads.filter(lead => lead.final_submitted_at).length;
-                } else {
-                    count = allLeads.filter(lead => lead[`${stage.key}_at`]).length;
-                }
-                
+                const count = stage.count || 0;
+                const previousCount = index > 0 ? stages[index - 1].count : totalLeads;
                 const percentage = totalLeads > 0 ? Math.round((count / totalLeads) * 100) : 0;
-                const dropoffFromPrevious = index > 0 ? stages[index - 1] : null;
+                const dropoffRate = previousCount > 0 ? Math.round(((previousCount - count) / previousCount) * 100) : 0;
                 
                 return `
                     <div class="funnel-step">
@@ -1823,7 +1862,7 @@
                             </div>
                             <div class="funnel-step-details">
                                 <h4>${stage.name}</h4>
-                                <p>Stage ${index + 1} of conversion process</p>
+                                <p>${dropoffRate > 0 ? `${dropoffRate}% drop-off` : 'Entry point'}</p>
                             </div>
                         </div>
                         <div class="funnel-step-stats">
@@ -1836,6 +1875,97 @@
                     </div>
                 `;
             }).join('');
+            
+            // Update product breakdown
+            updateProductBreakdown(filteredLeads);
+        }
+        
+        // Filter leads by date range
+        function filterLeadsByDate(leads) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            switch(funnelDateFilter) {
+                case 'today':
+                    return leads.filter(l => new Date(l.created_at) >= today);
+                    
+                case 'week':
+                    const weekAgo = new Date(today);
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    return leads.filter(l => new Date(l.created_at) >= weekAgo);
+                    
+                case 'month':
+                    const monthAgo = new Date(today);
+                    monthAgo.setMonth(monthAgo.getMonth() - 1);
+                    return leads.filter(l => new Date(l.created_at) >= monthAgo);
+                    
+                case 'custom':
+                    if (funnelStartDate && funnelEndDate) {
+                        const start = new Date(funnelStartDate);
+                        const end = new Date(funnelEndDate);
+                        end.setHours(23, 59, 59, 999); // Include full end date
+                        return leads.filter(l => {
+                            const leadDate = new Date(l.created_at);
+                            return leadDate >= start && leadDate <= end;
+                        });
+                    }
+                    return leads;
+                    
+                default:
+                    return leads;
+            }
+        }
+        
+        // Update product breakdown chart
+        function updateProductBreakdown(filteredLeads) {
+            const container = document.getElementById('product-interest-bars');
+            if (!container) return;
+            
+            const products = ['disblay', 'topiko', 'flex', 'hebt'];
+            const productNames = {
+                'disblay': 'Disblay',
+                'topiko': 'Topiko',
+                'flex': 'Topiko Flex',
+                'hebt': 'HEBT'
+            };
+            
+            const productCounts = {};
+            products.forEach(product => {
+                productCounts[product] = filteredLeads.filter(lead => 
+                    lead.recommended_products && lead.recommended_products.includes(product)
+                ).length;
+            });
+            
+            const maxCount = Math.max(...Object.values(productCounts), 1);
+            
+            container.innerHTML = products.map(product => {
+                const count = productCounts[product];
+                const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                
+                return `
+                    <div style="text-align: center;">
+                        <h4 style="margin-bottom: 0.5rem;">${productNames[product]}</h4>
+                        <div style="background: rgba(255,255,255,0.1); height: 150px; border-radius: 8px; position: relative; overflow: hidden;">
+                            <div style="position: absolute; bottom: 0; width: 100%; background: linear-gradient(135deg, #667eea, #764ba2); height: ${percentage}%; transition: height 0.5s ease; border-radius: 8px 8px 0 0;"></div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <div style="font-size: 1.5rem; font-weight: 600;">${count}</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Interested</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Apply custom date range
+        function applyCustomDateRange() {
+            funnelStartDate = document.getElementById('funnel-start-date').value;
+            funnelEndDate = document.getElementById('funnel-end-date').value;
+            
+            if (funnelStartDate && funnelEndDate) {
+                funnelDateFilter = 'custom';
+                updateConversionFunnel();
+            }
         }
 
         // Update recent activity feed
@@ -2152,6 +2282,30 @@
                 });
             });
         }
+        
+        // Setup funnel filter buttons
+        function setupFunnelFilters() {
+            document.querySelectorAll('.funnel-filter').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.funnel-filter').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const period = btn.dataset.period;
+                    funnelDateFilter = period;
+                    
+                    // Show/hide custom date range inputs
+                    const customRange = document.getElementById('custom-date-range');
+                    if (customRange) {
+                        if (period === 'custom') {
+                            customRange.style.display = 'flex';
+                        } else {
+                            customRange.style.display = 'none';
+                            updateConversionFunnel();
+                        }
+                    }
+                });
+            });
+        }
 
         // Setup all button event listeners
         function setupButtonActions() {
@@ -2253,6 +2407,7 @@
             initializeCharts();
             setupTabs();
             setupFilters();
+            setupFunnelFilters();
             setupButtonActions();
             await loadLeads();
             
