@@ -1069,6 +1069,7 @@
         // Initialize Supabase
         let supabase = null;
         let allLeads = [];
+        let allSiteVisits = [];
         let currentFilter = 'all';
         let charts = {};
 
@@ -1229,20 +1230,38 @@
                 
                 if (supabase) {
                     console.log('📡 Loading leads from Supabase...');
-                    const { data, error } = await supabase
+                    
+                    // Fetch franchise leads
+                    const { data: leadsData, error: leadsError } = await supabase
                         .from('franchise_leads')
                         .select('*')
                         .order('created_at', { ascending: false });
 
-                    if (error) throw error;
-                    allLeads = data || [];
+                    if (leadsError) throw leadsError;
+                    allLeads = leadsData || [];
                     console.log(`✅ Loaded ${allLeads.length} leads from Supabase`);
+                    
+                    // Fetch site visits
+                    const { data: visitsData, error: visitsError } = await supabase
+                        .from('site_visits')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (visitsError) {
+                        console.warn('⚠️ Could not fetch site visits:', visitsError);
+                        allSiteVisits = [];
+                    } else {
+                        allSiteVisits = visitsData || [];
+                        console.log(`✅ Loaded ${allSiteVisits.length} site visits`);
+                    }
+                    
                     if (allLeads.length > 0) {
                         console.log('📊 Sample Supabase lead IDs:', allLeads.slice(0, 3).map(l => ({ id: l.id, type: typeof l.id })));
                     }
                 } else {
                     console.log('🧪 Loading demo data (Supabase not configured)...');
                     allLeads = generateDemoData();
+                    allSiteVisits = []; // No demo site visits
                     console.log(`✅ Generated ${allLeads.length} demo leads`);
                     console.log('📊 Sample demo lead IDs:', allLeads.slice(0, 3).map(l => ({ id: l.id, type: typeof l.id })));
                 }
@@ -1822,12 +1841,16 @@
         function updateConversionFunnel() {
             const funnelContainer = document.getElementById('conversion-funnel');
             
-            // Filter leads based on selected date range
+            // Filter leads and site visits based on selected date range
             const filteredLeads = filterLeadsByDate(allLeads);
+            const filteredSiteVisits = filterLeadsByDate(allSiteVisits);
+            
+            // Use actual site visits if available, otherwise fall back to leads count
+            const siteVisitCount = filteredSiteVisits.length > 0 ? filteredSiteVisits.length : filteredLeads.length;
             
             const stages = [
                 { key: 'site_visits', name: 'Site Visits', icon: '🌐', color: '#9f7aea', 
-                  count: filteredLeads.length }, // All leads represent site visits
+                  count: siteVisitCount },
                 { key: 'video_views', name: 'Video Views', icon: '▶️', color: '#3182ce',
                   count: filteredLeads.filter(l => l.video_viewed_at || l.demo_viewed_at).length },
                 { key: 'interested_clicks', name: '"I am Interested" Clicks', icon: '💡', color: '#38a169',
@@ -1848,7 +1871,8 @@
                   count: filteredLeads.filter(l => l.final_submitted_at).length }
             ];
             
-            const totalLeads = filteredLeads.length;
+            // Use site visits as the total for percentage calculations if available
+            const totalLeads = siteVisitCount > filteredLeads.length ? siteVisitCount : filteredLeads.length;
             
             funnelContainer.innerHTML = stages.map((stage, index) => {
                 const count = stage.count || 0;

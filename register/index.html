@@ -1926,11 +1926,66 @@
                 if (typeof window.supabase !== 'undefined') {
                     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                     console.log('✅ Supabase initialized successfully');
+                    
+                    // Track session after Supabase is initialized
+                    trackSession();
                 } else {
                     console.error('❌ Supabase library not loaded');
                 }
             } catch (error) {
                 console.error('❌ Error initializing Supabase:', error);
+            }
+        }
+
+        // Session tracking functions
+        function getOrCreateSessionId() {
+            let sessionId = sessionStorage.getItem('topiko_session_id');
+            if (!sessionId) {
+                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                sessionStorage.setItem('topiko_session_id', sessionId);
+            }
+            return sessionId;
+        }
+
+        async function trackSession() {
+            if (!supabase) {
+                console.log('⚠️ Supabase not initialized, skipping session tracking');
+                return;
+            }
+
+            const sessionId = getOrCreateSessionId();
+            const sessionData = {
+                session_id: sessionId,
+                page_url: window.location.href,
+                page_title: document.title,
+                referrer: document.referrer || null,
+                user_agent: navigator.userAgent,
+                screen_resolution: `${screen.width}x${screen.height}`,
+                viewport_size: `${window.innerWidth}x${window.innerHeight}`,
+                language: navigator.language,
+                platform: navigator.platform,
+                created_at: new Date().toISOString()
+            };
+
+            // Parse UTM parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(param => {
+                const value = urlParams.get(param);
+                if (value) sessionData[param] = value;
+            });
+
+            try {
+                const { data, error } = await supabase
+                    .from('site_visits')
+                    .insert([sessionData]);
+
+                if (error) {
+                    console.error('❌ Failed to track session:', error);
+                } else {
+                    console.log('✅ Session tracked successfully:', sessionId);
+                }
+            } catch (err) {
+                console.error('❌ Error tracking session:', err);
             }
         }
         
@@ -2204,6 +2259,21 @@
                 const leadDataForInsert = { ...leadData };
                 delete leadDataForInsert.id; // Remove id field to let database auto-generate
                 
+                // Convert browser_info to JSON string if it's an object
+                if (leadDataForInsert.browser_info && typeof leadDataForInsert.browser_info === 'object') {
+                    leadDataForInsert.browser_info = JSON.stringify(leadDataForInsert.browser_info);
+                }
+                
+                // Convert custom_params to JSON string if it's an object
+                if (leadDataForInsert.custom_params && typeof leadDataForInsert.custom_params === 'object') {
+                    leadDataForInsert.custom_params = JSON.stringify(leadDataForInsert.custom_params);
+                }
+                
+                // Convert utm_data to JSON string if it's an object
+                if (leadDataForInsert.utm_data && typeof leadDataForInsert.utm_data === 'object') {
+                    leadDataForInsert.utm_data = JSON.stringify(leadDataForInsert.utm_data);
+                }
+                
                 const { data, error } = await supabase
                     .from('franchise_leads')
                     .insert([leadDataForInsert])
@@ -2219,6 +2289,11 @@
                 }
             } catch (error) {
                 console.error('❌ Failed to save contact details:', error);
+                console.log('📝 Error details:', {
+                    message: error.message,
+                    code: error.code,
+                    details: error.details
+                });
                 // Save to localStorage as backup with a temporary string ID
                 const tempId = 'local_' + Date.now();
                 currentLeadId = tempId;
@@ -4989,26 +5064,21 @@
             }
             
             // Save complete booking data to database
-            if (supabase) {
-                // First save to demo_bookings table
+            if (supabase && userProfile.leadId) {
+                // Update the main lead record with booking info
+                // Note: Skipping demo_bookings table as it doesn't exist
                 await supabase
-                    .from('demo_bookings')
-                    .insert([bookingData])
+                    .from('franchise_leads')
+                    .update({
+                        demo_viewed_at: new Date().toISOString(),
+                        follow_up_notes: `${bookingType === 'demo' ? 'Demo' : 'Call'} booked for ${selectedSlot.display}`
+                    })
+                    .eq('id', userProfile.leadId)
                     .then(({ error }) => {
-                        if (!error) {
-                            // Update the main lead record with booking info
-                            supabase
-                                .from('franchise_leads')
-                                .update({
-                                    has_booked_demo: bookingType === 'demo',
-                                    has_booked_call: bookingType === 'call',
-                                    last_booking_type: bookingType,
-                                    last_booking_at: new Date().toISOString(),
-                                    booking_slot: selectedSlot.display,
-                                    booking_product: bookingProduct
-                                })
-                                .eq('id', userProfile.leadId)
-                                .then(() => {});
+                        if (error) {
+                            console.log('Could not update booking info:', error);
+                        } else {
+                            console.log('✅ Booking info saved to lead record');
                         }
                     });
             }

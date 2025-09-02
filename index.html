@@ -999,7 +999,61 @@
         </div>
     </footer>
 
+    <script src="https://unpkg.com/@supabase/supabase-js@2.38.0/dist/umd/supabase.js"></script>
     <script>
+        // Initialize Supabase for tracking
+        const SUPABASE_URL = 'https://uyaubwfmxmxelcshuyaf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YXVid2ZteG14ZWxjc2h1eWFmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1Mzk0MDQxOSwiZXhwIjoyMDY5NTE2NDE5fQ.ldo2yTTOq5iOGZY6rXMcabDVIY7tBXr40x7_Wf5bvxk';
+        
+        // Session tracking
+        function getOrCreateSessionId() {
+            let sessionId = sessionStorage.getItem('topiko_session_id');
+            if (!sessionId) {
+                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                sessionStorage.setItem('topiko_session_id', sessionId);
+                sessionStorage.setItem('topiko_session_start', Date.now());
+            }
+            return sessionId;
+        }
+        
+        // Track page visit
+        async function trackPageVisit() {
+            try {
+                if (typeof window.supabase !== 'undefined') {
+                    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    
+                    const visitData = {
+                        session_id: getOrCreateSessionId(),
+                        page_url: window.location.href,
+                        page_path: window.location.pathname,
+                        referrer: document.referrer || 'direct',
+                        user_agent: navigator.userAgent,
+                        screen_resolution: `${screen.width}x${screen.height}`,
+                        viewport_size: `${window.innerWidth}x${window.innerHeight}`,
+                        language: navigator.language,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    const { error } = await supabase
+                        .from('site_visits')
+                        .insert([visitData]);
+                    
+                    if (error) {
+                        console.log('Error tracking visit:', error);
+                    } else {
+                        console.log('✅ Page visit tracked');
+                    }
+                }
+            } catch (err) {
+                console.log('Could not track visit:', err);
+            }
+        }
+        
+        // Track visit when page loads
+        window.addEventListener('load', () => {
+            trackPageVisit();
+        });
+        
         // Mobile menu toggle
         function toggleMobileMenu() {
             const navLinks = document.getElementById('navLinks');
