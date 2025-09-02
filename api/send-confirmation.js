@@ -16,6 +16,11 @@ export default async function handler(req, res) {
 
     // If a pre-formatted message is provided, use it directly
     if (message && mobile) {
+        // Validate mobile number (10 digits)
+        if (!/^[0-9]{10}$/.test(mobile)) {
+            return res.status(400).json({ error: 'Invalid mobile number' });
+        }
+
         // Skip to sending the message directly
         const postData = {
             apikey: '3NwCuamS0SnyYDUw',
@@ -40,18 +45,44 @@ export default async function handler(req, res) {
                 const result = await response.text();
                 console.log('SMS API Response:', result);
                 
+                try {
+                    const jsonResult = JSON.parse(result);
+                    
+                    if (jsonResult.status === 'OK' || jsonResult.message === 'message Submitted successfully') {
+                        return res.status(200).json({
+                            success: true,
+                            message: 'Confirmation SMS sent successfully',
+                            smsMessage: message,
+                            smsResponse: jsonResult
+                        });
+                    }
+                    
+                    if (jsonResult.status === 'AZQ01' || jsonResult.message) {
+                        console.error('MagicText Error:', jsonResult.message);
+                        return res.status(500).json({
+                            success: false,
+                            error: jsonResult.message || 'Failed to send SMS',
+                            details: result
+                        });
+                    }
+                } catch (parseError) {
+                    console.log('Non-JSON response:', result);
+                }
+                
                 return res.status(200).json({
                     success: true,
                     message: 'Confirmation SMS sent successfully',
                     smsMessage: message
                 });
             } else {
+                console.error('SMS API Error:', response.status, response.statusText);
                 return res.status(500).json({
                     error: 'Failed to send confirmation SMS',
                     details: `API returned ${response.status}`
                 });
             }
         } catch (error) {
+            console.error('Failed to send confirmation SMS:', error);
             return res.status(500).json({
                 error: 'Server error',
                 message: error.message
