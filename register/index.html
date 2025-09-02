@@ -2230,16 +2230,9 @@
                 // Additional tracking data
                 utm_data: utmData, // Full UTM data in JSON
                 campaign_source: 'topikopartner.com',
-                lead_type: 'partner',
-                partner_status: 'Pending Review',
                 
-                // Landing page data
-                landing_url: window.location.href,
-                landing_page: window.location.pathname,
+                // Referrer data
                 referrer: document.referrer,
-                
-                // Custom parameters
-                custom_params: Object.keys(customParams).length > 0 ? customParams : null,
                 
                 // Other fields
                 answers: {},
@@ -2262,11 +2255,6 @@
                 // Convert browser_info to JSON string if it's an object
                 if (leadDataForInsert.browser_info && typeof leadDataForInsert.browser_info === 'object') {
                     leadDataForInsert.browser_info = JSON.stringify(leadDataForInsert.browser_info);
-                }
-                
-                // Convert custom_params to JSON string if it's an object
-                if (leadDataForInsert.custom_params && typeof leadDataForInsert.custom_params === 'object') {
-                    leadDataForInsert.custom_params = JSON.stringify(leadDataForInsert.custom_params);
                 }
                 
                 // Convert utm_data to JSON string if it's an object
