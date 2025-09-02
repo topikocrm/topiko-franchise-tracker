@@ -2280,6 +2280,7 @@
                     
                     if (!error && data && data.length > 0) {
                         currentLeadId = data[0].id;
+                        userProfile.leadId = currentLeadId; // Store in userProfile for later use
                         console.log('✅ Existing lead updated with ID:', currentLeadId);
                         showSaveStatus('✅ Details updated!', 'saved');
                         return { success: true, leadId: currentLeadId, updated: true };
@@ -2295,6 +2296,7 @@
                     
                     if (!error && data && data.length > 0) {
                         currentLeadId = data[0].id;
+                        userProfile.leadId = currentLeadId; // Store in userProfile for later use
                         console.log('✅ New lead created with ID:', currentLeadId);
                         showSaveStatus('✅ Details saved!', 'saved');
                         return { success: true, leadId: currentLeadId };
@@ -5080,22 +5082,32 @@
             
             // Save complete booking data to database
             if (supabase && userProfile.leadId) {
+                console.log('📝 Saving booking to database for lead ID:', userProfile.leadId);
                 // Update the main lead record with booking info
-                // Note: Skipping demo_bookings table as it doesn't exist
-                await supabase
+                const updateData = {
+                    demo_viewed_at: new Date().toISOString(),
+                    follow_up_notes: `${bookingType === 'demo' ? 'Demo' : 'Call'} booked for ${selectedSlot.display}`,
+                    lead_status: 'demo_scheduled'
+                };
+                
+                console.log('📝 Update data:', updateData);
+                
+                const { data, error } = await supabase
                     .from('franchise_leads')
-                    .update({
-                        demo_viewed_at: new Date().toISOString(),
-                        follow_up_notes: `${bookingType === 'demo' ? 'Demo' : 'Call'} booked for ${selectedSlot.display}`
-                    })
+                    .update(updateData)
                     .eq('id', userProfile.leadId)
-                    .then(({ error }) => {
-                        if (error) {
-                            console.log('Could not update booking info:', error);
-                        } else {
-                            console.log('✅ Booking info saved to lead record');
-                        }
-                    });
+                    .select();
+                    
+                if (error) {
+                    console.error('❌ Could not update booking info:', error);
+                } else {
+                    console.log('✅ Booking info saved to lead record:', data);
+                }
+            } else {
+                console.warn('⚠️ Cannot save booking - missing requirements:', {
+                    hasSupabase: !!supabase,
+                    leadId: userProfile.leadId
+                });
             }
             
             // Show success view

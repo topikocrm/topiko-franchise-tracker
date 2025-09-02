@@ -1746,6 +1746,11 @@
                                         return new Date(lead.demo_booked_at).toLocaleString();
                                     }
                                     
+                                    // If demo_viewed_at exists but no time info, indicate time wasn't recorded
+                                    if (lead.demo_viewed_at) {
+                                        return 'Time not recorded (booked: ' + new Date(lead.demo_viewed_at).toLocaleDateString() + ')';
+                                    }
+                                    
                                     return 'Not scheduled';
                                 })()}
                             </div>
@@ -1760,7 +1765,8 @@
                                         if (notes.includes('call') || notes.includes('consultation')) return '📞 Consultation Call';
                                         if (notes.includes('scheduled') || notes.includes('booked')) return '📅 Scheduled Meeting';
                                     }
-                                    if (lead.demo_booked_at || lead.demo_viewed_at) return '🖥️ Product Demo';
+                                    // If demo_viewed_at exists, assume it's a demo
+                                    if (lead.demo_booked_at || lead.demo_viewed_at) return '🖥️ Product Demo (assumed)';
                                     return 'Not scheduled';
                                 })()}
                             </div>
