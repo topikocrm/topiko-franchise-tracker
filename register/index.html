@@ -5014,12 +5014,12 @@
             // Prepare SMS message content
             let smsMessage = '';
             
-            // For SMS, we want to use the display string directly since it's already in IST
-            // Don't convert the datetime object again as it may cause timezone issues
-            const slotDisplayForSMS = selectedSlot.display; // This already has IST time
+            // Use the display string directly - it's already formatted correctly
+            const slotDisplayForSMS = selectedSlot.display || 'Time to be confirmed';
             
             // Format product name for SMS
             const formatProductName = (key) => {
+                if (!key) return 'Topiko Products';
                 const names = { 'hebt': 'HEBT', 'flex': 'Flex', 'topiko': 'Topiko', 'display': 'Display' };
                 return names[key] || key;
             };
@@ -5078,6 +5078,13 @@
             // Send SMS confirmation
             let smsStatus = { sent: false, response: null };
             try {
+                // Log what we're about to send
+                console.log('📤 Sending SMS with data:', {
+                    mobile: userProfile.phone,
+                    message: smsMessage,
+                    slotDisplay: selectedSlot.display
+                });
+                
                 const response = await fetch('/api/send-confirmation', {
                     method: 'POST',
                     headers: {
@@ -5085,10 +5092,7 @@
                     },
                     body: JSON.stringify({
                         mobile: userProfile.phone,
-                        type: bookingType === 'demo' ? 'demo' : 'call',
-                        product: bookingProduct,
-                        dateTime: selectedSlot.display, // Send the display string which is already in IST
-                        message: smsMessage // Send the pre-formatted message
+                        message: smsMessage  // Just send the complete pre-formatted message
                     })
                 });
                 
