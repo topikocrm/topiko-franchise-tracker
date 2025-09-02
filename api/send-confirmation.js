@@ -1,6 +1,3 @@
-const http = require('http');
-const querystring = require('querystring');
-
 export default async function handler(req, res) {
     // Handle CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,7 +12,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { mobile, type, product, dateTime, message } = req.body;
+    const { mobile, message } = req.body;
 
     // If a pre-formatted message is provided, use it directly
     if (message && mobile) {
@@ -24,7 +21,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid mobile number' });
         }
 
-        // Skip to sending the message directly
+        // EXACT format that works - using JSON like OTP API!
         const postData = {
             apikey: '3NwCuamS0SnyYDUw',
             senderid: 'TOPIKO',
@@ -33,77 +30,70 @@ export default async function handler(req, res) {
             format: 'json'
         };
 
-        console.log('Sending pre-formatted SMS:', message);
+        console.log('Sending confirmation SMS:', JSON.stringify(postData));
 
-        // Convert to URL encoded format for MagicText API
-        const params = querystring.stringify(postData);
-        
-        return new Promise((resolve) => {
-            const options = {
-                hostname: 'msg.magictext.in',
-                path: '/V2/http-api-post.php',
+        try {
+            // Send SMS via API - EXACTLY like the working OTP version
+            const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Content-Length': params.length
-                }
-            };
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData)
+            });
 
-            const request = http.request(options, (response) => {
-                let data = '';
+            if (response.ok) {
+                const result = await response.text();
+                console.log('SMS API Response:', result);
                 
-                response.on('data', (chunk) => {
-                    data += chunk;
-                });
-                
-                response.on('end', () => {
-                    console.log('SMS API Response:', data);
+                try {
+                    const jsonResult = JSON.parse(result);
                     
-                    try {
-                        const jsonResult = JSON.parse(data);
-                        
-                        if (jsonResult.status === 'OK' || jsonResult.message === 'message Submitted successfully') {
-                            resolve(res.status(200).json({
-                                success: true,
-                                message: 'Confirmation SMS sent successfully',
-                                smsMessage: message,
-                                smsResponse: jsonResult
-                            }));
-                        } else {
-                            console.error('MagicText Error:', jsonResult.message);
-                            resolve(res.status(200).json({
-                                success: true,  // Still return success to avoid retries
-                                message: 'SMS request sent',
-                                smsMessage: message,
-                                warning: jsonResult.message
-                            }));
-                        }
-                    } catch (parseError) {
-                        console.log('Non-JSON response:', data);
-                        resolve(res.status(200).json({
+                    if (jsonResult.status === 'OK' || jsonResult.message === 'message Submitted successfully') {
+                        return res.status(200).json({
                             success: true,
-                            message: 'SMS request sent',
+                            message: 'Confirmation SMS sent successfully',
                             smsMessage: message,
-                            rawResponse: data
-                        }));
+                            smsResponse: jsonResult
+                        });
                     }
+                    
+                    if (jsonResult.status === 'AZQ01' || jsonResult.message) {
+                        console.error('MagicText Error:', jsonResult.message);
+                        return res.status(500).json({
+                            success: false,
+                            error: jsonResult.message || 'Failed to send SMS',
+                            details: result
+                        });
+                    }
+                } catch (parseError) {
+                    console.log('Non-JSON response:', result);
+                }
+                
+                return res.status(200).json({
+                    success: true,
+                    message: 'Confirmation SMS sent successfully',
+                    smsMessage: message
                 });
+            } else {
+                console.error('SMS API Error:', response.status, response.statusText);
+                return res.status(500).json({
+                    error: 'Failed to send confirmation SMS',
+                    details: `API returned ${response.status}`
+                });
+            }
+        } catch (error) {
+            console.error('Failed to send confirmation SMS:', error);
+            return res.status(500).json({
+                error: 'Server error',
+                message: error.message
             });
-            
-            request.on('error', (error) => {
-                console.error('Request error:', error);
-                resolve(res.status(500).json({
-                    error: 'Failed to send SMS',
-                    message: error.message
-                }));
-            });
-            
-            request.write(params);
-            request.end();
-        });
+        }
     }
 
-    // Validate inputs for old format
+    // Legacy support for old format (type, product, dateTime)
+    const { type, product, dateTime } = req.body;
+    
     if (!mobile || !type || !dateTime) {
         return res.status(400).json({ error: 'Missing required parameters' });
     }
@@ -113,7 +103,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid mobile number' });
     }
 
-    // Format product name (keep it short)
+    // Format product name
     const formatProductName = (productKey) => {
         const productNames = {
             'hebt': 'HEBT',
@@ -124,36 +114,38 @@ export default async function handler(req, res) {
         return productNames[productKey] || productKey;
     };
 
-    // Format date time to concise format (e.g., "Jan 25 8pm")
-    const formatDateTime = (dt) => {
-        const date = new Date(dt);
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const month = months[date.getMonth()];
-        const day = date.getDate();
-        let hours = date.getHours();
-        const minutes = date.getMinutes();
-        const ampm = hours >= 12 ? 'pm' : 'am';
-        hours = hours % 12 || 12;
-        
-        // Format time
-        let timeStr = `${hours}`;
-        if (minutes > 0) {
-            timeStr += `:${minutes.toString().padStart(2, '0')}`;
+    // For legacy format, just use the dateTime string as-is if it contains IST
+    let formattedDateTime = dateTime;
+    if (dateTime && !dateTime.includes('IST')) {
+        // Only try to parse if it doesn't already have IST
+        try {
+            const date = new Date(dateTime);
+            if (!isNaN(date.getTime())) {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const month = months[date.getMonth()];
+                const day = date.getDate();
+                let hours = date.getHours();
+                const minutes = date.getMinutes();
+                const ampm = hours >= 12 ? 'pm' : 'am';
+                hours = hours % 12 || 12;
+                let timeStr = `${hours}`;
+                if (minutes > 0) timeStr += `:${minutes.toString().padStart(2, '0')}`;
+                timeStr += ampm;
+                formattedDateTime = `${month} ${day} ${timeStr}`;
+            }
+        } catch (e) {
+            // If parsing fails, use as-is
+            formattedDateTime = dateTime;
         }
-        timeStr += ampm;
-        
-        return `${month} ${day} ${timeStr}`;
-    };
+    }
 
     // Prepare the message based on type
-    let message;
+    let legacyMessage;
     if (type === 'demo') {
         const productName = formatProductName(product);
-        const formattedDateTime = formatDateTime(dateTime);
-        message = `Your demo for ${productName} is confirmed on ${formattedDateTime}. For assistance, call 885 886 8889 - Topiko -TOPIKO`;
+        legacyMessage = `Your demo for ${productName} is confirmed on ${formattedDateTime}. For assistance, call 885 886 8889 - Topiko -TOPIKO`;
     } else if (type === 'call') {
-        const formattedDateTime = formatDateTime(dateTime);
-        message = `Your call with Topiko  team is scheduled for ${formattedDateTime}. For any assistance call 885 886 8889. -TOPIKO`;
+        legacyMessage = `Your call with Topiko team is scheduled for ${formattedDateTime}. For any assistance call 885 886 8889. -TOPIKO`;
     } else {
         return res.status(400).json({ error: 'Invalid booking type' });
     }
@@ -163,76 +155,66 @@ export default async function handler(req, res) {
         apikey: '3NwCuamS0SnyYDUw',
         senderid: 'TOPIKO',
         number: mobile,
-        message: message,
+        message: legacyMessage,
         format: 'json'
     };
 
-    console.log('Sending confirmation SMS:', JSON.stringify(postData));
+    console.log('Sending confirmation SMS (legacy):', JSON.stringify(postData));
 
-    // Convert to URL encoded format for MagicText API
-    const params = querystring.stringify(postData);
-    
-    return new Promise((resolve) => {
-        const options = {
-            hostname: 'msg.magictext.in',
-            path: '/V2/http-api-post.php',
+    try {
+        const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': params.length
-            }
-        };
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postData)
+        });
 
-        const request = http.request(options, (response) => {
-            let data = '';
+        if (response.ok) {
+            const result = await response.text();
+            console.log('SMS API Response:', result);
             
-            response.on('data', (chunk) => {
-                data += chunk;
-            });
-            
-            response.on('end', () => {
-                console.log('SMS API Response:', data);
+            try {
+                const jsonResult = JSON.parse(result);
                 
-                try {
-                    const jsonResult = JSON.parse(data);
-                    
-                    if (jsonResult.status === 'OK' || jsonResult.message === 'message Submitted successfully') {
-                        resolve(res.status(200).json({
-                            success: true,
-                            message: 'Confirmation SMS sent successfully',
-                            smsMessage: message,
-                            smsResponse: jsonResult
-                        }));
-                    } else {
-                        console.error('MagicText Error:', jsonResult.message);
-                        resolve(res.status(200).json({
-                            success: true,
-                            message: 'SMS request sent',
-                            smsMessage: message,
-                            warning: jsonResult.message
-                        }));
-                    }
-                } catch (parseError) {
-                    console.log('Non-JSON response:', data);
-                    resolve(res.status(200).json({
+                if (jsonResult.status === 'OK' || jsonResult.message === 'message Submitted successfully') {
+                    return res.status(200).json({
                         success: true,
-                        message: 'SMS request sent',
-                        smsMessage: message,
-                        rawResponse: data
-                    }));
+                        message: 'Confirmation SMS sent successfully',
+                        smsMessage: legacyMessage,
+                        smsResponse: jsonResult
+                    });
                 }
+                
+                if (jsonResult.status === 'AZQ01' || jsonResult.message) {
+                    console.error('MagicText Error:', jsonResult.message);
+                    return res.status(500).json({
+                        success: false,
+                        error: jsonResult.message || 'Failed to send SMS',
+                        details: result
+                    });
+                }
+            } catch (parseError) {
+                console.log('Non-JSON response:', result);
+            }
+            
+            return res.status(200).json({
+                success: true,
+                message: 'Confirmation SMS sent successfully',
+                smsMessage: legacyMessage
             });
+        } else {
+            console.error('SMS API Error:', response.status, response.statusText);
+            return res.status(500).json({
+                error: 'Failed to send confirmation SMS',
+                details: `API returned ${response.status}`
+            });
+        }
+    } catch (error) {
+        console.error('Failed to send confirmation SMS:', error);
+        return res.status(500).json({
+            error: 'Server error',
+            message: error.message
         });
-        
-        request.on('error', (error) => {
-            console.error('Request error:', error);
-            resolve(res.status(500).json({
-                error: 'Failed to send SMS',
-                message: error.message
-            }));
-        });
-        
-        request.write(params);
-        request.end();
-    });
+    }
 }
