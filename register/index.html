@@ -4794,14 +4794,13 @@
 
         function generateTimeSlots() {
             const slots = [];
-            // Get current time in IST
+            // Get current time
             const now = new Date();
-            const nowIST = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-            let currentTime = new Date(nowIST);
             
-            // Round up to next hour and add 2 hours
-            currentTime.setHours(nowIST.getHours() + 2, 0, 0, 0);
-            if (nowIST.getMinutes() > 0) {
+            // Start from 2 hours from now
+            let currentTime = new Date(now);
+            currentTime.setHours(currentTime.getHours() + 2, 0, 0, 0);
+            if (now.getMinutes() > 0) {
                 currentTime.setHours(currentTime.getHours() + 1);
             }
             
@@ -4811,10 +4810,16 @@
             const maxDays = 7; // Check up to 7 days ahead
             
             while (slotsAdded < 8 && daysChecked < maxDays) {
-                const hour = currentTime.getHours();
+                // Check what time this would be in IST
+                const istTimeString = currentTime.toLocaleString('en-US', { 
+                    timeZone: 'Asia/Kolkata',
+                    hour: 'numeric',
+                    hour12: false 
+                });
+                const istHour = parseInt(istTimeString);
                 
                 // Check if within business hours (10am to 6pm IST)
-                if (hour >= 10 && hour <= 17) { // 17 = 5pm (last slot at 5pm to end by 6pm)
+                if (istHour >= 10 && istHour <= 17) { // 17 = 5pm (last slot at 5pm to end by 6pm)
                     const slotTime = new Date(currentTime);
                     
                     // Format the slot in IST
@@ -4822,7 +4827,7 @@
                     const time = formatInIST(slotTime, { hour: 'numeric', minute: '2-digit', hour12: true });
                     
                     slots.push({
-                        datetime: slotTime,
+                        datetime: slotTime,  // Store the actual JavaScript Date object
                         display: `${day} - ${time} IST`,
                         day: day,
                         time: time + ' IST',
@@ -4835,10 +4840,12 @@
                 // Move to next hour
                 currentTime.setHours(currentTime.getHours() + 1);
                 
-                // If we've gone past business hours, move to next day at 10am
-                if (currentTime.getHours() >= 18) {
+                // If we've checked too many hours for today, move to next day
+                if (istHour >= 18 || (istHour < 10 && currentTime.getDate() === now.getDate())) {
+                    // Move to next day at 10am IST
                     currentTime.setDate(currentTime.getDate() + 1);
-                    currentTime.setHours(10, 0, 0, 0);
+                    // Set to approximately 10am IST (this is rough, will be refined by the IST check above)
+                    currentTime.setHours(4, 30, 0, 0); // 10am IST is roughly 4:30am UTC
                     daysChecked++;
                 }
             }
@@ -5006,7 +5013,10 @@
             
             // Prepare SMS message content
             let smsMessage = '';
-            const slotDateTime = selectedSlot.isCustom ? new Date().toISOString() : selectedSlot.datetime.toISOString();
+            
+            // For SMS, we want to use the display string directly since it's already in IST
+            // Don't convert the datetime object again as it may cause timezone issues
+            const slotDisplayForSMS = selectedSlot.display; // This already has IST time
             
             // Format product name for SMS
             const formatProductName = (key) => {
@@ -5014,29 +5024,19 @@
                 return names[key] || key;
             };
             
-            // Format date for SMS in IST
-            const formatDateTime = (dt) => {
-                const date = new Date(dt);
-                // Format in IST
-                const istOptions = { 
-                    timeZone: 'Asia/Kolkata',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true
-                };
-                const istString = date.toLocaleString('en-IN', istOptions);
-                // Add IST suffix for clarity
-                return istString + ' IST';
-            };
-            
             // Generate SMS message based on booking type
             if (bookingType === 'demo') {
-                smsMessage = `Your demo for ${formatProductName(bookingProduct)} is confirmed on ${formatDateTime(slotDateTime)}. For assistance, call 885 886 8889 - Topiko -TOPIKO`;
+                smsMessage = `Your demo for ${formatProductName(bookingProduct)} is confirmed on ${slotDisplayForSMS}. For assistance, call 885 886 8889 - Topiko -TOPIKO`;
             } else {
-                smsMessage = `Your call with Topiko  team is scheduled for ${formatDateTime(slotDateTime)}. For any assistance call 885 886 8889. -TOPIKO`;
+                smsMessage = `Your call with Topiko team is scheduled for ${slotDisplayForSMS}. For any assistance call 885 886 8889. -TOPIKO`;
             }
+            
+            console.log('📱 SMS Message:', smsMessage);
+            console.log('📅 Selected Slot:', {
+                display: selectedSlot.display,
+                datetime: selectedSlot.datetime,
+                isCustom: selectedSlot.isCustom
+            });
             
             // Enhanced booking data with all details
             const bookingData = {
@@ -5087,7 +5087,8 @@
                         mobile: userProfile.phone,
                         type: bookingType === 'demo' ? 'demo' : 'call',
                         product: bookingProduct,
-                        dateTime: slotDateTime
+                        dateTime: selectedSlot.display, // Send the display string which is already in IST
+                        message: smsMessage // Send the pre-formatted message
                     })
                 });
                 
@@ -5108,8 +5109,8 @@
                 // Update the main lead record with booking info
                 const updateData = {
                     demo_viewed_at: new Date().toISOString(),
-                    follow_up_notes: `${bookingType === 'demo' ? 'Demo' : 'Call'} booked for ${selectedSlot.display}`,
-                    lead_status: 'demo_scheduled'
+                    follow_up_notes: `${bookingType === 'demo' ? 'Demo' : 'Call'} booked for ${selectedSlot.display}`
+                    // Removed lead_status update as 'demo_scheduled' is not a valid enum value
                 };
                 
                 console.log('📝 Update data:', updateData);
