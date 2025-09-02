@@ -2262,18 +2262,45 @@
                     leadDataForInsert.utm_data = JSON.stringify(leadDataForInsert.utm_data);
                 }
                 
-                const { data, error } = await supabase
+                // First check if a lead with this phone already exists
+                const { data: existingLead, error: checkError } = await supabase
                     .from('franchise_leads')
-                    .insert([leadDataForInsert])
-                    .select('id');
+                    .select('id')
+                    .eq('phone', leadData.phone)
+                    .single();
                 
-                if (!error && data && data.length > 0) {
-                    currentLeadId = data[0].id;
-                    console.log('✅ Contact details saved with ID:', currentLeadId);
-                    showSaveStatus('✅ Details saved!', 'saved');
-                    return { success: true, leadId: currentLeadId };
+                if (existingLead) {
+                    // Update existing lead instead of creating new
+                    console.log('📝 Updating existing lead for phone:', leadData.phone);
+                    const { data, error } = await supabase
+                        .from('franchise_leads')
+                        .update(leadDataForInsert)
+                        .eq('id', existingLead.id)
+                        .select('id');
+                    
+                    if (!error && data && data.length > 0) {
+                        currentLeadId = data[0].id;
+                        console.log('✅ Existing lead updated with ID:', currentLeadId);
+                        showSaveStatus('✅ Details updated!', 'saved');
+                        return { success: true, leadId: currentLeadId, updated: true };
+                    } else {
+                        throw error || new Error('Failed to update existing lead');
+                    }
                 } else {
-                    throw error || new Error('No data returned');
+                    // No existing lead, create new one
+                    const { data, error } = await supabase
+                        .from('franchise_leads')
+                        .insert([leadDataForInsert])
+                        .select('id');
+                    
+                    if (!error && data && data.length > 0) {
+                        currentLeadId = data[0].id;
+                        console.log('✅ New lead created with ID:', currentLeadId);
+                        showSaveStatus('✅ Details saved!', 'saved');
+                        return { success: true, leadId: currentLeadId };
+                    } else {
+                        throw error || new Error('No data returned');
+                    }
                 }
             } catch (error) {
                 console.error('❌ Failed to save contact details:', error);
