@@ -1796,8 +1796,8 @@
     </div>
 
     <!-- Slot Booking Modal -->
-    <div id="slot-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 10000; align-items: center; justify-content: center;">
-        <div id="slot-modal-content" style="position: relative; width: 90%; max-width: 600px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px); border-radius: 24px; padding: 3rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+    <div id="slot-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 10000; align-items: center; justify-content: center;">
+        <div id="slot-modal-content" style="position: relative; width: 90%; max-width: 600px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); backdrop-filter: blur(40px); border-radius: 24px; padding: 3rem; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);">
             <button id="close-slot-modal" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255, 255, 255, 0.1); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
             
             <!-- Slot Selection View -->
@@ -1815,15 +1815,15 @@
                 <div style="text-align: center; margin-bottom: 2rem;">
                     <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 2rem;">✓</div>
                 </div>
-                <h3 style="color: white; text-align: center; margin-bottom: 1.5rem; font-size: 1.6rem;">Confirm Your Booking</h3>
+                <h3 style="color: white; text-align: center; margin-bottom: 1.5rem; font-size: 1.6rem;">Confirm Your Slot</h3>
                 <div id="booking-summary" style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
-                    <!-- Booking details will be shown here -->
+                    <!-- Slot details will be shown here -->
                 </div>
                 
                 <div style="display: flex; gap: 1rem; justify-content: center;">
                     <button id="cancel-booking-btn" class="back-btn">← Change Time</button>
                     <button id="confirm-booking-btn" class="next-btn" style="background: linear-gradient(135deg, #10b981, #059669);">
-                        <span>Confirm Booking</span>
+                        <span>Confirm Slot</span>
                     </button>
                 </div>
             </div>
@@ -1831,7 +1831,7 @@
             <!-- Success View -->
             <div id="slot-success-view" style="display: none; text-align: center;">
                 <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 3rem;">🎉</div>
-                <h3 style="color: white; margin-bottom: 1rem; font-size: 1.8rem;">Booking Confirmed!</h3>
+                <h3 style="color: white; margin-bottom: 1rem; font-size: 1.8rem;">Slot Confirmed!</h3>
                 <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem;">We've sent a confirmation to your phone number. Our team will connect with you at the scheduled time.</p>
                 <button id="close-success-btn" class="next-btn">Done</button>
             </div>
@@ -4964,7 +4964,7 @@
             document.getElementById('slot-selection-view').style.display = 'none';
             document.getElementById('slot-confirmation-view').style.display = 'block';
             
-            // Update booking summary
+            // Update slot summary
             const summary = document.getElementById('booking-summary');
             summary.innerHTML = `
                 <div style="color: rgba(255, 255, 255, 0.9); line-height: 1.8;">
