@@ -1828,12 +1828,12 @@
             const stages = [
                 { key: 'site_visits', name: 'Site Visits', icon: '🌐', color: '#9f7aea', 
                   count: filteredLeads.length }, // All leads represent site visits
-                { key: 'contact_entered', name: 'Contact Entered', icon: '📝', color: '#ed8936',
-                  count: filteredLeads.filter(l => l.contact_entered_at).length },
                 { key: 'video_views', name: 'Video Views', icon: '▶️', color: '#3182ce',
                   count: filteredLeads.filter(l => l.video_viewed_at || l.demo_viewed_at).length },
                 { key: 'interested_clicks', name: '"I am Interested" Clicks', icon: '💡', color: '#38a169',
-                  count: filteredLeads.filter(l => l.interest_shown_at || l.otp_verified_at).length },
+                  count: filteredLeads.filter(l => l.interest_shown_at || l.contact_entered_at).length },
+                { key: 'contact_entered', name: 'Contact Entered', icon: '📝', color: '#ed8936',
+                  count: filteredLeads.filter(l => l.contact_entered_at).length },
                 { key: 'otp_verified', name: 'OTP Verified', icon: '✅', color: '#4299e1',
                   count: filteredLeads.filter(l => l.otp_verified_at).length },
                 { key: 'assessment_started', name: 'Assessment Started', icon: '📋', color: '#667eea',
@@ -1842,6 +1842,8 @@
                   count: filteredLeads.filter(l => l.assessment_completed_at).length },
                 { key: 'products_viewed', name: 'Products Viewed', icon: '👀', color: '#48bb78',
                   count: filteredLeads.filter(l => l.products_viewed_at).length },
+                { key: 'demo_booked', name: 'Demo/Call Booked', icon: '📞', color: '#f6ad55',
+                  count: filteredLeads.filter(l => l.has_booked_demo || l.has_booked_call || l.demo_viewed_at).length },
                 { key: 'final_submitted', name: 'Final Submission', icon: '🎯', color: '#38a169',
                   count: filteredLeads.filter(l => l.final_submitted_at).length }
             ];
