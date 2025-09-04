@@ -2417,6 +2417,25 @@
             return result;
         }
 
+        // PHASE 1.5: Video Viewed (About page video)
+        async function updateVideoViewed() {
+            console.log('💾 Phase 1.5: Video viewed...');
+            showSaveStatus('💾 Tracking video view...', 'saving');
+
+            const updateData = {
+                video_viewed_at: new Date().toISOString(),
+                interest_shown_at: new Date().toISOString() // Also mark interest shown when video is watched
+            };
+
+            const result = await updateLeadData(updateData);
+            
+            if (result.success) {
+                showSaveStatus('✅ Video view tracked!', 'saved');
+            }
+
+            return result;
+        }
+
         // PHASE 5: Product Detail Viewed
         async function updateProductDetailed(productKey) {
             console.log('💾 Phase 5: Product detail viewed:', productKey);
@@ -3067,8 +3086,13 @@
             const aboutContinueBtn = document.getElementById('about-continue-btn');
             if (aboutContinueBtn) {
                 console.log('✅ About Continue button found');
-                aboutContinueBtn.addEventListener('click', function() {
+                aboutContinueBtn.addEventListener('click', async function() {
                     console.log('👉 About Continue button clicked');
+                    // Track interest shown when user clicks "I am interested"
+                    const updateData = {
+                        interest_shown_at: new Date().toISOString()
+                    };
+                    await updateLeadData(updateData);
                     showScreen('contact-details-screen');
                 });
             }
@@ -4240,7 +4264,7 @@
         }
 
         // Open Video Modal for About Page
-        function openVideoModal() {
+        async function openVideoModal() {
             const modal = document.getElementById('video-modal');
             const container = document.getElementById('video-container');
             
@@ -4250,6 +4274,11 @@
             
             // Create iframe
             container.innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
+            
+            // Track video view after a short delay to ensure it's actually playing
+            setTimeout(async () => {
+                await updateVideoViewed();
+            }, 2000);
             
             // Show modal
             modal.style.display = 'flex';
