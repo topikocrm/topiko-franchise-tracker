@@ -2216,12 +2216,12 @@
                 session_id: generateSessionId(),
                 browser_info: getBrowserInfo(),
                 
-                // Standard UTM tracking
+                // Standard UTM tracking (save both at top-level and in utm_data)
                 utm_source: utmData.utm_source || 'direct',
                 utm_medium: utmData.utm_medium || 'organic',
-                utm_campaign: utmData.utm_campaign,
-                utm_content: utmData.utm_content,
-                utm_term: utmData.utm_term,
+                utm_campaign: utmData.utm_campaign || null,
+                utm_content: utmData.utm_content || null,
+                utm_term: utmData.utm_term || null,
                 
                 // Partner-specific UTM parameters
                 utm_partner_type: utmData.utm_partner_type,
@@ -2229,7 +2229,7 @@
                 
                 // Additional tracking data
                 utm_data: utmData, // Full UTM data in JSON
-                campaign_source: 'topikopartner.com',
+                campaign_source: utmData.utm_source || 'direct',
                 
                 // Referrer data
                 referrer: document.referrer,

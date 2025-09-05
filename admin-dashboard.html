@@ -1493,8 +1493,9 @@
                                         ${lead.selected_product ? `<div style="font-size: 0.8rem; color: var(--success); margin-top: 0.25rem;">✅ Selected: ${lead.selected_product}</div>` : ''}
                                     </td>
                                     <td>
-                                        <div>${lead.campaign_source || 'Direct'}</div>
-                                        ${lead.utm_data?.utm_source ? `<div style="font-size: 0.8rem; color: var(--text-muted);">${lead.utm_data.utm_source}</div>` : ''}
+                                        <div>${lead.utm_source || lead.utm_data?.utm_source || lead.campaign_source || 'Direct'}</div>
+                                        ${lead.utm_medium || lead.utm_data?.utm_medium ? `<div style="font-size: 0.8rem; color: var(--text-muted);">${lead.utm_medium || lead.utm_data?.utm_medium}</div>` : ''}
+                                        ${lead.utm_campaign || lead.utm_data?.utm_campaign ? `<div style="font-size: 0.75rem; color: var(--text-muted);">${lead.utm_campaign || lead.utm_data?.utm_campaign}</div>` : ''}
                                     </td>
                                     <td>
                                         <div style="font-size: 0.85rem;">${new Date(lead.created_at).toLocaleDateString()}</div>
@@ -1861,11 +1862,31 @@
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">UTM Source</div>
-                            <div class="detail-value">${lead.utm_data?.utm_source || 'Not available'}</div>
+                            <div class="detail-value">${lead.utm_data?.utm_source || lead.utm_source || 'Not available'}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">UTM Medium</div>
-                            <div class="detail-value">${lead.utm_data?.utm_medium || 'Not available'}</div>
+                            <div class="detail-value">${lead.utm_data?.utm_medium || lead.utm_medium || 'Not available'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">UTM Campaign</div>
+                            <div class="detail-value">${lead.utm_data?.utm_campaign || lead.utm_campaign || 'Not available'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">UTM Content</div>
+                            <div class="detail-value">${lead.utm_data?.utm_content || lead.utm_content || 'Not available'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">UTM Term</div>
+                            <div class="detail-value">${lead.utm_data?.utm_term || lead.utm_term || 'Not available'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Partner Type</div>
+                            <div class="detail-value">${lead.utm_data?.utm_partner_type || lead.utm_partner_type || 'Not available'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Partner Region</div>
+                            <div class="detail-value">${lead.utm_data?.utm_partner_region || lead.utm_partner_region || 'Not available'}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Browser Info</div>
