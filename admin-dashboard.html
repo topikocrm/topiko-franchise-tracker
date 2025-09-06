@@ -1072,8 +1072,11 @@
                     <button class="filter-btn" data-followup-filter="today">Today</button>
                     <button class="filter-btn" data-followup-filter="week">This Week</button>
                     <button class="filter-btn" data-followup-filter="overdue">Overdue</button>
-                    <button class="filter-btn" data-followup-filter="pending">Pending</button>
-                    <button class="filter-btn" data-followup-filter="completed">Completed</button>
+                    <button class="filter-btn" data-followup-filter="not_contacted">📞 Not Contacted</button>
+                    <button class="filter-btn" data-followup-filter="interested">✅ Interested</button>
+                    <button class="filter-btn" data-followup-filter="demo_scheduled">📅 Demo Scheduled</button>
+                    <button class="filter-btn" data-followup-filter="not_interested">❌ Not Interested</button>
+                    <button class="filter-btn" data-followup-filter="future_prospect">🔮 Future Prospect</button>
                 </div>
             </div>
 
@@ -1999,11 +2002,13 @@
                                 <input type="date" id="follow-up-date" class="neu-input" style="width: 100%;">
                             </div>
                             <div>
-                                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Status</label>
+                                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Lead Status</label>
                                 <select id="note-status" class="neu-input" style="width: 100%;">
-                                    <option value="pending">⏳ Pending</option>
-                                    <option value="completed">✅ Completed</option>
-                                    <option value="cancelled">❌ Cancelled</option>
+                                    <option value="not_contacted" selected>📞 Not Contacted</option>
+                                    <option value="interested">✅ Interested</option>
+                                    <option value="demo_scheduled">📅 Demo Scheduled</option>
+                                    <option value="not_interested">❌ Not Interested</option>
+                                    <option value="future_prospect">🔮 Future Prospect</option>
                                 </select>
                             </div>
                             <button onclick="saveLeadNote('${lead.id}')" class="neu-button primary" style="margin-top: 1.5rem;">
@@ -2447,7 +2452,7 @@
                                         border-radius: 12px;
                                         font-size: 0.85rem;
                                     ">
-                                        ${getStatusIcon(note.status)} ${note.status}
+                                        ${getStatusIcon(note.status)} ${getStatusLabel(note.status)}
                                     </span>
                                 </div>
                                 <div class="note-content" style="color: var(--text-primary); line-height: 1.6;">
@@ -2512,7 +2517,7 @@
                     // Clear the form
                     document.getElementById('new-note-text').value = '';
                     document.getElementById('follow-up-date').value = '';
-                    document.getElementById('note-status').value = 'pending';
+                    document.getElementById('note-status').value = 'not_contacted';
                     
                     // Reload notes
                     await loadLeadNotes(leadId);
@@ -2557,8 +2562,13 @@
         // Helper functions for notes display
         function getStatusColor(status) {
             const colors = {
-                'pending': '#f59e0b',
+                'not_contacted': '#6b7280',
+                'interested': '#10b981',
+                'demo_scheduled': '#3b82f6',
+                'not_interested': '#ef4444',
+                'future_prospect': '#f59e0b',
                 'completed': '#10b981',
+                'pending': '#f59e0b',
                 'cancelled': '#ef4444'
             };
             return colors[status] || '#6b7280';
@@ -2566,11 +2576,30 @@
 
         function getStatusIcon(status) {
             const icons = {
-                'pending': '⏳',
+                'not_contacted': '📞',
+                'interested': '✅',
+                'demo_scheduled': '📅',
+                'not_interested': '❌',
+                'future_prospect': '🔮',
                 'completed': '✅',
+                'pending': '⏳',
                 'cancelled': '❌'
             };
             return icons[status] || '📝';
+        }
+        
+        function getStatusLabel(status) {
+            const labels = {
+                'not_contacted': 'Not Contacted',
+                'interested': 'Interested',
+                'demo_scheduled': 'Demo Scheduled',
+                'not_interested': 'Not Interested',
+                'future_prospect': 'Future Prospect',
+                'completed': 'Completed',
+                'pending': 'Pending',
+                'cancelled': 'Cancelled'
+            };
+            return labels[status] || status;
         }
 
         function getFollowUpColor(followUpDate) {
@@ -2720,10 +2749,8 @@
                     followUpDate.setHours(0, 0, 0, 0);
                     return followUpDate < today;
                 });
-            } else if (currentFollowupFilter === 'pending') {
-                filteredFollowups = allFollowups.filter(note => note.status === 'pending');
-            } else if (currentFollowupFilter === 'completed') {
-                filteredFollowups = allFollowups.filter(note => note.status === 'completed');
+            } else if (['not_contacted', 'interested', 'demo_scheduled', 'not_interested', 'future_prospect', 'pending', 'completed'].includes(currentFollowupFilter)) {
+                filteredFollowups = allFollowups.filter(note => note.status === currentFollowupFilter);
             }
 
             if (filteredFollowups.length === 0) {
@@ -2731,11 +2758,29 @@
                 return;
             }
 
-            container.innerHTML = filteredFollowups.map(note => {
-                const lead = note.franchise_leads;
-                if (!lead) return '';
+            // Group notes by lead_id
+            const groupedByLead = {};
+            filteredFollowups.forEach(note => {
+                if (!note.franchise_leads) return;
+                const leadId = note.lead_id;
+                if (!groupedByLead[leadId]) {
+                    groupedByLead[leadId] = {
+                        lead: note.franchise_leads,
+                        notes: []
+                    };
+                }
+                groupedByLead[leadId].notes.push(note);
+            });
 
-                const followUpColor = note.follow_up_date ? getFollowUpColor(note.follow_up_date) : '#6b7280';
+            // Display grouped leads
+            container.innerHTML = Object.values(groupedByLead).map(({ lead, notes }) => {
+                // Sort notes by date (newest first)
+                notes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                
+                // Get the latest note for status display
+                const latestNote = notes[0];
+                const nextFollowUp = notes.find(n => n.follow_up_date && new Date(n.follow_up_date) >= today);
+                const followUpColor = nextFollowUp ? getFollowUpColor(nextFollowUp.follow_up_date) : '#6b7280';
                 
                 return `
                     <div class="followup-card" style="
@@ -2743,7 +2788,7 @@
                         border-radius: 16px;
                         padding: 1.5rem;
                         margin-bottom: 1rem;
-                        border-left: 4px solid ${getStatusColor(note.status)};
+                        border-left: 4px solid ${getStatusColor(latestNote.status)};
                         cursor: pointer;
                     " onclick="showLeadDetailsById('${lead.id}')">
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
@@ -2754,47 +2799,65 @@
                                 <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
                                     📱 ${lead.phone} | 📍 ${lead.city}
                                 </div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                    📝 ${notes.length} note${notes.length > 1 ? 's' : ''}
+                                </div>
                             </div>
                             <div style="text-align: right;">
-                                ${note.follow_up_date ? `
+                                ${nextFollowUp ? `
                                     <div style="color: ${followUpColor}; font-weight: 500;">
-                                        📅 ${new Date(note.follow_up_date).toLocaleDateString()}
+                                        📅 Next: ${new Date(nextFollowUp.follow_up_date).toLocaleDateString()}
                                     </div>
                                 ` : ''}
                                 <span style="
-                                    background: ${getStatusColor(note.status)}20;
-                                    color: ${getStatusColor(note.status)};
+                                    background: ${getStatusColor(latestNote.status)}20;
+                                    color: ${getStatusColor(latestNote.status)};
                                     padding: 0.25rem 0.75rem;
                                     border-radius: 12px;
                                     font-size: 0.85rem;
                                     display: inline-block;
                                     margin-top: 0.5rem;
                                 ">
-                                    ${getStatusIcon(note.status)} ${note.status}
+                                    ${getStatusIcon(latestNote.status)} ${getStatusLabel(latestNote.status)}
                                 </span>
                             </div>
                         </div>
+                        
+                        <!-- Show latest note -->
                         <div style="
                             background: rgba(102, 126, 234, 0.05);
                             padding: 1rem;
                             border-radius: 8px;
                             margin-bottom: 1rem;
                         ">
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                                Latest Note (${new Date(latestNote.created_at).toLocaleDateString()}):
+                            </div>
                             <div style="color: var(--text-primary); line-height: 1.6;">
-                                ${note.note}
+                                ${latestNote.note}
                             </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div style="font-size: 0.85rem; color: var(--text-muted);">
-                                Created: ${new Date(note.created_at).toLocaleString()}
-                            </div>
-                            ${note.status === 'pending' ? `
-                                <button onclick="event.stopPropagation(); updateNoteStatusFromList('${note.id}')" 
-                                    class="neu-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
-                                    ✅ Mark Complete
-                                </button>
-                            ` : ''}
-                        </div>
+                        
+                        <!-- Show other notes summary if any -->
+                        ${notes.length > 1 ? `
+                            <details style="margin-top: 1rem;">
+                                <summary style="cursor: pointer; color: var(--text-muted); font-size: 0.9rem;">
+                                    View ${notes.length - 1} previous note${notes.length > 2 ? 's' : ''}
+                                </summary>
+                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                                    ${notes.slice(1).map(note => `
+                                        <div style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(255,255,255,0.02); border-radius: 8px;">
+                                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                                                ${new Date(note.created_at).toLocaleString()} - ${getStatusIcon(note.status)} ${getStatusLabel(note.status)}
+                                            </div>
+                                            <div style="font-size: 0.9rem; color: var(--text-primary);">
+                                                ${note.note}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </details>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
