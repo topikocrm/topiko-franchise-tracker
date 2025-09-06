@@ -782,6 +782,16 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
 
         .empty-state {
             text-align: center;
@@ -881,6 +891,7 @@
             <div class="nav-tab" data-tab="leads">👥 Leads Management</div>
             <div class="nav-tab" data-tab="analytics">📈 Analytics</div>
             <div class="nav-tab" data-tab="funnel">🔄 Conversion Funnel</div>
+            <div class="nav-tab" data-tab="followups">📝 Follow-ups</div>
         </div>
 
         <!-- Overview Tab -->
@@ -1047,6 +1058,63 @@
                     <h3 style="text-align: center; margin-bottom: 1.5rem;">📦 Product Interest Distribution</h3>
                     <div id="product-interest-bars" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                         <!-- Product bars will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Follow-ups Tab -->
+        <div id="followups-tab" class="tab-content">
+            <!-- Follow-ups Filter Bar -->
+            <div class="filter-bar" style="margin-bottom: 2rem;">
+                <div class="filter-group">
+                    <button class="filter-btn active" data-followup-filter="all">All Follow-ups</button>
+                    <button class="filter-btn" data-followup-filter="today">Today</button>
+                    <button class="filter-btn" data-followup-filter="week">This Week</button>
+                    <button class="filter-btn" data-followup-filter="overdue">Overdue</button>
+                    <button class="filter-btn" data-followup-filter="pending">Pending</button>
+                    <button class="filter-btn" data-followup-filter="completed">Completed</button>
+                </div>
+            </div>
+
+            <!-- Follow-ups Summary Cards -->
+            <div class="stats-grid" style="margin-bottom: 2rem;">
+                <div class="stat-card">
+                    <div class="stat-icon">🔴</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Overdue</div>
+                        <div class="stat-value" id="overdue-count">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🟡</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Today</div>
+                        <div class="stat-value" id="today-followups-count">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🟢</div>
+                    <div class="stat-content">
+                        <div class="stat-label">This Week</div>
+                        <div class="stat-value" id="week-followups-count">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Completed</div>
+                        <div class="stat-value" id="completed-followups-count">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Follow-ups List -->
+            <div class="neu-card">
+                <h2 style="margin-bottom: 1.5rem;">📋 Follow-up Schedule</h2>
+                <div id="followups-list">
+                    <div style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        Loading follow-ups...
                     </div>
                 </div>
             </div>
@@ -1914,6 +1982,44 @@
                     </div>
                 </div>
 
+                <!-- Notes & Follow-ups Section -->
+                <div class="detail-section">
+                    <h3>📝 Notes & Follow-ups</h3>
+                    
+                    <!-- Add New Note Form -->
+                    <div class="add-note-form" style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.05); border-radius: 12px;">
+                        <div style="margin-bottom: 1rem;">
+                            <textarea id="new-note-text" class="neu-input" 
+                                style="width: 100%; min-height: 80px; resize: vertical;" 
+                                placeholder="Add a note about this lead..."></textarea>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: center;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Follow-up Date</label>
+                                <input type="date" id="follow-up-date" class="neu-input" style="width: 100%;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Status</label>
+                                <select id="note-status" class="neu-input" style="width: 100%;">
+                                    <option value="pending">⏳ Pending</option>
+                                    <option value="completed">✅ Completed</option>
+                                    <option value="cancelled">❌ Cancelled</option>
+                                </select>
+                            </div>
+                            <button onclick="saveLeadNote('${lead.id}')" class="neu-button primary" style="margin-top: 1.5rem;">
+                                💾 Save Note
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Notes Timeline -->
+                    <div id="notes-timeline-${lead.id}" class="notes-timeline">
+                        <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            Loading notes...
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Raw Data (for debugging) -->
                 <div class="detail-section">
                     <h3>🔧 Technical Data (JSON)</h3>
@@ -1926,6 +2032,9 @@
             console.log('✅ Modal content populated, showing modal...');
             document.getElementById('lead-modal').classList.add('active');
             console.log('✅ Modal should now be visible');
+            
+            // Load notes for this lead
+            loadLeadNotes(lead.id);
         }
 
         // Format questionnaire answers in a readable way
@@ -2299,6 +2408,425 @@
             document.getElementById('lead-modal').classList.remove('active');
         }
 
+        // Load notes for a specific lead
+        async function loadLeadNotes(leadId) {
+            const container = document.getElementById(`notes-timeline-${leadId}`);
+            
+            try {
+                if (supabase) {
+                    const { data, error } = await supabase
+                        .from('lead_notes')
+                        .select('*')
+                        .eq('lead_id', leadId)
+                        .order('created_at', { ascending: false });
+                    
+                    if (error) {
+                        console.error('Error loading notes:', error);
+                        container.innerHTML = '<div style="color: var(--text-muted); text-align: center;">Failed to load notes</div>';
+                        return;
+                    }
+                    
+                    if (data && data.length > 0) {
+                        container.innerHTML = data.map(note => `
+                            <div class="note-item" style="border-left: 3px solid ${getStatusColor(note.status)}; padding-left: 1rem; margin-bottom: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                    <div>
+                                        <span class="note-date" style="font-size: 0.9rem; color: var(--text-muted);">
+                                            ${new Date(note.created_at).toLocaleString()}
+                                        </span>
+                                        ${note.follow_up_date ? `
+                                            <span style="margin-left: 1rem; font-size: 0.9rem; color: ${getFollowUpColor(note.follow_up_date)};">
+                                                📅 Follow-up: ${new Date(note.follow_up_date).toLocaleDateString()}
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                    <span class="status-badge" style="
+                                        background: ${getStatusColor(note.status)}20;
+                                        color: ${getStatusColor(note.status)};
+                                        padding: 0.25rem 0.75rem;
+                                        border-radius: 12px;
+                                        font-size: 0.85rem;
+                                    ">
+                                        ${getStatusIcon(note.status)} ${note.status}
+                                    </span>
+                                </div>
+                                <div class="note-content" style="color: var(--text-primary); line-height: 1.6;">
+                                    ${note.note}
+                                </div>
+                                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                                    By: ${note.created_by || 'Admin'}
+                                </div>
+                                ${note.status === 'pending' ? `
+                                    <div style="margin-top: 0.5rem;">
+                                        <button onclick="updateNoteStatus('${note.id}', 'completed')" 
+                                            class="neu-button" style="padding: 0.25rem 0.75rem; font-size: 0.85rem;">
+                                            ✅ Mark Complete
+                                        </button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('');
+                    } else {
+                        container.innerHTML = '<div style="color: var(--text-muted); text-align: center;">No notes yet. Add your first note above!</div>';
+                    }
+                } else {
+                    container.innerHTML = '<div style="color: var(--text-muted); text-align: center;">Notes feature requires database connection</div>';
+                }
+            } catch (error) {
+                console.error('Error in loadLeadNotes:', error);
+                container.innerHTML = '<div style="color: var(--text-muted); text-align: center;">Error loading notes</div>';
+            }
+        }
+
+        // Save a new note for a lead
+        async function saveLeadNote(leadId) {
+            const noteText = document.getElementById('new-note-text').value.trim();
+            const followUpDate = document.getElementById('follow-up-date').value;
+            const status = document.getElementById('note-status').value;
+            
+            if (!noteText) {
+                alert('Please enter a note');
+                return;
+            }
+            
+            try {
+                if (supabase) {
+                    const noteData = {
+                        lead_id: leadId,
+                        note: noteText,
+                        follow_up_date: followUpDate || null,
+                        status: status,
+                        created_by: 'Admin' // You can customize this
+                    };
+                    
+                    const { data, error } = await supabase
+                        .from('lead_notes')
+                        .insert([noteData]);
+                    
+                    if (error) {
+                        console.error('Error saving note:', error);
+                        alert('Failed to save note: ' + error.message);
+                        return;
+                    }
+                    
+                    // Clear the form
+                    document.getElementById('new-note-text').value = '';
+                    document.getElementById('follow-up-date').value = '';
+                    document.getElementById('note-status').value = 'pending';
+                    
+                    // Reload notes
+                    await loadLeadNotes(leadId);
+                    
+                    // Show success message
+                    showSuccess('Note saved successfully!');
+                } else {
+                    alert('Database connection required to save notes');
+                }
+            } catch (error) {
+                console.error('Error in saveLeadNote:', error);
+                alert('Failed to save note');
+            }
+        }
+
+        // Update note status
+        async function updateNoteStatus(noteId, newStatus) {
+            try {
+                if (supabase) {
+                    const { error } = await supabase
+                        .from('lead_notes')
+                        .update({ status: newStatus })
+                        .eq('id', noteId);
+                    
+                    if (error) {
+                        console.error('Error updating note status:', error);
+                        return;
+                    }
+                    
+                    // Reload the current lead's notes
+                    const modalBody = document.getElementById('modal-body');
+                    const leadId = modalBody.querySelector('[id^="notes-timeline-"]').id.replace('notes-timeline-', '');
+                    await loadLeadNotes(leadId);
+                    
+                    showSuccess('Status updated successfully!');
+                }
+            } catch (error) {
+                console.error('Error in updateNoteStatus:', error);
+            }
+        }
+
+        // Helper functions for notes display
+        function getStatusColor(status) {
+            const colors = {
+                'pending': '#f59e0b',
+                'completed': '#10b981',
+                'cancelled': '#ef4444'
+            };
+            return colors[status] || '#6b7280';
+        }
+
+        function getStatusIcon(status) {
+            const icons = {
+                'pending': '⏳',
+                'completed': '✅',
+                'cancelled': '❌'
+            };
+            return icons[status] || '📝';
+        }
+
+        function getFollowUpColor(followUpDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const followUp = new Date(followUpDate);
+            followUp.setHours(0, 0, 0, 0);
+            
+            if (followUp < today) return '#ef4444'; // Overdue - red
+            if (followUp.getTime() === today.getTime()) return '#f59e0b'; // Today - yellow
+            return '#10b981'; // Future - green
+        }
+
+        function showSuccess(message) {
+            // Simple success notification - you can enhance this
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Follow-ups management functions
+        let allFollowups = [];
+        let currentFollowupFilter = 'all';
+
+        async function loadFollowups() {
+            try {
+                if (!supabase) {
+                    document.getElementById('followups-list').innerHTML = 
+                        '<div style="text-align: center; color: var(--text-muted); padding: 3rem;">Database connection required</div>';
+                    return;
+                }
+
+                // Fetch all notes with lead information
+                const { data, error } = await supabase
+                    .from('lead_notes')
+                    .select(`
+                        *,
+                        franchise_leads (
+                            id,
+                            first_name,
+                            last_name,
+                            phone,
+                            city,
+                            lead_score,
+                            lead_status
+                        )
+                    `)
+                    .order('follow_up_date', { ascending: true });
+
+                if (error) {
+                    console.error('Error loading follow-ups:', error);
+                    document.getElementById('followups-list').innerHTML = 
+                        '<div style="text-align: center; color: var(--text-muted); padding: 3rem;">Failed to load follow-ups</div>';
+                    return;
+                }
+
+                allFollowups = data || [];
+                updateFollowupStats();
+                displayFollowups();
+            } catch (error) {
+                console.error('Error in loadFollowups:', error);
+            }
+        }
+
+        function updateFollowupStats() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const weekEnd = new Date();
+            weekEnd.setDate(weekEnd.getDate() + 7);
+            weekEnd.setHours(23, 59, 59, 999);
+
+            let overdue = 0;
+            let todayCount = 0;
+            let weekCount = 0;
+            let completed = 0;
+
+            allFollowups.forEach(note => {
+                if (note.status === 'completed') {
+                    completed++;
+                } else if (note.follow_up_date) {
+                    const followUpDate = new Date(note.follow_up_date);
+                    followUpDate.setHours(0, 0, 0, 0);
+                    
+                    if (followUpDate < today) {
+                        overdue++;
+                    } else if (followUpDate.getTime() === today.getTime()) {
+                        todayCount++;
+                    } else if (followUpDate <= weekEnd) {
+                        weekCount++;
+                    }
+                }
+            });
+
+            document.getElementById('overdue-count').textContent = overdue;
+            document.getElementById('today-followups-count').textContent = todayCount;
+            document.getElementById('week-followups-count').textContent = weekCount;
+            document.getElementById('completed-followups-count').textContent = completed;
+        }
+
+        function displayFollowups() {
+            const container = document.getElementById('followups-list');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const weekEnd = new Date();
+            weekEnd.setDate(weekEnd.getDate() + 7);
+            weekEnd.setHours(23, 59, 59, 999);
+
+            // Filter followups based on current filter
+            let filteredFollowups = allFollowups;
+            
+            if (currentFollowupFilter === 'today') {
+                filteredFollowups = allFollowups.filter(note => {
+                    if (!note.follow_up_date) return false;
+                    const followUpDate = new Date(note.follow_up_date);
+                    followUpDate.setHours(0, 0, 0, 0);
+                    return followUpDate.getTime() === today.getTime();
+                });
+            } else if (currentFollowupFilter === 'week') {
+                filteredFollowups = allFollowups.filter(note => {
+                    if (!note.follow_up_date) return false;
+                    const followUpDate = new Date(note.follow_up_date);
+                    return followUpDate >= today && followUpDate <= weekEnd;
+                });
+            } else if (currentFollowupFilter === 'overdue') {
+                filteredFollowups = allFollowups.filter(note => {
+                    if (!note.follow_up_date || note.status === 'completed') return false;
+                    const followUpDate = new Date(note.follow_up_date);
+                    followUpDate.setHours(0, 0, 0, 0);
+                    return followUpDate < today;
+                });
+            } else if (currentFollowupFilter === 'pending') {
+                filteredFollowups = allFollowups.filter(note => note.status === 'pending');
+            } else if (currentFollowupFilter === 'completed') {
+                filteredFollowups = allFollowups.filter(note => note.status === 'completed');
+            }
+
+            if (filteredFollowups.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 3rem;">No follow-ups found</div>';
+                return;
+            }
+
+            container.innerHTML = filteredFollowups.map(note => {
+                const lead = note.franchise_leads;
+                if (!lead) return '';
+
+                const followUpColor = note.follow_up_date ? getFollowUpColor(note.follow_up_date) : '#6b7280';
+                
+                return `
+                    <div class="followup-card" style="
+                        background: var(--card-bg);
+                        border-radius: 16px;
+                        padding: 1.5rem;
+                        margin-bottom: 1rem;
+                        border-left: 4px solid ${getStatusColor(note.status)};
+                        cursor: pointer;
+                    " onclick="showLeadDetailsById('${lead.id}')">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h3 style="margin: 0; color: var(--text-primary);">
+                                    ${lead.first_name} ${lead.last_name}
+                                </h3>
+                                <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+                                    📱 ${lead.phone} | 📍 ${lead.city}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                ${note.follow_up_date ? `
+                                    <div style="color: ${followUpColor}; font-weight: 500;">
+                                        📅 ${new Date(note.follow_up_date).toLocaleDateString()}
+                                    </div>
+                                ` : ''}
+                                <span style="
+                                    background: ${getStatusColor(note.status)}20;
+                                    color: ${getStatusColor(note.status)};
+                                    padding: 0.25rem 0.75rem;
+                                    border-radius: 12px;
+                                    font-size: 0.85rem;
+                                    display: inline-block;
+                                    margin-top: 0.5rem;
+                                ">
+                                    ${getStatusIcon(note.status)} ${note.status}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="
+                            background: rgba(102, 126, 234, 0.05);
+                            padding: 1rem;
+                            border-radius: 8px;
+                            margin-bottom: 1rem;
+                        ">
+                            <div style="color: var(--text-primary); line-height: 1.6;">
+                                ${note.note}
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 0.85rem; color: var(--text-muted);">
+                                Created: ${new Date(note.created_at).toLocaleString()}
+                            </div>
+                            ${note.status === 'pending' ? `
+                                <button onclick="event.stopPropagation(); updateNoteStatusFromList('${note.id}')" 
+                                    class="neu-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                    ✅ Mark Complete
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Helper function to show lead details by ID
+        async function showLeadDetailsById(leadId) {
+            const lead = allLeads.find(l => l.id === leadId);
+            if (lead) {
+                const event = { currentTarget: { closest: () => ({ dataset: { leadId: leadId } }) } };
+                showLeadDetails(event);
+            }
+        }
+
+        // Update note status from follow-ups list
+        async function updateNoteStatusFromList(noteId) {
+            await updateNoteStatus(noteId, 'completed');
+            await loadFollowups(); // Reload the follow-ups list
+        }
+
+        // Setup follow-up filters
+        function setupFollowupFilters() {
+            document.querySelectorAll('[data-followup-filter]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-followup-filter]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFollowupFilter = btn.dataset.followupFilter;
+                    displayFollowups();
+                });
+            });
+        }
+
         // Initialize all charts
         function initializeCharts() {
             // Base chart configuration
@@ -2474,7 +3002,7 @@
         // Tab switching functionality
         function setupTabs() {
             document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
+                tab.addEventListener('click', async () => {
                     // Remove active class from all tabs and content
                     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -2483,6 +3011,11 @@
                     tab.classList.add('active');
                     const tabId = tab.dataset.tab + '-tab';
                     document.getElementById(tabId).classList.add('active');
+                    
+                    // Load follow-ups when that tab is selected
+                    if (tab.dataset.tab === 'followups') {
+                        await loadFollowups();
+                    }
                 });
             });
         }
@@ -2624,6 +3157,7 @@
             setupTabs();
             setupFilters();
             setupFunnelFilters();
+            setupFollowupFilters();
             setupButtonActions();
             await loadLeads();
             
