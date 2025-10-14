@@ -1701,12 +1701,15 @@
         
         // ===== INTERACTIVE CHAT MESSAGES =====
         
-        let messageHistory = new Set();
+        let questionResponsesShown = new Set();
         
-        function addChatMessage(message, delay = 500, screenNumber = null) {
-            // Create a unique key for this message
-            const messageKey = `${screenNumber || currentScreen}_${message}`;
-            if (messageHistory.has(messageKey)) return;
+        function addChatMessage(message, delay = 500, screenNumber = null, questionType = null) {
+            // For question responses, only show once per question type
+            if (questionType) {
+                const responseKey = `${screenNumber || currentScreen}_${questionType}`;
+                if (questionResponsesShown.has(responseKey)) return;
+                questionResponsesShown.add(responseKey);
+            }
             
             // Find the chat container for the current screen
             let chatContainer;
@@ -1717,8 +1720,6 @@
             }
             
             if (!chatContainer) return;
-            
-            messageHistory.add(messageKey);
             
             setTimeout(() => {
                 const chatBubble = document.createElement('div');
@@ -1740,20 +1741,18 @@
         }
         
         function clearChatMessages(screenNumber = null) {
-            let chatContainer;
-            if (screenNumber) {
-                chatContainer = document.querySelector(`#screen${screenNumber} .chat-container`);
-            } else {
-                chatContainer = document.querySelector('.screen.active .chat-container');
-            }
-            
-            if (chatContainer) {
-                // Keep only the first (original) message
+            // Clear all added chat messages from all screens
+            const allChatContainers = document.querySelectorAll('.chat-container');
+            allChatContainers.forEach(chatContainer => {
                 const messages = chatContainer.querySelectorAll('.chat-bubble');
+                // Keep only the first (original) message
                 for (let i = 1; i < messages.length; i++) {
                     messages[i].remove();
                 }
-            }
+            });
+            
+            // Reset the response tracking
+            questionResponsesShown.clear();
         }
 
         function updateProgress() {
@@ -1809,10 +1808,8 @@
             updateProgress();
             updateProfilePreview(); // Update profile preview on screen change
             
-            // Clear chat messages when changing screens (except screen 1)
-            if (screenNumber > 1) {
-                clearChatMessages();
-            }
+            // Clear all chat messages when changing screens to prevent carryover
+            clearChatMessages();
         }
 
         // Screen 1: Welcome and Basic Info
@@ -1994,7 +1991,7 @@
             if (questionId === 'businessType') {
                 formData.businessType = answers[questionId];
                 
-                // Add interactive message for business type
+                // Add interactive message for business type - only once
                 const businessTypeLabels = {
                     'retail': 'Retail/E-commerce',
                     'services': 'Professional Services', 
@@ -2002,24 +1999,24 @@
                     'others': 'Other Industry'
                 };
                 const typeLabel = businessTypeLabels[answers[questionId]] || answers[questionId];
-                addChatMessage(`Got it, ${typeLabel} businesses are going digital faster than ever!`, 500, 2);
+                addChatMessage(`Got it, ${typeLabel} businesses are going digital faster than ever!`, 500, 2, 'businessType');
             }
             
-            // Add interactive messages for Screen 2 questions - only once per question
+            // Add interactive messages for Screen 2 questions - only once per question type
             if (questionId === 'goals' && answers[questionId] && answers[questionId].length > 0) {
-                addChatMessage("Got it. Everyone's growth goals are unique — we'll tailor the plan just for you.", 500, 2);
+                addChatMessage("Got it. Everyone's growth goals are unique — we'll tailor the plan just for you.", 500, 2, 'goals');
             }
             
             if (questionId === 'digitalStatus' && answers[questionId]) {
-                addChatMessage("Makes sense. Many businesses start here — we'll help you go beyond visibility.", 500, 2);
+                addChatMessage("Makes sense. Many businesses start here — we'll help you go beyond visibility.", 500, 2, 'digitalStatus');
             }
             
             if (questionId === 'budget' && answers[questionId]) {
-                addChatMessage("Perfect. That helps us suggest the most effective plan for your scale.", 500, 2);
+                addChatMessage("Perfect. That helps us suggest the most effective plan for your scale.", 500, 2, 'budget');
             }
             
             if (questionId === 'challenge' && answers[questionId]) {
-                addChatMessage("We hear this a lot — you're not alone, and that's exactly what this checkup solves.", 500, 2);
+                addChatMessage("We hear this a lot — you're not alone, and that's exactly what this checkup solves.", 500, 2, 'challenge');
             }
             
             // Update profile preview whenever an answer is selected
