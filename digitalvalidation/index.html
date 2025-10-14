@@ -33,7 +33,7 @@
                 </div>
                 <div class="step" data-step="5">
                     <div class="step-number">5</div>
-                    <span class="step-label">Preferences</span>
+                    <span class="step-label">Contact</span>
                 </div>
             </div>
             <div class="progress-line">
@@ -46,437 +46,31 @@
     <div class="main-layout">
         <!-- Left: Form Content -->
         <div class="content-area">
-            <!-- Screen 1: About You -->
-            <div class="screen active" id="screen1">
+            <!-- Single Question Container -->
+            <div class="question-container">
                 <div class="chat-bubble">
-                    <div class="chat-text">👋 Hi! I'm your digital consultant. Let's discover the perfect solution for your business. First, tell me about yourself!</div>
+                    <div class="chat-text" id="chatMessage">👋 Hi! I'm your digital consultant. Let's discover the perfect solution for your business. What's your name?</div>
                 </div>
                 
                 <div class="form-card">
-                    <h2>Tell Us About Yourself</h2>
-                    
-                    <div class="form-group">
-                        <label>What's your name? *</label>
-                        <input type="text" id="userName" class="form-input" placeholder="Enter your full name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>What's your business name? *</label>
-                        <input type="text" id="businessName" class="form-input" placeholder="Enter your business name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>What type of business do you run? *</label>
-                        <div class="option-grid">
-                            <div class="option-card" data-value="retail">
-                                <span class="option-icon">🛍️</span>
-                                <span class="option-text">Retail/E-commerce</span>
-                            </div>
-                            <div class="option-card" data-value="services">
-                                <span class="option-icon">💼</span>
-                                <span class="option-text">Services</span>
-                            </div>
-                            <div class="option-card" data-value="manufacturing">
-                                <span class="option-icon">🏭</span>
-                                <span class="option-text">Manufacturing</span>
-                            </div>
-                            <div class="option-card" data-value="food">
-                                <span class="option-icon">🍽️</span>
-                                <span class="option-text">Restaurant/Food</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Where are you located? *</label>
-                        <input type="text" id="location" class="form-input" placeholder="City, State">
+                    <div class="question-content" id="questionContent">
+                        <!-- Questions will be dynamically loaded here -->
                     </div>
                     
                     <div class="button-group">
-                        <button class="btn btn-primary" id="nextBtn1" disabled>
+                        <button class="btn btn-secondary" id="backBtn" style="display: none;" onclick="previousQuestion()">
+                            ← Back
+                        </button>
+                        <button class="btn btn-primary" id="nextBtn" disabled onclick="nextQuestion()">
                             Continue →
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Screen 2: Current State -->
-            <div class="screen" id="screen2">
-                <div class="chat-bubble">
-                    <div class="chat-text">Great! Now let's see where you stand digitally. Be honest - no judgment here! 😊</div>
-                </div>
-                
-                <div class="form-card">
-                    <h2>Understanding Your Current State</h2>
-                    
-                    <div class="form-group">
-                        <label>What's your current digital presence?</label>
-                        <div class="option-list">
-                            <div class="option-card" data-value="no_presence">
-                                <span class="option-icon">🌱</span>
-                                <div>
-                                    <strong>No presence at all</strong>
-                                    <small>Starting from scratch</small>
-                                </div>
-                            </div>
-                            <div class="option-card" data-value="whatsapp">
-                                <span class="option-icon">💬</span>
-                                <div>
-                                    <strong>Only WhatsApp Business</strong>
-                                    <small>Basic customer communication</small>
-                                </div>
-                            </div>
-                            <div class="option-card" data-value="basic_website">
-                                <span class="option-icon">🌐</span>
-                                <div>
-                                    <strong>Basic website</strong>
-                                    <small>Simple online presence</small>
-                                </div>
-                            </div>
-                            <div class="option-card" data-value="social_only">
-                                <span class="option-icon">📱</span>
-                                <div>
-                                    <strong>Social media only</strong>
-                                    <small>Facebook/Instagram pages</small>
-                                </div>
-                            </div>
-                            <div class="option-card" data-value="full_website_no_results">
-                                <span class="option-icon">📉</span>
-                                <div>
-                                    <strong>Full website but no results</strong>
-                                    <small>Not generating leads/sales</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Who manages your digital presence currently?</label>
-                        <div class="option-grid">
-                            <div class="option-card" data-value="nobody">
-                                <span class="option-text">Nobody</span>
-                            </div>
-                            <div class="option-card" data-value="myself">
-                                <span class="option-text">Myself</span>
-                            </div>
-                            <div class="option-card" data-value="family">
-                                <span class="option-text">Family member</span>
-                            </div>
-                            <div class="option-card" data-value="employee">
-                                <span class="option-text">Employee</span>
-                            </div>
-                            <div class="option-card" data-value="agency">
-                                <span class="option-text">Agency/Freelancer</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Current monthly digital spend?</label>
-                        <div class="option-list">
-                            <div class="option-card" data-value="nothing">
-                                <span class="option-icon">💰</span>
-                                <span class="option-text">Nothing</span>
-                            </div>
-                            <div class="option-card" data-value="below_2k">
-                                <span class="option-icon">💳</span>
-                                <span class="option-text">Below ₹2,000</span>
-                            </div>
-                            <div class="option-card" data-value="2k_10k">
-                                <span class="option-icon">💎</span>
-                                <span class="option-text">₹2,000 - ₹10,000</span>
-                            </div>
-                            <div class="option-card" data-value="10k_25k">
-                                <span class="option-icon">🏆</span>
-                                <span class="option-text">₹10,000 - ₹25,000</span>
-                            </div>
-                            <div class="option-card" data-value="25k_plus">
-                                <span class="option-icon">🚀</span>
-                                <span class="option-text">₹25,000+</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="previousScreen()">← Back</button>
-                        <button class="btn btn-primary" id="nextBtn2" disabled>Continue →</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Screen 3: Goals & Challenges -->
-            <div class="screen" id="screen3">
-                <div class="chat-bubble">
-                    <div class="chat-text">Now the exciting part - what do you want to achieve? Dream big! 🚀</div>
-                </div>
-                
-                <div class="form-card">
-                    <h2>Your Goals & Challenges</h2>
-                    
-                    <div class="form-group">
-                        <label>What are your primary goals? (Select all that apply)</label>
-                        <div class="checkbox-list">
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="more_customers">
-                                <span class="checkbox-custom"></span>
-                                <span>Get more customers</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="brand_recognition">
-                                <span class="checkbox-custom"></span>
-                                <span>Build brand recognition</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="showcase_products">
-                                <span class="checkbox-custom"></span>
-                                <span>Showcase products/services</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="online_payments">
-                                <span class="checkbox-custom"></span>
-                                <span>Accept online payments</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="customer_management">
-                                <span class="checkbox-custom"></span>
-                                <span>Manage customers better</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="reduce_manual_work">
-                                <span class="checkbox-custom"></span>
-                                <span>Reduce manual work</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>What's your biggest challenge right now?</label>
-                        <div class="option-list">
-                            <div class="option-card" data-value="no_leads">
-                                <span class="option-icon">📢</span>
-                                <span class="option-text">No enquiries/leads</span>
-                            </div>
-                            <div class="option-card" data-value="too_many_platforms">
-                                <span class="option-icon">🤯</span>
-                                <span class="option-text">Too many platforms to manage</span>
-                            </div>
-                            <div class="option-card" data-value="dont_know">
-                                <span class="option-icon">❓</span>
-                                <span class="option-text">Don't know what works</span>
-                            </div>
-                            <div class="option-card" data-value="competitors_ahead">
-                                <span class="option-icon">🏃</span>
-                                <span class="option-text">Competitors are ahead</span>
-                            </div>
-                            <div class="option-card" data-value="no_time">
-                                <span class="option-icon">⏰</span>
-                                <span class="option-text">No time to learn</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>How soon do you need results?</label>
-                        <div class="option-grid">
-                            <div class="option-card" data-value="immediately">
-                                <span class="option-text">Immediately</span>
-                            </div>
-                            <div class="option-card" data-value="1_3_months">
-                                <span class="option-text">1-3 months</span>
-                            </div>
-                            <div class="option-card" data-value="3_6_months">
-                                <span class="option-text">3-6 months</span>
-                            </div>
-                            <div class="option-card" data-value="exploring">
-                                <span class="option-text">Just exploring</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="previousScreen()">← Back</button>
-                        <button class="btn btn-primary" id="nextBtn3" disabled>Continue →</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Screen 4: Technical Details -->
-            <div class="screen" id="screen4">
-                <div class="chat-bubble">
-                    <div class="chat-text">Almost done! These details help me recommend the perfect solution 🎯</div>
-                </div>
-                
-                <div class="form-card">
-                    <h2>Technical & Operational Details</h2>
-                    
-                    <div class="form-group">
-                        <label>Do you have domain/hosting?</label>
-                        <div class="option-grid">
-                            <div class="option-card" data-value="no_idea">
-                                <span class="option-text">No idea what these are</span>
-                            </div>
-                            <div class="option-card" data-value="need_everything">
-                                <span class="option-text">Need everything</span>
-                            </div>
-                            <div class="option-card" data-value="have_domain">
-                                <span class="option-text">Have domain</span>
-                            </div>
-                            <div class="option-card" data-value="have_both">
-                                <span class="option-text">Have both</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>How many products/services do you offer?</label>
-                        <div class="option-grid">
-                            <div class="option-card" data-value="less_10">
-                                <span class="option-text">&lt; 10 items</span>
-                            </div>
-                            <div class="option-card" data-value="10_50">
-                                <span class="option-text">10-50 items</span>
-                            </div>
-                            <div class="option-card" data-value="50_200">
-                                <span class="option-text">50-200 items</span>
-                            </div>
-                            <div class="option-card" data-value="200_plus">
-                                <span class="option-text">200+ items</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Team size who'll use this?</label>
-                        <div class="option-grid">
-                            <div class="option-card" data-value="just_me">
-                                <span class="option-text">Just me</span>
-                            </div>
-                            <div class="option-card" data-value="2_5">
-                                <span class="option-text">2-5 people</span>
-                            </div>
-                            <div class="option-card" data-value="5_10">
-                                <span class="option-text">5-10 people</span>
-                            </div>
-                            <div class="option-card" data-value="10_plus">
-                                <span class="option-text">10+ people</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Preferred customer communication?</label>
-                        <div class="checkbox-list">
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="whatsapp">
-                                <span class="checkbox-custom"></span>
-                                <span>WhatsApp</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="phone">
-                                <span class="checkbox-custom"></span>
-                                <span>Phone calls</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="email">
-                                <span class="checkbox-custom"></span>
-                                <span>Email</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="chat">
-                                <span class="checkbox-custom"></span>
-                                <span>Live chat</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="previousScreen()">← Back</button>
-                        <button class="btn btn-primary" id="nextBtn4" disabled>Continue →</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Screen 5: Final Preferences -->
-            <div class="screen" id="screen5">
-                <div class="chat-bubble">
-                    <div class="chat-text">Last few questions to perfect your recommendation! 💎</div>
-                </div>
-                
-                <div class="form-card">
-                    <h2>Final Personalization</h2>
-                    
-                    <div class="form-group">
-                        <label>Any industry-specific needs?</label>
-                        <div class="checkbox-list">
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="appointment_booking">
-                                <span class="checkbox-custom"></span>
-                                <span>Appointment booking</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="inventory_management">
-                                <span class="checkbox-custom"></span>
-                                <span>Inventory management</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="billing">
-                                <span class="checkbox-custom"></span>
-                                <span>Invoice/Billing</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="delivery_tracking">
-                                <span class="checkbox-custom"></span>
-                                <span>Delivery tracking</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Marketing preferences?</label>
-                        <div class="checkbox-list">
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="google_ads">
-                                <span class="checkbox-custom"></span>
-                                <span>Google Ads</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="social_media">
-                                <span class="checkbox-custom"></span>
-                                <span>Social Media Marketing</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="whatsapp_marketing">
-                                <span class="checkbox-custom"></span>
-                                <span>WhatsApp Marketing</span>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" value="email_marketing">
-                                <span class="checkbox-custom"></span>
-                                <span>Email Marketing</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Contact Information</label>
-                        <input type="tel" id="phone" class="form-input" placeholder="Mobile Number *" required>
-                        <input type="email" id="email" class="form-input" placeholder="Email Address (Optional)" style="margin-top: 1rem;">
-                    </div>
-                    
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="previousScreen()">← Back</button>
-                        <button class="btn btn-primary btn-submit" id="submitBtn" disabled>
-                            Get My Recommendation →
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Results Screen -->
-            <div class="screen" id="resultsScreen">
-                <div class="results-container">
-                    <!-- Results will be dynamically generated -->
-                </div>
+            <!-- Results Screen (hidden initially) -->
+            <div class="results-container" id="resultsContainer" style="display: none;">
+                <!-- Results will be dynamically generated -->
             </div>
         </div>
 
@@ -486,89 +80,16 @@
                 <div class="profile-avatar" id="profileAvatar">?</div>
                 <div class="profile-info">
                     <div class="profile-name" id="profileName">Getting to know you...</div>
-                    <div class="profile-status" id="profileStatus">Answer questions to build your profile</div>
+                    <div class="profile-status" id="profileStatus">Complete the questions</div>
                 </div>
             </div>
             
             <div class="profile-sections">
-                <!-- Basic Info -->
-                <div class="profile-section" id="basicInfoSection" style="display: none;">
-                    <h4>📋 Basic Information</h4>
-                    <div class="profile-detail">
-                        <span class="label">Name:</span>
-                        <span class="value" id="profileUserName">-</span>
-                    </div>
-                    <div class="profile-detail">
-                        <span class="label">Business:</span>
-                        <span class="value" id="profileBusinessName">-</span>
-                    </div>
-                    <div class="profile-detail">
-                        <span class="label">Type:</span>
-                        <span class="value" id="profileBusinessType">-</span>
-                    </div>
-                    <div class="profile-detail">
-                        <span class="label">Location:</span>
-                        <span class="value" id="profileLocation">-</span>
-                    </div>
-                </div>
-                
-                <!-- Digital State -->
-                <div class="profile-section" id="digitalStateSection" style="display: none;">
-                    <h4>💻 Digital State</h4>
-                    <div class="profile-detail">
-                        <span class="label">Current:</span>
-                        <span class="value" id="profileDigitalState">-</span>
-                    </div>
-                    <div class="profile-detail">
-                        <span class="label">Managed by:</span>
-                        <span class="value" id="profileManagedBy">-</span>
-                    </div>
-                    <div class="profile-detail">
-                        <span class="label">Budget:</span>
-                        <span class="value" id="profileBudget">-</span>
-                    </div>
-                </div>
-                
-                <!-- Goals -->
-                <div class="profile-section" id="goalsSection" style="display: none;">
-                    <h4>🎯 Goals</h4>
-                    <div class="tags-container" id="profileGoals">
-                        <!-- Goals will be added as tags -->
-                    </div>
-                    <div class="profile-detail" style="margin-top: 1rem;">
-                        <span class="label">Challenge:</span>
-                        <span class="value" id="profileChallenge">-</span>
-                    </div>
-                    <div class="profile-detail">
-                        <span class="label">Timeline:</span>
-                        <span class="value" id="profileTimeline">-</span>
-                    </div>
-                </div>
-                
-                <!-- Requirements -->
-                <div class="profile-section" id="requirementsSection" style="display: none;">
-                    <h4>⚙️ Requirements</h4>
-                    <div class="profile-detail">
-                        <span class="label">Products:</span>
-                        <span class="value" id="profileProducts">-</span>
-                    </div>
-                    <div class="profile-detail">
-                        <span class="label">Team:</span>
-                        <span class="value" id="profileTeam">-</span>
-                    </div>
-                    <div class="profile-detail">
-                        <span class="label">Domain:</span>
-                        <span class="value" id="profileDomain">-</span>
-                    </div>
-                </div>
-                
-                <!-- Score Preview -->
-                <div class="profile-section" id="scoreSection" style="display: none;">
-                    <h4>📊 Readiness Score</h4>
-                    <div class="mini-score">
-                        <div class="score-value" id="miniScore">-</div>
-                        <div class="score-label">Digital Readiness</div>
-                    </div>
+                <!-- Profile sections will be dynamically updated -->
+                <div class="profile-section" id="profileContent">
+                    <p style="color: var(--gray-500); text-align: center; padding: 2rem 0;">
+                        Answer questions to build your profile
+                    </p>
                 </div>
             </div>
         </div>
@@ -576,6 +97,6 @@
 
     <!-- Scripts -->
     <script src="/digitalvalidation/assets/js/products.js"></script>
-    <script src="/digitalvalidation/assets/js/app.js"></script>
+    <script src="/digitalvalidation/assets/js/questionnaire.js"></script>
 </body>
 </html>
