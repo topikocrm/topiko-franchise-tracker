@@ -594,20 +594,19 @@
         /* Main Layout - Desktop Grid */
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 350px;
+            grid-template-columns: 3fr 1fr;
             gap: 2rem;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 2rem;
             min-height: 100vh;
         }
         
-        @media (min-width: 1400px) {
+        @media (min-width: 1600px) {
             .main-layout {
-                max-width: 1400px;
-                grid-template-columns: 1fr 380px;
+                max-width: 1600px;
                 gap: 3rem;
-                padding: 0 2rem;
+                padding: 0 3rem;
             }
         }
         
@@ -618,9 +617,9 @@
         }
         
         .content-area .container {
-            max-width: 600px;
-            padding: 2rem 1rem;
-            margin: 0 auto;
+            max-width: 800px;
+            padding: 2rem;
+            margin: 0;
         }
         
         .content-area .glass-card {
@@ -633,15 +632,15 @@
             backdrop-filter: blur(40px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 20px;
-            padding: 1.25rem;
+            padding: 1.5rem;
             position: sticky;
             top: 2rem;
             height: fit-content;
             max-height: calc(100vh - 4rem);
             overflow-y: auto;
             width: 100%;
-            max-width: 350px;
-            flex-shrink: 0;
+            min-width: 280px;
+            max-width: 320px;
         }
         
         .profile-header {
@@ -936,11 +935,11 @@
         }
         
         /* Responsive Breakpoints */
-        @media (max-width: 1200px) {
+        @media (max-width: 1400px) {
             .main-layout {
                 grid-template-columns: 1fr;
                 gap: 0;
-                padding: 0;
+                padding: 0 1rem;
             }
             
             .profile-panel {
@@ -1523,7 +1522,7 @@
             if (sheetStatus) sheetStatus.textContent = getProfileStatus();
             
             // Show mobile float widget after name is entered (on mobile/tablet)
-            if (firstName && window.innerWidth <= 1200) {
+            if (firstName && window.innerWidth <= 1400) {
                 showMobileFloat();
             }
             
@@ -1667,7 +1666,7 @@
         
         function showMobileFloat() {
             const mobileFloat = document.getElementById('mobile-float');
-            if (mobileFloat && window.innerWidth <= 1200) {
+            if (mobileFloat && window.innerWidth <= 1400) {
                 mobileFloat.classList.add('show');
                 
                 // Add click handler to show bottom sheet
@@ -1687,7 +1686,7 @@
             const mobileFloat = document.getElementById('mobile-float');
             const mobileSheet = document.getElementById('mobile-sheet');
             
-            if (window.innerWidth > 1200) {
+            if (window.innerWidth > 1400) {
                 // Desktop - hide mobile elements
                 if (mobileFloat) mobileFloat.classList.remove('show');
                 if (mobileSheet) mobileSheet.classList.remove('active');
