@@ -1699,6 +1699,47 @@
         
         // Initialize responsive handler
         window.addEventListener('resize', handleResize);
+        
+        // ===== INTERACTIVE CHAT MESSAGES =====
+        
+        let lastMessage = '';
+        
+        function addChatMessage(message, delay = 500) {
+            const chatContainer = document.querySelector('.chat-container');
+            if (!chatContainer || message === lastMessage) return;
+            
+            lastMessage = message;
+            
+            setTimeout(() => {
+                const chatBubble = document.createElement('div');
+                chatBubble.className = 'chat-bubble';
+                chatBubble.innerHTML = `<div class="chat-text">${message}</div>`;
+                
+                // Add animation
+                chatBubble.style.opacity = '0';
+                chatBubble.style.transform = 'translateY(20px)';
+                chatContainer.appendChild(chatBubble);
+                
+                // Animate in
+                setTimeout(() => {
+                    chatBubble.style.transition = 'all 0.5s ease';
+                    chatBubble.style.opacity = '1';
+                    chatBubble.style.transform = 'translateY(0)';
+                }, 50);
+            }, delay);
+        }
+        
+        function clearChatMessages() {
+            const chatContainer = document.querySelector('.chat-container');
+            if (chatContainer) {
+                // Keep only the first (original) message
+                const messages = chatContainer.querySelectorAll('.chat-bubble');
+                for (let i = 1; i < messages.length; i++) {
+                    messages[i].remove();
+                }
+                lastMessage = ''; // Reset to allow new messages
+            }
+        }
 
         function updateProgress() {
             const progressText = document.getElementById('progressText');
@@ -1752,6 +1793,11 @@
             currentScreen = screenNumber;
             updateProgress();
             updateProfilePreview(); // Update profile preview on screen change
+            
+            // Clear chat messages when changing screens (except screen 1)
+            if (screenNumber > 1) {
+                clearChatMessages();
+            }
         }
 
         // Screen 1: Welcome and Basic Info
@@ -1766,6 +1812,11 @@
                 if (value.length > 2) {
                     formData.fullName = value;
                     updateProfilePreview(); // Update profile preview
+                    
+                    // Add interactive greeting message
+                    const firstName = value.split(' ')[0];
+                    addChatMessage(`Nice to meet you, ${firstName}.`);
+                    
                     if (step === 0) {
                         setTimeout(() => showBusinessNameField(), 1000);
                         step = 1;
@@ -1777,8 +1828,15 @@
             });
 
             businessNameInput.addEventListener('input', (e) => {
-                formData.businessName = e.target.value.trim();
+                const value = e.target.value.trim();
+                formData.businessName = value;
                 updateProfilePreview(); // Update profile preview
+                
+                // Add interactive greeting message for business name
+                if (value.length > 2) {
+                    addChatMessage(`Sounds great — ${value}. Let's get to know your business better.`);
+                }
+                
                 updateContinueButton();
             });
 
@@ -1820,7 +1878,14 @@
                     showCurrentQuestion();
                 } else {
                     saveAnswers();
-                    showScreen(3);
+                    
+                    // Add final engagement message before moving to Screen 3
+                    const firstName = formData.fullName.split(' ')[0] || 'there';
+                    addChatMessage(`Thanks, ${firstName}! You've almost completed your Digital Checkup — let's get your personalized preview.`, 1000);
+                    
+                    setTimeout(() => {
+                        showScreen(3);
+                    }, 2000);
                 }
             });
         }
@@ -1894,6 +1959,33 @@
             // Update business type in formData for profile preview
             if (questionId === 'businessType') {
                 formData.businessType = answers[questionId];
+                
+                // Add interactive message for business type
+                const businessTypeLabels = {
+                    'retail': 'Retail/E-commerce',
+                    'services': 'Professional Services', 
+                    'manufacturing': 'Manufacturing',
+                    'others': 'Other Industry'
+                };
+                const typeLabel = businessTypeLabels[answers[questionId]] || answers[questionId];
+                addChatMessage(`Got it, ${typeLabel} businesses are going digital faster than ever!`);
+            }
+            
+            // Add interactive messages for Screen 2 questions
+            if (questionId === 'goals' && answers[questionId] && answers[questionId].length > 0) {
+                addChatMessage("Got it. Everyone's growth goals are unique — we'll tailor the plan just for you.");
+            }
+            
+            if (questionId === 'digitalStatus' && answers[questionId]) {
+                addChatMessage("Makes sense. Many businesses start here — we'll help you go beyond visibility.");
+            }
+            
+            if (questionId === 'budget' && answers[questionId]) {
+                addChatMessage("Perfect. That helps us suggest the most effective plan for your scale.");
+            }
+            
+            if (questionId === 'challenge' && answers[questionId]) {
+                addChatMessage("We hear this a lot — you're not alone, and that's exactly what this checkup solves.");
             }
             
             // Update profile preview whenever an answer is selected
@@ -1945,6 +2037,12 @@
                 if (locationInput.value.trim()) {
                     formData.location = locationInput.value.trim();
                     updateProfilePreview();
+                    
+                    // Add interactive greeting for location
+                    if (locationInput.value.trim().length > 2) {
+                        const city = locationInput.value.trim().split(',')[0]; // Get city part
+                        addChatMessage(`${city} has a growing business community — love that!`);
+                    }
                 }
                 
                 if (sendOtpBtn) {
