@@ -588,6 +588,378 @@
         .hidden { display: none; }
         .text-center { text-align: center; }
         .mb-2 { margin-bottom: 2rem; }
+        
+        /* ===== PROFILE PREVIEW SYSTEM ===== */
+        
+        /* Main Layout - Desktop Grid */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .content-area {
+            min-height: 100vh;
+        }
+        
+        /* Right Profile Panel - Desktop Only */
+        .profile-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 2rem;
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+        
+        .profile-status {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .profile-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .profile-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            font-size: 0.9rem;
+            color: white;
+            font-weight: 500;
+            text-align: right;
+            max-width: 60%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .goals-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .goal-tag {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .progress-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .progress-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+        
+        .progress-value {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .mini-score {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+        }
+        
+        .mini-score-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.25rem;
+        }
+        
+        .mini-score-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+        
+        /* Mobile Profile Float Widget */
+        .mobile-profile-float {
+            display: none !important;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            right: 6rem;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-profile-float.show {
+            display: block !important;
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .float-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .float-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+        }
+        
+        .float-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .float-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .float-status {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Mobile Profile Bottom Sheet */
+        .mobile-profile-sheet {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(40px);
+            border-radius: 32px 32px 0 0;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mobile-profile-sheet.active {
+            transform: translateY(0);
+        }
+        
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            margin: 1rem auto;
+            cursor: pointer;
+        }
+        
+        .sheet-content {
+            padding: 0 1.5rem 2rem;
+        }
+        
+        .sheet-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .sheet-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+        }
+        
+        .sheet-info {
+            flex: 1;
+        }
+        
+        .sheet-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+        
+        .sheet-status {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .mobile-details-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .mobile-detail {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .mobile-detail-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+        
+        .mobile-detail-value {
+            font-size: 0.95rem;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr 350px;
+                gap: 1.5rem;
+                padding: 0 1rem;
+            }
+            
+            .profile-panel {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Tablet Landscape */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 0;
+                padding: 0;
+            }
+            
+            .profile-panel {
+                display: none;
+            }
+            
+            .mobile-profile-float.show {
+                display: block !important;
+            }
+        }
+        
+        /* Mobile Portrait */
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 0;
+                padding: 0;
+            }
+            
+            .profile-panel {
+                display: none;
+            }
+            
+            .mobile-profile-float.show {
+                display: block !important;
+            }
+            
+            .mobile-profile-sheet {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -602,10 +974,23 @@
         </div>
     </div>
 
-    <div class="container">
-        <!-- Screen 1: Welcome -->
-        <div id="screen1" class="screen active">
-            <div class="container">
+    <!-- Mobile Profile Float Widget -->
+    <div class="mobile-profile-float" id="mobile-float" style="display: none;">
+        <div class="float-content">
+            <div class="float-avatar" id="float-avatar">?</div>
+            <div class="float-info">
+                <div class="float-name" id="float-name">Building your profile...</div>
+                <div class="float-status" id="float-status">Answer questions to get started</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <!-- Left Content Area -->
+        <div class="content-area">
+            <!-- Screen 1: Welcome -->
+            <div id="screen1" class="screen active">
+                <div class="container">
                 <div class="glass-card">
                     <h1>Discover Your <span class="topiko-text brand-highlight">Digital Readiness</span></h1>
                     <p class="subtitle">
@@ -818,6 +1203,100 @@
                 </div>
             </div>
         </div>
+        </div>
+
+        <!-- Right Profile Panel (Desktop Only) -->
+        <div class="profile-panel" id="profile-panel">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profile-avatar">?</div>
+                <div class="profile-info">
+                    <div class="profile-name" id="profile-name">Building your profile...</div>
+                    <div class="profile-status" id="profile-status">Answer questions to get started</div>
+                </div>
+            </div>
+            
+            <div class="profile-content" id="profile-content">
+                <div class="profile-section" id="business-details" style="display: none;">
+                    <h3>📊 Business Overview</h3>
+                    <div class="detail-item">
+                        <span class="detail-label">Business:</span>
+                        <span class="detail-value" id="business-name-display">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Type:</span>
+                        <span class="detail-value" id="business-type-display">—</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Location:</span>
+                        <span class="detail-value" id="location-display">—</span>
+                    </div>
+                </div>
+                
+                <div class="profile-section" id="goals-section" style="display: none;">
+                    <h3>🎯 Your Goals</h3>
+                    <div id="goals-display" class="goals-grid">
+                        <!-- Goals will be added dynamically -->
+                    </div>
+                </div>
+                
+                <div class="profile-section" id="assessment-section" style="display: none;">
+                    <h3>🔍 Assessment Status</h3>
+                    <div class="progress-item">
+                        <span class="progress-label">Digital Status:</span>
+                        <span class="progress-value" id="digital-status-display">—</span>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Budget:</span>
+                        <span class="progress-value" id="budget-display">—</span>
+                    </div>
+                    <div class="progress-item">
+                        <span class="progress-label">Challenge:</span>
+                        <span class="progress-value" id="challenge-display">—</span>
+                    </div>
+                </div>
+                
+                <div class="profile-section" id="score-preview" style="display: none;">
+                    <h3>⚡ Quick Preview</h3>
+                    <div class="mini-score">
+                        <div class="mini-score-number" id="mini-score">0</div>
+                        <div class="mini-score-label">Readiness Score</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Profile Bottom Sheet -->
+    <div class="mobile-profile-sheet" id="mobile-sheet" style="display: none;">
+        <div class="sheet-handle" onclick="toggleMobileProfile()"></div>
+        <div class="sheet-content">
+            <div class="sheet-header">
+                <div class="sheet-avatar" id="sheet-avatar">?</div>
+                <div class="sheet-info">
+                    <div class="sheet-name" id="sheet-name">Building your profile...</div>
+                    <div class="sheet-status" id="sheet-status">Answer questions to get started</div>
+                </div>
+            </div>
+            <div class="sheet-body">
+                <div id="mobile-business-details" style="display: none;">
+                    <h3>📊 Business Overview</h3>
+                    <div class="mobile-details-grid">
+                        <div class="mobile-detail">
+                            <div class="mobile-detail-label">Business</div>
+                            <div class="mobile-detail-value" id="mobile-business-name">—</div>
+                        </div>
+                        <div class="mobile-detail">
+                            <div class="mobile-detail-label">Type</div>
+                            <div class="mobile-detail-value" id="mobile-business-type">—</div>
+                        </div>
+                        <div class="mobile-detail">
+                            <div class="mobile-detail-label">Location</div>
+                            <div class="mobile-detail-value" id="mobile-location">—</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -918,6 +1397,216 @@
             };
         }
 
+        // ===== PROFILE PREVIEW SYSTEM =====
+        
+        function updateProfilePreview() {
+            const firstName = formData.fullName.split(' ')[0] || '';
+            const avatar = firstName.charAt(0).toUpperCase() || '?';
+            
+            // Update all avatar elements
+            const avatarElements = document.querySelectorAll('.profile-avatar, .float-avatar, .sheet-avatar');
+            avatarElements.forEach(el => el.textContent = avatar);
+            
+            // Update name displays
+            const desktopName = `${firstName}${formData.location ? ' from ' + formData.location : ''}`;
+            const mobileName = firstName ? `Building profile for ${firstName}` : 'Building your profile...';
+            
+            // Desktop profile panel
+            const profileName = document.getElementById('profile-name');
+            const profileStatus = document.getElementById('profile-status');
+            if (profileName) profileName.textContent = desktopName || 'Building your profile...';
+            if (profileStatus) profileStatus.textContent = getProfileStatus();
+            
+            // Mobile float widget
+            const floatName = document.getElementById('float-name');
+            const floatStatus = document.getElementById('float-status');
+            if (floatName) floatName.textContent = desktopName || 'Building your profile...';
+            if (floatStatus) floatStatus.textContent = getProfileStatus();
+            
+            // Mobile bottom sheet
+            const sheetName = document.getElementById('sheet-name');
+            const sheetStatus = document.getElementById('sheet-status');
+            if (sheetName) sheetName.textContent = mobileName;
+            if (sheetStatus) sheetStatus.textContent = getProfileStatus();
+            
+            // Show mobile float widget after name is entered (on mobile only)
+            if (firstName && window.innerWidth <= 768) {
+                showMobileFloat();
+            }
+            
+            // Update business details section
+            updateBusinessDetails();
+            
+            // Update goals section
+            updateGoalsSection();
+            
+            // Update assessment section
+            updateAssessmentSection();
+        }
+        
+        function getProfileStatus() {
+            if (currentScreen === 1) return 'Collecting basic information...';
+            if (currentScreen === 2) return 'Understanding your business goals...';
+            if (currentScreen === 3) return 'Preparing your assessment results...';
+            if (currentScreen === 4) return 'Digital readiness assessment complete!';
+            return 'Answer questions to get started';
+        }
+        
+        function updateBusinessDetails() {
+            const businessSection = document.getElementById('business-details');
+            const mobileBusinessSection = document.getElementById('mobile-business-details');
+            
+            if (formData.businessName || formData.businessType || formData.location) {
+                // Desktop
+                if (businessSection) {
+                    businessSection.style.display = 'block';
+                    
+                    const businessNameDisplay = document.getElementById('business-name-display');
+                    const businessTypeDisplay = document.getElementById('business-type-display');
+                    const locationDisplay = document.getElementById('location-display');
+                    
+                    if (businessNameDisplay) businessNameDisplay.textContent = formData.businessName || '—';
+                    if (businessTypeDisplay) businessTypeDisplay.textContent = getBusinessTypeLabel(formData.businessType) || '—';
+                    if (locationDisplay) locationDisplay.textContent = formData.location || '—';
+                }
+                
+                // Mobile
+                if (mobileBusinessSection) {
+                    mobileBusinessSection.style.display = 'block';
+                    
+                    const mobileBusinessName = document.getElementById('mobile-business-name');
+                    const mobileBusinessType = document.getElementById('mobile-business-type');
+                    const mobileLocation = document.getElementById('mobile-location');
+                    
+                    if (mobileBusinessName) mobileBusinessName.textContent = formData.businessName || '—';
+                    if (mobileBusinessType) mobileBusinessType.textContent = getBusinessTypeLabel(formData.businessType) || '—';
+                    if (mobileLocation) mobileLocation.textContent = formData.location || '—';
+                }
+            }
+        }
+        
+        function getBusinessTypeLabel(type) {
+            const labels = {
+                'retail': 'Retail / E-commerce',
+                'services': 'Professional Services',
+                'manufacturing': 'Manufacturing',
+                'others': 'Other Industry'
+            };
+            return labels[type] || type;
+        }
+        
+        function updateGoalsSection() {
+            const goalsSection = document.getElementById('goals-section');
+            const goalsDisplay = document.getElementById('goals-display');
+            
+            if (answers.goals && answers.goals.length > 0) {
+                if (goalsSection) goalsSection.style.display = 'block';
+                if (goalsDisplay) {
+                    goalsDisplay.innerHTML = '';
+                    answers.goals.forEach(goal => {
+                        const goalTag = document.createElement('span');
+                        goalTag.className = 'goal-tag';
+                        goalTag.textContent = getGoalLabel(goal);
+                        goalsDisplay.appendChild(goalTag);
+                    });
+                }
+            }
+        }
+        
+        function getGoalLabel(goal) {
+            const labels = {
+                'more_customers': 'Get more customers',
+                'showcase': 'Showcase products/services',
+                'brand': 'Build professional brand',
+                'automate': 'Automate processes',
+                'app': 'Create branded app/website'
+            };
+            return labels[goal] || goal;
+        }
+        
+        function updateAssessmentSection() {
+            const assessmentSection = document.getElementById('assessment-section');
+            
+            if (answers.digitalStatus || answers.budget || answers.challenge) {
+                if (assessmentSection) {
+                    assessmentSection.style.display = 'block';
+                    
+                    const digitalStatusDisplay = document.getElementById('digital-status-display');
+                    const budgetDisplay = document.getElementById('budget-display');
+                    const challengeDisplay = document.getElementById('challenge-display');
+                    
+                    if (digitalStatusDisplay) digitalStatusDisplay.textContent = getDigitalStatusLabel(answers.digitalStatus) || '—';
+                    if (budgetDisplay) budgetDisplay.textContent = getBudgetLabel(answers.budget) || '—';
+                    if (challengeDisplay) challengeDisplay.textContent = getChallengeLabel(answers.challenge) || '—';
+                }
+            }
+        }
+        
+        function getDigitalStatusLabel(status) {
+            const labels = {
+                'no_presence': 'No digital presence yet',
+                'basic_social': 'Only on WhatsApp/Google',
+                'basic_website': 'Have basic website',
+                'no_results': 'Digital but no results'
+            };
+            return labels[status] || status;
+        }
+        
+        function getBudgetLabel(budget) {
+            const labels = {
+                'below_2k': 'Below ₹2,000',
+                '2k_10k': '₹2,000-₹10,000',
+                '10k_25k': '₹10,000-₹25,000',
+                '25k_plus': '₹25,000+'
+            };
+            return labels[budget] || budget;
+        }
+        
+        function getChallengeLabel(challenge) {
+            const labels = {
+                'no_leads': 'Not getting leads',
+                'dont_know': "Don't know where to start",
+                'no_time': 'No time to manage',
+                'low_sales': 'Low sales despite being online'
+            };
+            return labels[challenge] || challenge;
+        }
+        
+        function showMobileFloat() {
+            const mobileFloat = document.getElementById('mobile-float');
+            if (mobileFloat && window.innerWidth <= 768) {
+                mobileFloat.classList.add('show');
+                
+                // Add click handler to show bottom sheet
+                mobileFloat.onclick = toggleMobileProfile;
+            }
+        }
+        
+        function toggleMobileProfile() {
+            const mobileSheet = document.getElementById('mobile-sheet');
+            if (mobileSheet) {
+                mobileSheet.classList.toggle('active');
+            }
+        }
+        
+        // Handle responsive behavior
+        function handleResize() {
+            const mobileFloat = document.getElementById('mobile-float');
+            const mobileSheet = document.getElementById('mobile-sheet');
+            
+            if (window.innerWidth > 768) {
+                // Desktop - hide mobile elements
+                if (mobileFloat) mobileFloat.classList.remove('show');
+                if (mobileSheet) mobileSheet.classList.remove('active');
+            } else if (formData.fullName) {
+                // Mobile with data - show float widget
+                showMobileFloat();
+            }
+        }
+        
+        // Initialize responsive handler
+        window.addEventListener('resize', handleResize);
+
         function updateProgress() {
             const progressText = document.getElementById('progressText');
             const progressSteps = document.querySelectorAll('.progress-step');
@@ -969,6 +1658,7 @@
             newScreenEl.classList.add('active');
             currentScreen = screenNumber;
             updateProgress();
+            updateProfilePreview(); // Update profile preview on screen change
         }
 
         // Screen 1: Welcome and Basic Info
@@ -982,6 +1672,7 @@
                 const value = e.target.value.trim();
                 if (value.length > 2) {
                     formData.fullName = value;
+                    updateProfilePreview(); // Update profile preview
                     if (step === 0) {
                         setTimeout(() => showBusinessNameField(), 1000);
                         step = 1;
@@ -994,6 +1685,7 @@
 
             businessNameInput.addEventListener('input', (e) => {
                 formData.businessName = e.target.value.trim();
+                updateProfilePreview(); // Update profile preview
                 updateContinueButton();
             });
 
@@ -1105,6 +1797,14 @@
             } else {
                 answers[questionId] = inputs.length > 0 ? inputs[0].value : null;
             }
+            
+            // Update business type in formData for profile preview
+            if (questionId === 'businessType') {
+                formData.businessType = answers[questionId];
+            }
+            
+            // Update profile preview whenever an answer is selected
+            updateProfilePreview();
         }
 
         function updateNextButton() {
@@ -1147,6 +1847,13 @@
             function checkFields() {
                 const mobileValid = mobileInput.value.trim().length >= 10;
                 const locationValid = locationInput.value.trim().length >= 3;
+                
+                // Update form data and profile preview
+                if (locationInput.value.trim()) {
+                    formData.location = locationInput.value.trim();
+                    updateProfilePreview();
+                }
+                
                 if (sendOtpBtn) {
                     sendOtpBtn.disabled = !(mobileValid && locationValid);
                 }
