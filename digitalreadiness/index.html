@@ -996,7 +996,9 @@
                 padding-top: 0.5rem;
                 margin: 0;
                 max-width: 100%;
-                min-height: calc(100vh - 80px);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
             }
             
             .header {
@@ -1006,6 +1008,15 @@
             
             .chat-container {
                 margin-bottom: 1rem;
+            }
+            
+            .glass-card {
+                flex: 1;
+            }
+            
+            .mobile-profile-sheet {
+                max-height: 70vh;
+                overflow-y: auto;
             }
             
             .glass-card {
@@ -1077,16 +1088,7 @@
         </div>
     </div>
 
-    <!-- Mobile Profile Float Widget -->
-    <div class="mobile-profile-float" id="mobile-float" style="display: none;">
-        <div class="float-content">
-            <div class="float-avatar" id="float-avatar">?</div>
-            <div class="float-info">
-                <div class="float-name" id="float-name">Building your profile...</div>
-                <div class="float-status" id="float-status">Answer questions to get started</div>
-            </div>
-        </div>
-    </div>
+    <!-- Mobile Profile Float Widget will be created dynamically -->
 
     <div class="main-layout">
         <!-- Left Content Area -->
@@ -1258,7 +1260,14 @@
         <!-- Screen 4: Results -->
         <div id="screen4" class="screen">
             <div class="container">
-                <div class="glass-card results-container">
+                <!-- Chat Container for Screen 4 -->
+                <div class="chat-container">
+                    <div class="chat-bubble">
+                        <div class="chat-text">🎉 Congratulations! Your assessment is complete. Let's see your results!</div>
+                    </div>
+                </div>
+                
+                <div class="glass-card results-container" style="margin-top: 1rem;">
                     <h1 id="resultsTitle">🎉 Great work, <span id="userName">[Name]</span>!</h1>
                     <p class="subtitle">Here's your personalized <span class="brand-highlight topiko-text">Digital Readiness</span> summary</p>
                     
@@ -1833,6 +1842,8 @@
                         chatText.textContent = "Let's understand your business better.";
                     } else if (screenNumber === 3) {
                         chatText.textContent = "📱 Just need your mobile number to send your private assessment results securely — no spam, ever!";
+                    } else if (screenNumber === 4) {
+                        chatText.textContent = "🎉 Congratulations! Your assessment is complete. Let's see your results!";
                     }
                 }
             }
@@ -1987,7 +1998,16 @@
         }
 
         // Screen 2: Assessment Questions
+        let screen2Initialized = false;
         function initScreen2() {
+            // Prevent duplicate initialization
+            if (screen2Initialized) {
+                currentQuestionIndex = 0;
+                showCurrentQuestion();
+                return;
+            }
+            screen2Initialized = true;
+            
             const backBtn = document.getElementById('backBtn2');
             const nextBtn = document.getElementById('nextQuestion');
             
@@ -2020,6 +2040,9 @@
             const container = document.getElementById('questionContainer');
             const nextBtn = document.getElementById('nextQuestion');
             
+            // Reset chat message when switching questions
+            resetChatMessage(2);
+            
             if (questionText) {
                 questionText.textContent = question.question;
             }
@@ -2049,21 +2072,38 @@
             // Add event listeners
             const inputs = container.querySelectorAll('input');
             inputs.forEach(input => {
+                // Handle change event
                 input.addEventListener('change', () => {
                     updateSelection(question.id, question.type);
                     updateNextButton();
                 });
                 
-                input.closest('.option-card').addEventListener('click', () => {
+                // Handle click event on option card
+                const optionCard = input.closest('.option-card');
+                optionCard.addEventListener('click', (e) => {
+                    // Prevent double triggering
+                    if (e.target.tagName === 'INPUT') return;
+                    
                     if (question.type === 'radio') {
+                        // Clear all selections
                         container.querySelectorAll('.option-card').forEach(card => {
                             card.classList.remove('selected');
                         });
-                    }
-                    if (input.checked || input.type === 'radio') {
-                        input.closest('.option-card').classList.add('selected');
+                        // Check the input and select the card
+                        input.checked = true;
+                        optionCard.classList.add('selected');
+                        // Trigger change event
+                        input.dispatchEvent(new Event('change'));
                     } else {
-                        input.closest('.option-card').classList.remove('selected');
+                        // Checkbox behavior
+                        input.checked = !input.checked;
+                        if (input.checked) {
+                            optionCard.classList.add('selected');
+                        } else {
+                            optionCard.classList.remove('selected');
+                        }
+                        // Trigger change event
+                        input.dispatchEvent(new Event('change'));
                     }
                 });
             });
