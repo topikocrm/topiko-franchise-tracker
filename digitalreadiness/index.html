@@ -1387,6 +1387,31 @@
                         </div>
                     </div>
                 </div>
+                
+                <div id="mobile-goals-section" style="display: none;">
+                    <h3>🎯 Your Goals</h3>
+                    <div id="mobile-goals-display" class="goals-grid" style="padding: 0.5rem 0;">
+                        <!-- Goals will be added dynamically -->
+                    </div>
+                </div>
+                
+                <div id="mobile-assessment-section" style="display: none; margin-top: 1rem;">
+                    <h3>🔍 Assessment Status</h3>
+                    <div class="mobile-details-grid">
+                        <div class="mobile-detail">
+                            <div class="mobile-detail-label">Digital Status</div>
+                            <div class="mobile-detail-value" id="mobile-digital-status">—</div>
+                        </div>
+                        <div class="mobile-detail">
+                            <div class="mobile-detail-label">Budget</div>
+                            <div class="mobile-detail-value" id="mobile-budget">—</div>
+                        </div>
+                        <div class="mobile-detail">
+                            <div class="mobile-detail-label">Challenge</div>
+                            <div class="mobile-detail-value" id="mobile-challenge">—</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1590,8 +1615,11 @@
         function updateGoalsSection() {
             const goalsSection = document.getElementById('goals-section');
             const goalsDisplay = document.getElementById('goals-display');
+            const mobileGoalsSection = document.getElementById('mobile-goals-section');
+            const mobileGoalsDisplay = document.getElementById('mobile-goals-display');
             
             if (answers.goals && answers.goals.length > 0) {
+                // Desktop
                 if (goalsSection) goalsSection.style.display = 'block';
                 if (goalsDisplay) {
                     goalsDisplay.innerHTML = '';
@@ -1600,6 +1628,18 @@
                         goalTag.className = 'goal-tag';
                         goalTag.textContent = getGoalLabel(goal);
                         goalsDisplay.appendChild(goalTag);
+                    });
+                }
+                
+                // Mobile
+                if (mobileGoalsSection) mobileGoalsSection.style.display = 'block';
+                if (mobileGoalsDisplay) {
+                    mobileGoalsDisplay.innerHTML = '';
+                    answers.goals.forEach(goal => {
+                        const goalTag = document.createElement('span');
+                        goalTag.className = 'goal-tag';
+                        goalTag.textContent = getGoalLabel(goal);
+                        mobileGoalsDisplay.appendChild(goalTag);
                     });
                 }
             }
@@ -1618,8 +1658,10 @@
         
         function updateAssessmentSection() {
             const assessmentSection = document.getElementById('assessment-section');
+            const mobileAssessmentSection = document.getElementById('mobile-assessment-section');
             
             if (answers.digitalStatus || answers.budget || answers.challenge) {
+                // Desktop
                 if (assessmentSection) {
                     assessmentSection.style.display = 'block';
                     
@@ -1630,6 +1672,19 @@
                     if (digitalStatusDisplay) digitalStatusDisplay.textContent = getDigitalStatusLabel(answers.digitalStatus) || '—';
                     if (budgetDisplay) budgetDisplay.textContent = getBudgetLabel(answers.budget) || '—';
                     if (challengeDisplay) challengeDisplay.textContent = getChallengeLabel(answers.challenge) || '—';
+                }
+                
+                // Mobile
+                if (mobileAssessmentSection) {
+                    mobileAssessmentSection.style.display = 'block';
+                    
+                    const mobileDigitalStatus = document.getElementById('mobile-digital-status');
+                    const mobileBudget = document.getElementById('mobile-budget');
+                    const mobileChallenge = document.getElementById('mobile-challenge');
+                    
+                    if (mobileDigitalStatus) mobileDigitalStatus.textContent = getDigitalStatusLabel(answers.digitalStatus) || '—';
+                    if (mobileBudget) mobileBudget.textContent = getBudgetLabel(answers.budget) || '—';
+                    if (mobileChallenge) mobileChallenge.textContent = getChallengeLabel(answers.challenge) || '—';
                 }
             }
         }
@@ -1677,7 +1732,13 @@
         function toggleMobileProfile() {
             const mobileSheet = document.getElementById('mobile-sheet');
             if (mobileSheet) {
-                mobileSheet.classList.toggle('active');
+                if (!mobileSheet.style.display || mobileSheet.style.display === 'none') {
+                    mobileSheet.style.display = 'block';
+                    setTimeout(() => mobileSheet.classList.add('active'), 10);
+                } else {
+                    mobileSheet.classList.remove('active');
+                    setTimeout(() => mobileSheet.style.display = 'none', 400);
+                }
             }
         }
         
@@ -1701,17 +1762,8 @@
         
         // ===== INTERACTIVE CHAT MESSAGES =====
         
-        let questionResponsesShown = new Set();
-        
-        function addChatMessage(message, delay = 500, screenNumber = null, questionType = null) {
-            // For question responses, only show once per question type
-            if (questionType) {
-                const responseKey = `${screenNumber || currentScreen}_${questionType}`;
-                if (questionResponsesShown.has(responseKey)) return;
-                questionResponsesShown.add(responseKey);
-            }
-            
-            // Find the chat container for the current screen
+        function updateChatMessage(message, screenNumber = null) {
+            // Find the chat container and update the EXISTING bubble
             let chatContainer;
             if (screenNumber) {
                 chatContainer = document.querySelector(`#screen${screenNumber} .chat-container`);
@@ -1721,38 +1773,58 @@
             
             if (!chatContainer) return;
             
-            setTimeout(() => {
-                const chatBubble = document.createElement('div');
+            // Find the first (and only) chat bubble and update its text
+            let chatBubble = chatContainer.querySelector('.chat-bubble');
+            if (!chatBubble) {
+                // Create one if it doesn't exist
+                chatBubble = document.createElement('div');
                 chatBubble.className = 'chat-bubble';
-                chatBubble.innerHTML = `<div class="chat-text">${message}</div>`;
-                
-                // Add animation
-                chatBubble.style.opacity = '0';
-                chatBubble.style.transform = 'translateY(20px)';
                 chatContainer.appendChild(chatBubble);
+            }
+            
+            // Update the text with animation
+            const chatText = chatBubble.querySelector('.chat-text') || document.createElement('div');
+            chatText.className = 'chat-text';
+            chatText.style.opacity = '0';
+            
+            setTimeout(() => {
+                chatText.textContent = message;
+                if (!chatText.parentElement) {
+                    chatBubble.appendChild(chatText);
+                }
                 
-                // Animate in
                 setTimeout(() => {
-                    chatBubble.style.transition = 'all 0.5s ease';
-                    chatBubble.style.opacity = '1';
-                    chatBubble.style.transform = 'translateY(0)';
+                    chatText.style.transition = 'opacity 0.3s ease';
+                    chatText.style.opacity = '1';
                 }, 50);
-            }, delay);
+            }, 100);
         }
         
-        function clearChatMessages(screenNumber = null) {
-            // Clear all added chat messages from all screens
-            const allChatContainers = document.querySelectorAll('.chat-container');
-            allChatContainers.forEach(chatContainer => {
-                const messages = chatContainer.querySelectorAll('.chat-bubble');
-                // Keep only the first (original) message
-                for (let i = 1; i < messages.length; i++) {
-                    messages[i].remove();
-                }
-            });
+        function resetChatMessage(screenNumber = null) {
+            // Reset chat message to original greeting
+            let chatContainer;
+            if (screenNumber) {
+                chatContainer = document.querySelector(`#screen${screenNumber} .chat-container`);
+            } else {
+                chatContainer = document.querySelector('.screen.active .chat-container');
+            }
             
-            // Reset the response tracking
-            questionResponsesShown.clear();
+            if (!chatContainer) return;
+            
+            const chatBubble = chatContainer.querySelector('.chat-bubble');
+            if (chatBubble) {
+                const chatText = chatBubble.querySelector('.chat-text');
+                if (chatText) {
+                    // Reset to appropriate default message based on screen
+                    if (screenNumber === 1) {
+                        chatText.textContent = "👋 Hi! I'm excited to help you discover your business's digital potential. Let's start with your details.";
+                    } else if (screenNumber === 2) {
+                        chatText.textContent = "Let's understand your business better.";
+                    } else if (screenNumber === 3) {
+                        chatText.textContent = "📱 Just need your mobile number to send your private assessment results securely — no spam, ever!";
+                    }
+                }
+            }
         }
 
         function updateProgress() {
@@ -1808,8 +1880,7 @@
             updateProgress();
             updateProfilePreview(); // Update profile preview on screen change
             
-            // Clear all chat messages when changing screens to prevent carryover
-            clearChatMessages();
+            // No need to clear messages - we update the existing bubble
         }
 
         // Screen 1: Welcome and Basic Info
@@ -1833,7 +1904,7 @@
                         clearTimeout(nameTimeout);
                         nameTimeout = setTimeout(() => {
                             const firstName = value.split(' ')[0];
-                            addChatMessage(`Nice to meet you, ${firstName}.`, 500, 1);
+                            updateChatMessage(`Nice to meet you, ${firstName}.`, 1);
                             nameGreetingShown = true;
                         }, 800); // Wait 800ms after user stops typing
                     }
@@ -1861,7 +1932,7 @@
                 if (value.length > 2 && !businessGreetingShown) {
                     clearTimeout(businessTimeout);
                     businessTimeout = setTimeout(() => {
-                        addChatMessage(`Sounds great — ${value}. Let's get to know your business better.`, 500, 1);
+                        updateChatMessage(`Sounds great — ${value}. Let's get to know your business better.`, 1);
                         businessGreetingShown = true;
                     }, 800);
                 } else if (value.length <= 2) {
@@ -1900,7 +1971,12 @@
             showCurrentQuestion();
 
             backBtn.addEventListener('click', () => {
-                showScreen(1, 'backward');
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    showCurrentQuestion();
+                } else {
+                    showScreen(1, 'backward');
+                }
             });
 
             nextBtn.addEventListener('click', () => {
@@ -1909,14 +1985,7 @@
                     showCurrentQuestion();
                 } else {
                     saveAnswers();
-                    
-                    // Add final engagement message before moving to Screen 3
-                    const firstName = formData.fullName.split(' ')[0] || 'there';
-                    addChatMessage(`Thanks, ${firstName}! You've almost completed your Digital Checkup — let's get your personalized preview.`, 1000);
-                    
-                    setTimeout(() => {
-                        showScreen(3);
-                    }, 2000);
+                    showScreen(3);
                 }
             });
         }
@@ -1999,24 +2068,24 @@
                     'others': 'Other Industry'
                 };
                 const typeLabel = businessTypeLabels[answers[questionId]] || answers[questionId];
-                addChatMessage(`Got it, ${typeLabel} businesses are going digital faster than ever!`, 500, 2, 'businessType');
+                updateChatMessage(`Got it, ${typeLabel} businesses are going digital faster than ever!`, 2);
             }
             
-            // Add interactive messages for Screen 2 questions - only once per question type
+            // Update chat message for Screen 2 questions based on question type
             if (questionId === 'goals' && answers[questionId] && answers[questionId].length > 0) {
-                addChatMessage("Got it. Everyone's growth goals are unique — we'll tailor the plan just for you.", 500, 2, 'goals');
+                updateChatMessage("Got it. Everyone's growth goals are unique — we'll tailor the plan just for you.", 2);
             }
             
             if (questionId === 'digitalStatus' && answers[questionId]) {
-                addChatMessage("Makes sense. Many businesses start here — we'll help you go beyond visibility.", 500, 2, 'digitalStatus');
+                updateChatMessage("Makes sense. Many businesses start here — we'll help you go beyond visibility.", 2);
             }
             
             if (questionId === 'budget' && answers[questionId]) {
-                addChatMessage("Perfect. That helps us suggest the most effective plan for your scale.", 500, 2, 'budget');
+                updateChatMessage("Perfect. That helps us suggest the most effective plan for your scale.", 2);
             }
             
             if (questionId === 'challenge' && answers[questionId]) {
-                addChatMessage("We hear this a lot — you're not alone, and that's exactly what this checkup solves.", 500, 2, 'challenge');
+                updateChatMessage("We hear this a lot — you're not alone, and that's exactly what this checkup solves.", 2);
             }
             
             // Update profile preview whenever an answer is selected
@@ -2077,7 +2146,7 @@
                         clearTimeout(locationTimeout);
                         locationTimeout = setTimeout(() => {
                             const city = locationInput.value.trim().split(',')[0];
-                            addChatMessage(`${city} has a growing business community — love that!`, 500, 3);
+                            updateChatMessage(`${city} has a growing business community — love that!`, 3);
                             locationGreetingShown = true;
                         }, 800);
                     } else if (!locationValid) {
