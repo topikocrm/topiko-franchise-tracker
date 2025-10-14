@@ -2117,33 +2117,33 @@
             if (questionId === 'digitalStatus' && answers[questionId]) {
                 const statusMessages = {
                     'no_presence': ['Starting fresh gives you complete freedom to build it right!', 'A blank canvas means unlimited potential!', 'Every digital giant started exactly where you are now!'],
-                    'basic_social': ['WhatsApp and Google are great foundations to build upon!', 'You've already taken the first steps — let's amplify your reach!', 'Smart start! Now let's expand your digital footprint.'],
-                    'basic_website': ['Having a website puts you ahead of many competitors!', 'Your website is the cornerstone — let's make it work harder!', 'Good foundation! Time to maximize its potential.'],
-                    'no_results': ['Identifying the gap is the first step to success!', 'Let's turn your digital presence into a growth engine!', 'Time to optimize and see real results!']
+                    'basic_social': ['WhatsApp and Google are great foundations to build upon!', "You've already taken the first steps — let's amplify your reach!", "Smart start! Now let's expand your digital footprint."],
+                    'basic_website': ['Having a website puts you ahead of many competitors!', "Your website is the cornerstone — let's make it work harder!", 'Good foundation! Time to maximize its potential.'],
+                    'no_results': ['Identifying the gap is the first step to success!', "Let's turn your digital presence into a growth engine!", 'Time to optimize and see real results!']
                 };
-                const messages = statusMessages[answers[questionId]] || ['Interesting position! We'll work with what you have.'];
+                const messages = statusMessages[answers[questionId]] || ["Interesting position! We'll work with what you have."];
                 updateChatMessage(messages[Math.floor(Math.random() * messages.length)], 2);
             }
             
             if (questionId === 'budget' && answers[questionId]) {
                 const budgetMessages = {
-                    'below_2k': ['Smart budgeting! We'll maximize every rupee.', 'Cost-effective solutions can deliver amazing results!', 'Strategic spending beats big budgets every time!'],
+                    'below_2k': ["Smart budgeting! We'll maximize every rupee.", 'Cost-effective solutions can deliver amazing results!', 'Strategic spending beats big budgets every time!'],
                     '2k_10k': ['Perfect range for sustainable digital growth!', 'This budget opens up exciting possibilities!', 'Ideal investment level for measurable impact!'],
-                    '10k_25k': ['Serious commitment! Let's make it count.', 'This investment will accelerate your digital journey!', 'Great budget for comprehensive transformation!'],
-                    '25k_plus': ['Premium investment for premium results!', 'Sky's the limit with this budget!', 'Enterprise-level budget for enterprise-level growth!']
+                    '10k_25k': ["Serious commitment! Let's make it count.", 'This investment will accelerate your digital journey!', 'Great budget for comprehensive transformation!'],
+                    '25k_plus': ['Premium investment for premium results!', "Sky's the limit with this budget!", 'Enterprise-level budget for enterprise-level growth!']
                 };
-                const messages = budgetMessages[answers[questionId]] || ['We'll work within your budget effectively!'];
+                const messages = budgetMessages[answers[questionId]] || ["We'll work within your budget effectively!"];
                 updateChatMessage(messages[Math.floor(Math.random() * messages.length)], 2);
             }
             
             if (questionId === 'challenge' && answers[questionId]) {
                 const challengeMessages = {
-                    'no_leads': ['Lead generation is solvable with the right strategy!', 'Let's turn your website into a lead magnet!', 'Quality leads are coming your way!'],
-                    'dont_know': ['That's why we're here — to guide you step by step!', 'No worries! We'll create a clear roadmap for you.', 'Perfect! Let's demystify digital together.'],
-                    'no_time': ['Automation is your best friend — we'll set it up!', 'Let's build systems that work while you sleep!', 'Smart tools will give you time back!'],
-                    'low_sales': ['Conversion optimization is our specialty!', 'Let's diagnose and fix your sales funnel!', 'Time to turn visitors into customers!']
+                    'no_leads': ['Lead generation is solvable with the right strategy!', "Let's turn your website into a lead magnet!", 'Quality leads are coming your way!'],
+                    'dont_know': ["That's why we're here — to guide you step by step!", "No worries! We'll create a clear roadmap for you.", "Perfect! Let's demystify digital together."],
+                    'no_time': ["Automation is your best friend — we'll set it up!", "Let's build systems that work while you sleep!", 'Smart tools will give you time back!'],
+                    'low_sales': ['Conversion optimization is our specialty!', "Let's diagnose and fix your sales funnel!", 'Time to turn visitors into customers!']
                 };
-                const messages = challengeMessages[answers[questionId]] || ['We'll tackle this challenge head-on!'];
+                const messages = challengeMessages[answers[questionId]] || ["We'll tackle this challenge head-on!"];
                 updateChatMessage(messages[Math.floor(Math.random() * messages.length)], 2);
             }
             
