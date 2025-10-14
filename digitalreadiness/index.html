@@ -594,11 +594,11 @@
         /* Main Layout - Desktop Grid */
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 3rem;
-            max-width: 1600px;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 1rem;
             min-height: 100vh;
         }
         
@@ -609,9 +609,9 @@
         }
         
         .content-area .container {
-            max-width: 800px;
-            padding: 2rem;
-            margin: 0 auto;
+            max-width: 100%;
+            padding: 2rem 1rem;
+            margin: 0;
         }
         
         .content-area .glass-card {
@@ -623,14 +623,15 @@
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(40px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 1.5rem;
+            border-radius: 20px;
+            padding: 1.25rem;
             position: sticky;
             top: 2rem;
             height: fit-content;
             max-height: calc(100vh - 4rem);
             overflow-y: auto;
-            width: 380px;
+            width: 100%;
+            max-width: 350px;
             flex-shrink: 0;
         }
         
@@ -928,19 +929,6 @@
         /* Responsive Breakpoints */
         @media (max-width: 1200px) {
             .main-layout {
-                grid-template-columns: 1fr 320px;
-                gap: 2rem;
-                padding: 0 1rem;
-            }
-            
-            .profile-panel {
-                width: 320px;
-                padding: 1.25rem;
-            }
-        }
-        
-        @media (max-width: 1024px) {
-            .main-layout {
                 grid-template-columns: 1fr;
                 gap: 0;
                 padding: 0;
@@ -948,6 +936,12 @@
             
             .profile-panel {
                 display: none;
+            }
+            
+            .content-area .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 2rem;
             }
             
             .mobile-profile-float.show {
@@ -1461,8 +1455,8 @@
             if (sheetName) sheetName.textContent = mobileName;
             if (sheetStatus) sheetStatus.textContent = getProfileStatus();
             
-            // Show mobile float widget after name is entered (on mobile only)
-            if (firstName && window.innerWidth <= 768) {
+            // Show mobile float widget after name is entered (on mobile/tablet)
+            if (firstName && window.innerWidth <= 1200) {
                 showMobileFloat();
             }
             
@@ -1606,7 +1600,7 @@
         
         function showMobileFloat() {
             const mobileFloat = document.getElementById('mobile-float');
-            if (mobileFloat && window.innerWidth <= 768) {
+            if (mobileFloat && window.innerWidth <= 1200) {
                 mobileFloat.classList.add('show');
                 
                 // Add click handler to show bottom sheet
@@ -1626,12 +1620,12 @@
             const mobileFloat = document.getElementById('mobile-float');
             const mobileSheet = document.getElementById('mobile-sheet');
             
-            if (window.innerWidth > 768) {
+            if (window.innerWidth > 1200) {
                 // Desktop - hide mobile elements
                 if (mobileFloat) mobileFloat.classList.remove('show');
                 if (mobileSheet) mobileSheet.classList.remove('active');
             } else if (formData.fullName) {
-                // Mobile with data - show float widget
+                // Mobile/Tablet with data - show float widget
                 showMobileFloat();
             }
         }
