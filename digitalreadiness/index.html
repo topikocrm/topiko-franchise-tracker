@@ -2,82 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Digital Readiness Assessment - Topiko</title>
-    <meta name="description" content="Discover your business's digital readiness and get a personalized growth plan in just 3 minutes.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Readiness Assessment - Join Topiko Revolution</title>
     
-    <!-- Preconnect for performance -->
+    <!-- External Dependencies -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Progressive Web App -->
-    <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- External Libraries -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2.38.0/dist/umd/supabase.js"></script>
     
     <style>
-        /* === CSS VARIABLES === */
-        :root {
-            /* Colors - Premium Gradient System */
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-            
-            /* Text Colors */
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --text-muted: #999999;
-            --text-white: #ffffff;
-            --text-glass: rgba(255,255,255,0.9);
-            
-            /* Background */
-            --bg-primary: #f8fafc;
-            --bg-card: rgba(255,255,255,0.95);
-            --bg-glass: rgba(255,255,255,0.1);
-            --bg-overlay: rgba(0,0,0,0.5);
-            
-            /* Shadows */
-            --shadow-glass: 0 8px 32px rgba(31,38,135,0.37);
-            --shadow-card: 0 4px 20px rgba(0,0,0,0.08);
-            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
-            
-            /* Spacing */
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 1rem;
-            --spacing-md: 1.5rem;
-            --spacing-lg: 2rem;
-            --spacing-xl: 3rem;
-            
-            /* Border Radius */
-            --radius-sm: 8px;
-            --radius-md: 16px;
-            --radius-lg: 24px;
-            --radius-xl: 32px;
-            
-            /* Typography */
-            --font-size-xs: 0.75rem;
-            --font-size-sm: 0.875rem;
-            --font-size-md: 1rem;
-            --font-size-lg: 1.125rem;
-            --font-size-xl: 1.5rem;
-            --font-size-2xl: 2rem;
-            --font-size-3xl: 2.5rem;
-            
-            /* Animation */
-            --transition-fast: 0.2s ease-out;
-            --transition-smooth: 0.3s ease-out;
-            --transition-slow: 0.5s ease-out;
-        }
-
-        /* === RESET & BASE === */
         * {
             margin: 0;
             padding: 0;
@@ -85,215 +20,281 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--primary-gradient);
-            background-attachment: fixed;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Roboto, sans-serif;
+            background: #000;
             min-height: 100vh;
-            color: var(--text-primary);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* === GLASSMORPHIC COMPONENTS === */
-        .glass-card {
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-glass);
-            transition: all var(--transition-smooth);
-        }
-
-        .glass-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(31,38,135,0.5);
-        }
-
-        /* === LAYOUT === */
-        .container {
-            max-width: 420px;
-            margin: 0 auto;
-            padding: var(--spacing-md);
-            min-height: 100vh;
+            color: white;
+            overflow: hidden;
             position: relative;
         }
 
-        @media (min-width: 768px) {
-            .container {
-                max-width: 600px;
-                padding: var(--spacing-xl);
-            }
-        }
-
-        /* === SCREEN SYSTEM === */
-        .screen {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            min-height: calc(100vh - 4rem);
-            padding: var(--spacing-lg) 0;
-        }
-
-        .screen.active {
-            display: block;
-            animation: screenSlideIn var(--transition-smooth) forwards;
-        }
-
-        @keyframes screenSlideIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* === HEADER === */
-        .header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-            position: relative;
-        }
-
-        .logo {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto var(--spacing-md);
-            background: var(--primary-gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-white);
-            font-weight: 800;
-            font-size: var(--font-size-xl);
-            box-shadow: var(--shadow-card);
-            animation: logoFloat 6s ease-in-out infinite;
-        }
-
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(2deg); }
-        }
-
-        .header h1 {
-            font-size: var(--font-size-2xl);
-            font-weight: 700;
-            color: var(--text-white);
-            margin-bottom: var(--spacing-sm);
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            font-size: var(--font-size-lg);
-            color: var(--text-glass);
+        /* Poppins font for Topiko brand name */
+        .topiko-text {
+            font-family: 'Poppins', sans-serif;
             font-weight: 400;
-            opacity: 0.9;
+            position: relative;
+            filter: drop-shadow(0 0 12px rgba(102, 126, 234, 0.3)) 
+                    drop-shadow(0 0 24px rgba(118, 75, 162, 0.2));
+            animation: subtleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes subtleGlow {
+            0% {
+                filter: drop-shadow(0 0 12px rgba(102, 126, 234, 0.3)) 
+                        drop-shadow(0 0 24px rgba(118, 75, 162, 0.2));
+            }
+            100% {
+                filter: drop-shadow(0 0 16px rgba(102, 126, 234, 0.4)) 
+                        drop-shadow(0 0 32px rgba(118, 75, 162, 0.3));
+            }
         }
 
-        /* === PROGRESS BAR === */
-        .progress-container {
+        /* Animated Background */
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
         }
 
-        .progress-bar {
-            height: 4px;
-            background: var(--success-gradient);
-            width: 0%;
-            transition: width var(--transition-smooth);
-            border-radius: 0 2px 2px 0;
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transform: scale(1) translateY(0);
+            transition: opacity 0.5s ease-in-out;
+            z-index: 1;
+            pointer-events: none;
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            z-index: 2;
+            pointer-events: all;
+        }
+
+        .screen.zoom-out {
+            opacity: 0;
+            transform: scale(0.8) translateY(0);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .screen.zoom-in-from {
+            opacity: 0;
+            transform: scale(0.8) translateY(0);
+        }
+
+        .screen.zoom-in-to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .screen.fade-out {
+            opacity: 0;
+            transform: scale(1.05) translateY(-20px);
+            transition: all 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            margin: auto;
+            min-height: min-content;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px);
+            border-radius: 32px;
+            padding: 4rem 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
-            overflow: hidden;
         }
 
-        .progress-bar::after {
+        .glass-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-            animation: progressShine 2s ease-in-out infinite;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
         }
 
-        @keyframes progressShine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        /* === FORM ELEMENTS === */
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .brand-highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        /* Progress Indicator */
+        .progress-container {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            right: 1rem;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .progress-steps {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .progress-step {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 0 12px rgba(102, 126, 234, 0.5);
+        }
+
+        .progress-step.completed {
+            background: #10b981;
+        }
+
+        /* Form Elements */
         .form-group {
-            margin-bottom: var(--spacing-lg);
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp var(--transition-smooth) forwards;
-        }
-
-        .form-group.active {
-            animation-delay: 0.1s;
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            margin-bottom: 2rem;
+            text-align: left;
         }
 
         .form-label {
             display: block;
-            font-size: var(--font-size-lg);
+            font-size: 1.1rem;
             font-weight: 600;
-            color: var(--text-white);
-            margin-bottom: var(--spacing-md);
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 1rem;
         }
 
         .form-input {
             width: 100%;
-            padding: var(--spacing-md) var(--spacing-lg);
-            background: var(--bg-glass);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: var(--radius-md);
-            font-size: var(--font-size-md);
-            color: var(--text-white);
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            font-size: 1rem;
+            color: white;
             backdrop-filter: blur(10px);
-            transition: all var(--transition-smooth);
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
 
         .form-input::placeholder {
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: rgba(255,255,255,0.5);
-            box-shadow: 0 0 0 4px rgba(255,255,255,0.1);
-            transform: translateY(-2px);
+            border-color: rgba(102, 126, 234, 0.6);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.08);
         }
 
-        /* === OPTION CARDS === */
+        .question-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.3;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Options Grid */
         .options-grid {
             display: grid;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-xl);
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .option-card {
-            background: var(--bg-glass);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: var(--radius-md);
-            padding: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1.5rem;
             cursor: pointer;
-            transition: all var(--transition-smooth);
-            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -302,27 +303,29 @@
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left var(--transition-smooth);
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
         }
 
         .option-card:hover::before {
-            left: 100%;
+            transform: translateX(0);
         }
 
         .option-card:hover {
-            border-color: rgba(255,255,255,0.4);
+            border-color: rgba(102, 126, 234, 0.3);
+            background: rgba(255, 255, 255, 0.06);
             transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .option-card.selected {
-            background: rgba(255,255,255,0.2);
-            border-color: rgba(255,255,255,0.6);
-            transform: scale(1.02);
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
         }
 
         .option-card input[type="radio"],
@@ -334,62 +337,61 @@
 
         .option-card label {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             cursor: pointer;
             font-weight: 500;
-            color: var(--text-white);
-            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+            font-size: 1rem;
         }
 
         .option-icon {
-            width: 24px;
-            height: 24px;
-            margin-right: var(--spacing-sm);
-            opacity: 0.8;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
         }
 
-        /* === BUTTONS === */
+        /* Button Styles */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: var(--spacing-md) var(--spacing-xl);
-            font-size: var(--font-size-md);
+            padding: 1rem 2rem;
+            font-size: 1rem;
             font-weight: 600;
             border: none;
-            border-radius: var(--radius-md);
+            border-radius: 16px;
             cursor: pointer;
-            transition: all var(--transition-smooth);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
+            font-family: inherit;
             position: relative;
             overflow: hidden;
             min-height: 56px;
         }
 
         .btn-primary {
-            background: var(--success-gradient);
-            color: var(--text-white);
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
         }
 
         .btn-secondary {
-            background: var(--bg-glass);
-            color: var(--text-white);
-            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
         }
 
-        .btn-secondary:hover {
-            border-color: rgba(255,255,255,0.5);
+        .btn-secondary:hover:not(:disabled) {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
         }
 
@@ -401,29 +403,31 @@
 
         .btn-group {
             display: flex;
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-xl);
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
         }
 
         .btn-group .btn {
-            flex: 1;
+            min-width: 140px;
         }
 
-        /* === CHAT BUBBLES === */
+        /* Chat Bubbles */
         .chat-container {
-            max-width: 100%;
-            margin-bottom: var(--spacing-xl);
+            margin-bottom: 2rem;
+            text-align: center;
         }
 
         .chat-bubble {
-            background: var(--bg-glass);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md) var(--spacing-lg);
-            margin-bottom: var(--spacing-md);
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: var(--shadow-glass);
-            animation: bubbleSlideIn 0.5s ease-out;
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            max-width: 80%;
+            animation: bubbleSlideIn 0.6s ease-out;
         }
 
         @keyframes bubbleSlideIn {
@@ -437,29 +441,24 @@
             }
         }
 
-        .chat-bubble.user {
-            background: var(--success-gradient);
-            margin-left: 20%;
-            box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
-        }
-
         .chat-text {
-            color: var(--text-white);
-            font-size: var(--font-size-md);
-            line-height: 1.5;
-            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            line-height: 1.6;
+            font-weight: 400;
         }
 
-        /* === LOADING STATES === */
+        /* Loading Animation */
         .loading-dots {
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            margin-left: 8px;
         }
 
         .loading-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: currentColor;
             border-radius: 50%;
             animation: loadingBounce 1.4s ease-in-out infinite both;
@@ -474,59 +473,131 @@
             40% { transform: scale(1); opacity: 1; }
         }
 
-        /* === SCORE DISPLAY === */
-        .score-container {
+        /* Results Display */
+        .results-container {
             text-align: center;
-            margin: var(--spacing-xl) 0;
         }
 
         .score-circle {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto var(--spacing-lg);
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 2rem;
             position: relative;
-            background: var(--bg-glass);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 50%;
             backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            box-shadow: 0 0 40px rgba(102, 126, 234, 0.2);
         }
 
         .score-number {
-            font-size: var(--font-size-3xl);
-            font-weight: 800;
-            color: var(--text-white);
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .score-label {
-            font-size: var(--font-size-sm);
-            color: var(--text-glass);
-            margin-top: var(--spacing-xs);
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
         }
 
-        /* === RESPONSIVE === */
-        @media (max-width: 480px) {
-            .container {
-                padding: var(--spacing-sm);
+        .personalized-story {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .story-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                overflow-y: auto;
             }
             
-            .header h1 {
-                font-size: var(--font-size-xl);
+            .screen {
+                position: relative;
+                height: auto;
+                min-height: 100vh;
+                padding: 1rem;
+            }
+            
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+            
+            .glass-card {
+                padding: 2rem 1.5rem;
+                border-radius: 24px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .question-text {
+                font-size: 1.4rem;
             }
             
             .btn-group {
                 flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .progress-container {
+                position: relative;
+                margin-bottom: 1rem;
+            }
+            
+            .score-circle {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .score-number {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .glass-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
             }
             
             .option-card {
-                padding: var(--spacing-sm);
+                padding: 1rem;
             }
         }
-
-        /* === ACCESSIBILITY === */
+        
+        /* Accessibility */
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation-duration: 0.01ms !important;
@@ -534,405 +605,283 @@
                 transition-duration: 0.01ms !important;
             }
         }
-
-        /* === UTILITY CLASSES === */
-        .text-center { text-align: center; }
-        .mb-lg { margin-bottom: var(--spacing-lg); }
-        .mt-lg { margin-top: var(--spacing-lg); }
+        
+        /* Utility Classes */
         .hidden { display: none; }
-        .fade-in { animation: fadeInUp 0.5s ease-out forwards; }
+        .text-center { text-align: center; }
+        .mb-2 { margin-bottom: 2rem; }
     </style>
 </head>
 <body>
-    <!-- Progress Bar -->
+    <!-- Progress Indicator -->
     <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-text" id="progressText">Step 1 of 4</div>
+        <div class="progress-steps">
+            <div class="progress-step active"></div>
+            <div class="progress-step"></div>
+            <div class="progress-step"></div>
+            <div class="progress-step"></div>
+        </div>
     </div>
 
     <div class="container">
-        <!-- Screen 1: Personal Details -->
+        <!-- Screen 1: Welcome -->
         <div id="screen1" class="screen active">
-            <div class="header">
-                <div class="logo">T</div>
-                <h1>Tell Us About Yourself</h1>
-                <p>Let's get to know you and your business better</p>
-            </div>
-
-            <div class="chat-container" id="chatContainer1">
-                <div class="chat-bubble">
-                    <div class="chat-text">Hi! I'm excited to help you discover your business's digital potential. What's your full name?</div>
-                </div>
-            </div>
-
-            <form id="personalForm">
-                <div class="form-group active">
-                    <label class="form-label" for="fullName">Full Name</label>
-                    <input 
-                        type="text" 
-                        id="fullName" 
-                        class="form-input" 
-                        placeholder="Enter your full name"
-                        required
-                    >
-                </div>
-
-                <div class="form-group" id="businessNameGroup" style="display: none;">
-                    <label class="form-label" for="businessName">Business Name</label>
-                    <input 
-                        type="text" 
-                        id="businessName" 
-                        class="form-input" 
-                        placeholder="What's your business called?"
-                        required
-                    >
-                </div>
-
-                <div class="form-group" id="businessTypeGroup" style="display: none;">
-                    <label class="form-label">What type of business is it?</label>
-                    <div class="options-grid">
-                        <div class="option-card">
-                            <input type="radio" id="retail" name="businessType" value="retail">
-                            <label for="retail">
-                                <span class="option-icon">🛍️</span>
-                                Retail / E-commerce
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="services" name="businessType" value="services">
-                            <label for="services">
-                                <span class="option-icon">💼</span>
-                                Professional Services
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="manufacturing" name="businessType" value="manufacturing">
-                            <label for="manufacturing">
-                                <span class="option-icon">🏭</span>
-                                Manufacturing
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="others" name="businessType" value="others">
-                            <label for="others">
-                                <span class="option-icon">🏢</span>
-                                Others
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group" id="locationGroup" style="display: none;">
-                    <label class="form-label" for="location">Where are you located?</label>
-                    <input 
-                        type="text" 
-                        id="location" 
-                        class="form-input" 
-                        placeholder="City, State"
-                        required
-                    >
-                </div>
-            </form>
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary" id="continueBtn1" disabled>
-                    Continue 
-                    <span class="loading-dots" id="loading1" style="display: none; margin-left: 8px;">
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                    </span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Screen 2: Business Goals -->
-        <div id="screen2" class="screen">
-            <div class="header">
-                <h1>Understanding Your Goals</h1>
-                <p>What would you like to achieve with your business?</p>
-            </div>
-
-            <div class="chat-container" id="chatContainer2"></div>
-
-            <form id="goalsForm">
-                <div class="form-group active">
-                    <label class="form-label">What would you like to achieve? (Select all that apply)</label>
-                    <div class="options-grid">
-                        <div class="option-card">
-                            <input type="checkbox" id="moreCustomers" name="goals" value="more_customers">
-                            <label for="moreCustomers">
-                                <span class="option-icon">📈</span>
-                                Get more customers
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="checkbox" id="showcase" name="goals" value="showcase">
-                            <label for="showcase">
-                                <span class="option-icon">🌐</span>
-                                Showcase products/services online
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="checkbox" id="brand" name="goals" value="brand">
-                            <label for="brand">
-                                <span class="option-icon">✨</span>
-                                Build a professional brand identity
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="checkbox" id="automate" name="goals" value="automate">
-                            <label for="automate">
-                                <span class="option-icon">🤖</span>
-                                Automate orders & customer management
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="checkbox" id="app" name="goals" value="app">
-                            <label for="app">
-                                <span class="option-icon">📱</span>
-                                Create my own branded app/website
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group" id="digitalStatusGroup" style="display: none;">
-                    <label class="form-label">What's your current digital status?</label>
-                    <div class="options-grid">
-                        <div class="option-card">
-                            <input type="radio" id="noPresence" name="digitalStatus" value="no_presence">
-                            <label for="noPresence">
-                                <span class="option-icon">🌱</span>
-                                No digital presence yet
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="basicSocial" name="digitalStatus" value="basic_social">
-                            <label for="basicSocial">
-                                <span class="option-icon">💬</span>
-                                Only on WhatsApp / Google
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="basicWebsite" name="digitalStatus" value="basic_website">
-                            <label for="basicWebsite">
-                                <span class="option-icon">🌐</span>
-                                Have a basic website or page
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="noResults" name="digitalStatus" value="no_results">
-                            <label for="noResults">
-                                <span class="option-icon">📉</span>
-                                Already digital, but not getting results
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group" id="budgetGroup" style="display: none;">
-                    <label class="form-label">What's your approximate monthly digital budget?</label>
-                    <div class="options-grid">
-                        <div class="option-card">
-                            <input type="radio" id="budget1" name="budget" value="below_2k">
-                            <label for="budget1">
-                                <span class="option-icon">💰</span>
-                                Below ₹2,000
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="budget2" name="budget" value="2k_10k">
-                            <label for="budget2">
-                                <span class="option-icon">💳</span>
-                                ₹2,000 – ₹10,000
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="budget3" name="budget" value="10k_25k">
-                            <label for="budget3">
-                                <span class="option-icon">💎</span>
-                                ₹10,000 – ₹25,000
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="budget4" name="budget" value="25k_plus">
-                            <label for="budget4">
-                                <span class="option-icon">🚀</span>
-                                ₹25,000+
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group" id="challengeGroup" style="display: none;">
-                    <label class="form-label">What's the biggest challenge you face right now?</label>
-                    <div class="options-grid">
-                        <div class="option-card">
-                            <input type="radio" id="noLeads" name="challenge" value="no_leads">
-                            <label for="noLeads">
-                                <span class="option-icon">📢</span>
-                                Not getting leads
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="dontKnow" name="challenge" value="dont_know">
-                            <label for="dontKnow">
-                                <span class="option-icon">❓</span>
-                                Don't know where to start
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="noTime" name="challenge" value="no_time">
-                            <label for="noTime">
-                                <span class="option-icon">⏰</span>
-                                No time to manage digital presence
-                            </label>
-                        </div>
-                        <div class="option-card">
-                            <input type="radio" id="lowSales" name="challenge" value="low_sales">
-                            <label for="lowSales">
-                                <span class="option-icon">📊</span>
-                                Low sales despite being online
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-secondary" id="backBtn2">
-                    ← Back
-                </button>
-                <button type="button" class="btn btn-primary" id="continueBtn2" disabled>
-                    Continue
-                    <span class="loading-dots" id="loading2" style="display: none; margin-left: 8px;">
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                    </span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Screen 3: Verification -->
-        <div id="screen3" class="screen">
-            <div class="header">
-                <h1>Almost Ready!</h1>
-                <p>We've prepared your personalized business readiness summary</p>
-            </div>
-
-            <div class="chat-container">
-                <div class="chat-bubble">
-                    <div class="chat-text">
-                        Before showing your results, please verify your mobile number. We'll send your private preview link securely — no spam, ever! 📱
-                    </div>
-                </div>
-            </div>
-
-            <form id="verificationForm">
-                <div class="form-group active">
-                    <label class="form-label" for="mobile">Mobile Number</label>
-                    <input 
-                        type="tel" 
-                        id="mobile" 
-                        class="form-input" 
-                        placeholder="+91 98765 43210"
-                        required
-                    >
-                </div>
-
-                <div class="form-group" id="otpGroup" style="display: none;">
-                    <label class="form-label" for="otp">Verification Code</label>
-                    <input 
-                        type="text" 
-                        id="otp" 
-                        class="form-input" 
-                        placeholder="Enter 4-digit OTP"
-                        maxlength="4"
-                        required
-                    >
-                    <p style="color: var(--text-glass); font-size: var(--font-size-sm); margin-top: var(--spacing-xs);">
-                        Demo Mode: Use <strong>1111</strong> as OTP
+            <div class="container">
+                <div class="glass-card">
+                    <h1>Discover Your <span class="topiko-text brand-highlight">Digital Readiness</span></h1>
+                    <p class="subtitle">
+                        Get your personalized business assessment and discover the perfect digital solution for your growth in just 3 minutes.
                     </p>
-                </div>
-            </form>
+                    
+                    <div class="chat-container">
+                        <div class="chat-bubble">
+                            <div class="chat-text">
+                                👋 Hi! I'm excited to help you discover your business's digital potential. Let's start with your details.
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="btn-group">
-                <button type="button" class="btn btn-secondary" id="backBtn3">
-                    ← Back
-                </button>
-                <button type="button" class="btn btn-primary" id="sendOtpBtn">
-                    Send OTP
-                    <span class="loading-dots" id="loading3" style="display: none; margin-left: 8px;">
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                    </span>
-                </button>
-                <button type="button" class="btn btn-primary" id="verifyBtn" style="display: none;">
-                    Verify & View Results
-                    <span class="loading-dots" id="loading4" style="display: none; margin-left: 8px;">
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                        <span class="loading-dot"></span>
-                    </span>
-                </button>
+                    <div class="form-group">
+                        <label class="form-label" for="fullName">What's your full name?</label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            class="form-input" 
+                            placeholder="Enter your full name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group" id="businessNameGroup" style="display: none;">
+                        <label class="form-label" for="businessName">What's your business name?</label>
+                        <input 
+                            type="text" 
+                            id="businessName" 
+                            class="form-input" 
+                            placeholder="Your business name"
+                            required
+                        >
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" id="continueBtn1" disabled>
+                            Continue to Assessment
+                            <span class="loading-dots" id="loading1" style="display: none;">
+                                <span class="loading-dot"></span>
+                                <span class="loading-dot"></span>
+                                <span class="loading-dot"></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 2: Business Assessment -->
+        <div id="screen2" class="screen">
+            <div class="container">
+                <div class="glass-card">
+                    <div class="question-text" id="currentQuestion">
+                        What type of business do you run?
+                    </div>
+                    
+                    <div class="chat-container" id="chatContainer2"></div>
+
+                    <div id="questionContainer">
+                        <!-- Business Type Question -->
+                        <div class="form-group" id="businessTypeGroup">
+                            <div class="options-grid">
+                                <div class="option-card">
+                                    <input type="radio" id="retail" name="businessType" value="retail">
+                                    <label for="retail">
+                                        <span class="option-icon">🛍️</span>
+                                        <div>
+                                            <strong>Retail / E-commerce</strong>
+                                            <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.3rem;">Sell products online or offline</div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="option-card">
+                                    <input type="radio" id="services" name="businessType" value="services">
+                                    <label for="services">
+                                        <span class="option-icon">💼</span>
+                                        <div>
+                                            <strong>Professional Services</strong>
+                                            <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.3rem;">Consultancy, legal, medical, etc.</div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="option-card">
+                                    <input type="radio" id="manufacturing" name="businessType" value="manufacturing">
+                                    <label for="manufacturing">
+                                        <span class="option-icon">🏭</span>
+                                        <div>
+                                            <strong>Manufacturing</strong>
+                                            <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.3rem;">Production and distribution</div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="option-card">
+                                    <input type="radio" id="others" name="businessType" value="others">
+                                    <label for="others">
+                                        <span class="option-icon">🏢</span>
+                                        <div>
+                                            <strong>Other Industry</strong>
+                                            <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.3rem;">Something unique</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" id="backBtn2">
+                            ← Back
+                        </button>
+                        <button type="button" class="btn btn-primary" id="nextQuestion" disabled>
+                            Next Question
+                            <span class="loading-dots" id="loading2" style="display: none;">
+                                <span class="loading-dot"></span>
+                                <span class="loading-dot"></span>
+                                <span class="loading-dot"></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 3: Contact & Verification -->
+        <div id="screen3" class="screen">
+            <div class="container">
+                <div class="glass-card">
+                    <h1>Almost Ready! 🎉</h1>
+                    <p class="subtitle">
+                        We've prepared your personalized <span class="brand-highlight">Digital Readiness Report</span>. 
+                        Please verify your contact details to receive your results.
+                    </p>
+                    
+                    <div class="chat-container">
+                        <div class="chat-bubble">
+                            <div class="chat-text">
+                                📱 Just need your mobile number to send your private assessment results securely — no spam, ever!
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="mobile">Mobile Number</label>
+                        <input 
+                            type="tel" 
+                            id="mobile" 
+                            class="form-input" 
+                            placeholder="+91 98765 43210"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="location">Your City</label>
+                        <input 
+                            type="text" 
+                            id="location" 
+                            class="form-input" 
+                            placeholder="City, State"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group" id="otpGroup" style="display: none;">
+                        <label class="form-label" for="otp">Verification Code</label>
+                        <input 
+                            type="text" 
+                            id="otp" 
+                            class="form-input" 
+                            placeholder="Enter 4-digit OTP"
+                            maxlength="4"
+                            required
+                        >
+                        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 0.5rem; text-align: center;">
+                            Demo Mode: Use <strong>1111</strong> as OTP
+                        </p>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" id="backBtn3">
+                            ← Back
+                        </button>
+                        <button type="button" class="btn btn-primary" id="sendOtpBtn">
+                            Send OTP
+                            <span class="loading-dots" id="loading3" style="display: none;">
+                                <span class="loading-dot"></span>
+                                <span class="loading-dot"></span>
+                                <span class="loading-dot"></span>
+                            </span>
+                        </button>
+                        <button type="button" class="btn btn-primary" id="verifyBtn" style="display: none;">
+                            View My Results 🎯
+                            <span class="loading-dots" id="loading4" style="display: none;">
+                                <span class="loading-dot"></span>
+                                <span class="loading-dot"></span>
+                                <span class="loading-dot"></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Screen 4: Results -->
         <div id="screen4" class="screen">
-            <div class="header">
-                <h1 id="resultsTitle">Great work, [Name]!</h1>
-                <p>Here's your personalized digital readiness summary</p>
-            </div>
-
-            <div class="glass-card mb-lg" id="summaryCard">
-                <div style="padding: var(--spacing-lg);">
-                    <div class="chat-text" id="personalizedStory">
-                        <!-- Dynamic story will be generated here -->
+            <div class="container">
+                <div class="glass-card results-container">
+                    <h1 id="resultsTitle">🎉 Great work, <span id="userName">[Name]</span>!</h1>
+                    <p class="subtitle">Here's your personalized <span class="brand-highlight topiko-text">Digital Readiness</span> summary</p>
+                    
+                    <div class="personalized-story">
+                        <div class="story-text" id="personalizedStory">
+                            <!-- Dynamic story will be generated here -->
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="score-container">
-                <div class="score-circle">
-                    <div>
+                    <div class="score-circle">
                         <div class="score-number" id="scoreNumber">0</div>
-                        <div class="score-label">Digital Readiness</div>
+                        <div class="score-label">Digital Readiness Score</div>
+                    </div>
+
+                    <div class="glass-card mb-2">
+                        <div style="padding: 2rem; text-align: left;">
+                            <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.3rem; text-align: center;">
+                                📊 Your Score Breakdown
+                            </h3>
+                            <div id="scoreBreakdown">
+                                <!-- Score dimensions will be added here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card mb-2">
+                        <div style="padding: 2rem; text-align: center;">
+                            <h3 style="color: white; margin-bottom: 1.5rem; font-size: 1.3rem;">
+                                🎯 Perfect Solution for You
+                            </h3>
+                            <div id="recommendedProduct">
+                                <!-- Product recommendation will be added here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" id="viewPlanBtn">
+                            📊 Get My Detailed Plan
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="consultationBtn">
+                            📞 Book Free Consultation
+                        </button>
                     </div>
                 </div>
-            </div>
-
-            <div class="glass-card mb-lg">
-                <div style="padding: var(--spacing-lg);">
-                    <h3 style="color: var(--text-white); margin-bottom: var(--spacing-md); font-size: var(--font-size-lg);">
-                        Score Breakdown
-                    </h3>
-                    <div id="scoreBreakdown">
-                        <!-- Score dimensions will be added here -->
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-card mb-lg">
-                <div style="padding: var(--spacing-lg);">
-                    <h3 style="color: var(--text-white); margin-bottom: var(--spacing-md); font-size: var(--font-size-lg);">
-                        🎯 Recommended Next Step
-                    </h3>
-                    <div id="recommendedProduct">
-                        <!-- Product recommendation will be added here -->
-                    </div>
-                </div>
-            </div>
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-primary" id="viewPlanBtn">
-                    📊 View My Plan
-                </button>
-                <button type="button" class="btn btn-secondary" id="consultationBtn">
-                    📞 Book Consultation
-                </button>
             </div>
         </div>
     </div>
