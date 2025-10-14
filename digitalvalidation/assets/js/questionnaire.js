@@ -13,7 +13,7 @@ const questions = [
         question: "What's your name?",
         placeholder: 'Enter your full name',
         required: true,
-        chat: "👋 Hi! I'm your digital consultant. Let's discover the perfect solution for your business. What's your name?"
+        chat: "👋 Hi! I'm your <span class='topiko-text'>digital consultant</span>. Let's discover the perfect solution for your business. What's your name?"
     },
     {
         id: 'businessName', 
@@ -497,6 +497,119 @@ function updateProfilePanel() {
     if (profileHTML) {
         content.innerHTML = profileHTML;
     }
+    
+    // Update mobile profile components
+    updateMobileProfile();
+    
+    // Show mobile float widget after name is entered (on mobile/tablet)
+    if (userProfile.userName && window.innerWidth <= 1400) {
+        showMobileFloat();
+    }
+}
+
+// Mobile Profile Functions
+function updateMobileProfile() {
+    // Update all avatar elements
+    const avatarElements = document.querySelectorAll('.profile-avatar, .float-avatar, .sheet-avatar');
+    avatarElements.forEach(el => {
+        if (userProfile.userName) {
+            el.textContent = userProfile.userName.charAt(0).toUpperCase();
+        }
+    });
+    
+    // Update name displays
+    const firstName = userProfile.userName ? userProfile.userName.split(' ')[0] : '';
+    const desktopName = firstName + (userProfile.location ? ` from ${userProfile.location.split(',')[0]}` : '');
+    const mobileName = firstName ? `Building profile for ${firstName}` : 'Building your profile...';
+    
+    // Update float widget
+    const floatName = document.getElementById('float-name');
+    const floatStatus = document.getElementById('float-status');
+    if (floatName) floatName.textContent = mobileName;
+    if (floatStatus) floatStatus.textContent = getProfileStatus();
+    
+    // Update sheet
+    const sheetName = document.getElementById('sheet-name');
+    const sheetStatus = document.getElementById('sheet-status');
+    if (sheetName) sheetName.textContent = mobileName;
+    if (sheetStatus) sheetStatus.textContent = getProfileStatus();
+    
+    // Update mobile profile content
+    const mobileContent = document.getElementById('mobile-profile-content');
+    if (mobileContent) {
+        let mobileHTML = '';
+        
+        if (userProfile.businessName || userProfile.businessType) {
+            mobileHTML += `
+                <div class="profile-section">
+                    <h4>📋 Business Info</h4>
+                    ${userProfile.businessName ? `<div class="profile-detail"><span class="label">Business:</span> <span class="value">${userProfile.businessName}</span></div>` : ''}
+                    ${userProfile.businessType ? `<div class="profile-detail"><span class="label">Type:</span> <span class="value">${getLabel('businessType', userProfile.businessType)}</span></div>` : ''}
+                    ${userProfile.location ? `<div class="profile-detail"><span class="label">Location:</span> <span class="value">${userProfile.location}</span></div>` : ''}
+                </div>
+            `;
+        }
+        
+        if (answers.digitalStatus || answers.budget) {
+            mobileHTML += `
+                <div class="profile-section">
+                    <h4>💻 Current State</h4>
+                    ${answers.digitalStatus ? `<div class="profile-detail"><span class="label">Digital:</span> <span class="value">${getLabel('digitalStatus', answers.digitalStatus)}</span></div>` : ''}
+                    ${answers.budget ? `<div class="profile-detail"><span class="label">Budget:</span> <span class="value">${getLabel('budget', answers.budget)}</span></div>` : ''}
+                </div>
+            `;
+        }
+        
+        if (answers.goals && answers.goals.length > 0) {
+            mobileHTML += `
+                <div class="profile-section">
+                    <h4>🎯 Goals</h4>
+                    <div class="tags-container">
+                        ${answers.goals.map(g => `<span class="tag">${getLabel('goals', g)}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (mobileHTML) {
+            mobileContent.innerHTML = mobileHTML;
+        }
+    }
+}
+
+function showMobileFloat() {
+    const mobileFloat = document.getElementById('mobile-float');
+    if (mobileFloat && window.innerWidth <= 1400) {
+        mobileFloat.classList.add('show');
+        
+        // Add click handler to show bottom sheet
+        mobileFloat.onclick = toggleMobileProfile;
+    }
+}
+
+function toggleMobileProfile() {
+    const mobileSheet = document.getElementById('mobile-sheet');
+    if (mobileSheet) {
+        if (!mobileSheet.style.display || mobileSheet.style.display === 'none') {
+            mobileSheet.style.display = 'block';
+            setTimeout(() => mobileSheet.classList.add('active'), 10);
+        } else {
+            mobileSheet.classList.remove('active');
+            setTimeout(() => mobileSheet.style.display = 'none', 400);
+        }
+    }
+}
+
+function getProfileStatus() {
+    const step = questions[currentQuestion].step;
+    const statuses = {
+        1: 'Getting basic info...',
+        2: 'Understanding your needs...',
+        3: 'Exploring your goals...',
+        4: 'Finalizing details...',
+        5: 'Almost done!'
+    };
+    return statuses[step] || 'Complete your profile';
 }
 
 // Get label for a value

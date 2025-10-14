@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Validation - Discover Your Perfect Business Solution</title>
     <link rel="icon" type="image/png" href="/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="/digitalvalidation/assets/css/styles.css">
     
     <!-- Supabase -->
@@ -91,6 +97,36 @@
                         Answer questions to build your profile
                     </p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Profile Float Widget -->
+    <div class="mobile-profile-float" id="mobile-float" style="display: none;">
+        <div class="float-content">
+            <div class="float-avatar" id="float-avatar">?</div>
+            <div class="float-info">
+                <div class="float-name" id="float-name">Building your profile...</div>
+                <div class="float-status" id="float-status">Answer questions to get started</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Profile Bottom Sheet -->
+    <div class="mobile-profile-sheet" id="mobile-sheet" style="display: none;">
+        <div class="sheet-handle" onclick="toggleMobileProfile()"></div>
+        <div class="sheet-content">
+            <div class="sheet-header">
+                <div class="sheet-avatar" id="sheet-avatar">?</div>
+                <div class="sheet-info">
+                    <div class="sheet-name" id="sheet-name">Building your profile...</div>
+                    <div class="sheet-status" id="sheet-status">Answer questions to get started</div>
+                </div>
+            </div>
+            <div class="sheet-body" id="mobile-profile-content">
+                <p style="color: rgba(255, 255, 255, 0.6); text-align: center; padding: 2rem 0;">
+                    Answer questions to build your profile
+                </p>
             </div>
         </div>
     </div>
