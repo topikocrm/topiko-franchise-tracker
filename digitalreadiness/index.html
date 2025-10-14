@@ -777,23 +777,23 @@
         
         /* Mobile Profile Float Widget */
         .mobile-profile-float {
-            display: none !important;
+            display: none;
             position: fixed;
             top: 1rem;
             left: 1rem;
-            right: 6rem;
+            right: 1rem;
             z-index: 100;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            padding: 1rem 1.5rem;
+            padding: 0.75rem 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         
         .mobile-profile-float.show {
-            display: block !important;
+            display: block;
             visibility: visible;
             opacity: 1;
         }
@@ -953,7 +953,7 @@
             }
             
             .mobile-profile-float.show {
-                display: block !important;
+                display: block;
             }
         }
         
@@ -970,7 +970,7 @@
             }
             
             .mobile-profile-float.show {
-                display: block !important;
+                display: block;
             }
         }
         
@@ -993,8 +993,19 @@
             
             .content-area .container {
                 padding: 1rem;
+                padding-top: 0.5rem;
                 margin: 0;
                 max-width: 100%;
+                min-height: calc(100vh - 80px);
+            }
+            
+            .header {
+                padding: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .chat-container {
+                margin-bottom: 1rem;
             }
             
             .glass-card {
@@ -1880,7 +1891,8 @@
             updateProgress();
             updateProfilePreview(); // Update profile preview on screen change
             
-            // No need to clear messages - we update the existing bubble
+            // Reset chat message for the new screen
+            resetChatMessage(screenNumber);
         }
 
         // Screen 1: Welcome and Basic Info
@@ -1899,12 +1911,18 @@
                     formData.fullName = value;
                     updateProfilePreview(); // Update profile preview
                     
-                    // Debounced greeting message - only show once when user stops typing
+                    // Debounced greeting message with variety
                     if (!nameGreetingShown) {
                         clearTimeout(nameTimeout);
                         nameTimeout = setTimeout(() => {
                             const firstName = value.split(' ')[0];
-                            updateChatMessage(`Nice to meet you, ${firstName}.`, 1);
+                            const greetings = [
+                                `Nice to meet you, ${firstName}!`,
+                                `Welcome ${firstName}! Excited to help you grow.`,
+                                `Hello ${firstName}! Let's explore your digital potential.`,
+                                `Great to have you here, ${firstName}!`
+                            ];
+                            updateChatMessage(greetings[Math.floor(Math.random() * greetings.length)], 1);
                             nameGreetingShown = true;
                         }, 800); // Wait 800ms after user stops typing
                     }
@@ -1928,11 +1946,17 @@
                 formData.businessName = value;
                 updateProfilePreview(); // Update profile preview
                 
-                // Debounced greeting message for business name
+                // Debounced greeting message for business name with variety
                 if (value.length > 2 && !businessGreetingShown) {
                     clearTimeout(businessTimeout);
                     businessTimeout = setTimeout(() => {
-                        updateChatMessage(`Sounds great — ${value}. Let's get to know your business better.`, 1);
+                        const businessGreetings = [
+                            `${value} sounds impressive! Let's unlock its digital potential.`,
+                            `Great name! ${value} is ready for digital success.`,
+                            `${value} — I can already see the possibilities!`,
+                            `Love it! Let's make ${value} digitally unstoppable.`
+                        ];
+                        updateChatMessage(businessGreetings[Math.floor(Math.random() * businessGreetings.length)], 1);
                         businessGreetingShown = true;
                     }, 800);
                 } else if (value.length <= 2) {
@@ -2060,7 +2084,15 @@
             if (questionId === 'businessType') {
                 formData.businessType = answers[questionId];
                 
-                // Add interactive message for business type - only once
+                // Add dynamic interactive message for business type
+                const businessTypeMessages = {
+                    'retail': ['Retail is evolving rapidly with digital tools!', 'E-commerce is reshaping how retail connects with customers!', 'Digital retail transformation is the future!'],
+                    'services': ['Service businesses thrive with the right digital strategy!', 'Professional services are discovering new digital opportunities!', 'Digital tools are revolutionizing service delivery!'],
+                    'manufacturing': ['Manufacturing is embracing Industry 4.0!', 'Smart factories start with smart digital presence!', 'Digital transformation is optimizing manufacturing globally!'],
+                    'others': ['Every industry has unique digital opportunities!', 'Your industry is ripe for digital innovation!', 'Digital transformation knows no boundaries!']
+                };
+                const messages = businessTypeMessages[answers[questionId]] || businessTypeMessages['others'];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
                 const businessTypeLabels = {
                     'retail': 'Retail/E-commerce',
                     'services': 'Professional Services', 
@@ -2068,24 +2100,51 @@
                     'others': 'Other Industry'
                 };
                 const typeLabel = businessTypeLabels[answers[questionId]] || answers[questionId];
-                updateChatMessage(`Got it, ${typeLabel} businesses are going digital faster than ever!`, 2);
+                updateChatMessage(`Got it! ${randomMessage}`, 2);
             }
             
-            // Update chat message for Screen 2 questions based on question type
+            // Update chat message for Screen 2 questions with variety
             if (questionId === 'goals' && answers[questionId] && answers[questionId].length > 0) {
-                updateChatMessage("Got it. Everyone's growth goals are unique — we'll tailor the plan just for you.", 2);
+                const goalsMessages = [
+                    `Excellent choices! We'll craft a strategy around these ${answers[questionId].length} priorities.`,
+                    `Great vision! These goals will shape your digital transformation journey.`,
+                    `Love your ambition! Let's turn these aspirations into reality.`,
+                    `Smart thinking! We'll align our recommendations with these objectives.`
+                ];
+                updateChatMessage(goalsMessages[Math.floor(Math.random() * goalsMessages.length)], 2);
             }
             
             if (questionId === 'digitalStatus' && answers[questionId]) {
-                updateChatMessage("Makes sense. Many businesses start here — we'll help you go beyond visibility.", 2);
+                const statusMessages = {
+                    'no_presence': ['Starting fresh gives you complete freedom to build it right!', 'A blank canvas means unlimited potential!', 'Every digital giant started exactly where you are now!'],
+                    'basic_social': ['WhatsApp and Google are great foundations to build upon!', 'You've already taken the first steps — let's amplify your reach!', 'Smart start! Now let's expand your digital footprint.'],
+                    'basic_website': ['Having a website puts you ahead of many competitors!', 'Your website is the cornerstone — let's make it work harder!', 'Good foundation! Time to maximize its potential.'],
+                    'no_results': ['Identifying the gap is the first step to success!', 'Let's turn your digital presence into a growth engine!', 'Time to optimize and see real results!']
+                };
+                const messages = statusMessages[answers[questionId]] || ['Interesting position! We'll work with what you have.'];
+                updateChatMessage(messages[Math.floor(Math.random() * messages.length)], 2);
             }
             
             if (questionId === 'budget' && answers[questionId]) {
-                updateChatMessage("Perfect. That helps us suggest the most effective plan for your scale.", 2);
+                const budgetMessages = {
+                    'below_2k': ['Smart budgeting! We'll maximize every rupee.', 'Cost-effective solutions can deliver amazing results!', 'Strategic spending beats big budgets every time!'],
+                    '2k_10k': ['Perfect range for sustainable digital growth!', 'This budget opens up exciting possibilities!', 'Ideal investment level for measurable impact!'],
+                    '10k_25k': ['Serious commitment! Let's make it count.', 'This investment will accelerate your digital journey!', 'Great budget for comprehensive transformation!'],
+                    '25k_plus': ['Premium investment for premium results!', 'Sky's the limit with this budget!', 'Enterprise-level budget for enterprise-level growth!']
+                };
+                const messages = budgetMessages[answers[questionId]] || ['We'll work within your budget effectively!'];
+                updateChatMessage(messages[Math.floor(Math.random() * messages.length)], 2);
             }
             
             if (questionId === 'challenge' && answers[questionId]) {
-                updateChatMessage("We hear this a lot — you're not alone, and that's exactly what this checkup solves.", 2);
+                const challengeMessages = {
+                    'no_leads': ['Lead generation is solvable with the right strategy!', 'Let's turn your website into a lead magnet!', 'Quality leads are coming your way!'],
+                    'dont_know': ['That's why we're here — to guide you step by step!', 'No worries! We'll create a clear roadmap for you.', 'Perfect! Let's demystify digital together.'],
+                    'no_time': ['Automation is your best friend — we'll set it up!', 'Let's build systems that work while you sleep!', 'Smart tools will give you time back!'],
+                    'low_sales': ['Conversion optimization is our specialty!', 'Let's diagnose and fix your sales funnel!', 'Time to turn visitors into customers!']
+                };
+                const messages = challengeMessages[answers[questionId]] || ['We'll tackle this challenge head-on!'];
+                updateChatMessage(messages[Math.floor(Math.random() * messages.length)], 2);
             }
             
             // Update profile preview whenever an answer is selected
@@ -2141,12 +2200,18 @@
                     formData.location = locationInput.value.trim();
                     updateProfilePreview();
                     
-                    // Debounced location greeting
+                    // Debounced location greeting with variety
                     if (locationValid && !locationGreetingShown) {
                         clearTimeout(locationTimeout);
                         locationTimeout = setTimeout(() => {
                             const city = locationInput.value.trim().split(',')[0];
-                            updateChatMessage(`${city} has a growing business community — love that!`, 3);
+                            const locationGreetings = [
+                                `${city} is buzzing with digital opportunities!`,
+                                `Great location! ${city} businesses are thriving online.`,
+                                `${city} — perfect place for digital growth!`,
+                                `Love ${city}! Let's make you the digital leader there.`
+                            ];
+                            updateChatMessage(locationGreetings[Math.floor(Math.random() * locationGreetings.length)], 3);
                             locationGreetingShown = true;
                         }, 800);
                     } else if (!locationValid) {
