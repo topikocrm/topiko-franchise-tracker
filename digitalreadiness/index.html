@@ -1701,13 +1701,24 @@
         
         // ===== INTERACTIVE CHAT MESSAGES =====
         
-        let lastMessage = '';
+        let messageHistory = new Set();
         
-        function addChatMessage(message, delay = 500) {
-            const chatContainer = document.querySelector('.chat-container');
-            if (!chatContainer || message === lastMessage) return;
+        function addChatMessage(message, delay = 500, screenNumber = null) {
+            // Create a unique key for this message
+            const messageKey = `${screenNumber || currentScreen}_${message}`;
+            if (messageHistory.has(messageKey)) return;
             
-            lastMessage = message;
+            // Find the chat container for the current screen
+            let chatContainer;
+            if (screenNumber) {
+                chatContainer = document.querySelector(`#screen${screenNumber} .chat-container`);
+            } else {
+                chatContainer = document.querySelector('.screen.active .chat-container');
+            }
+            
+            if (!chatContainer) return;
+            
+            messageHistory.add(messageKey);
             
             setTimeout(() => {
                 const chatBubble = document.createElement('div');
@@ -1728,15 +1739,20 @@
             }, delay);
         }
         
-        function clearChatMessages() {
-            const chatContainer = document.querySelector('.chat-container');
+        function clearChatMessages(screenNumber = null) {
+            let chatContainer;
+            if (screenNumber) {
+                chatContainer = document.querySelector(`#screen${screenNumber} .chat-container`);
+            } else {
+                chatContainer = document.querySelector('.screen.active .chat-container');
+            }
+            
             if (chatContainer) {
                 // Keep only the first (original) message
                 const messages = chatContainer.querySelectorAll('.chat-bubble');
                 for (let i = 1; i < messages.length; i++) {
                     messages[i].remove();
                 }
-                lastMessage = ''; // Reset to allow new messages
             }
         }
 
@@ -1806,15 +1822,24 @@
             const continueBtn = document.getElementById('continueBtn1');
             let step = 0;
 
+            let nameTimeout;
+            let nameGreetingShown = false;
+            
             fullNameInput.addEventListener('input', (e) => {
                 const value = e.target.value.trim();
                 if (value.length > 2) {
                     formData.fullName = value;
                     updateProfilePreview(); // Update profile preview
                     
-                    // Add interactive greeting message
-                    const firstName = value.split(' ')[0];
-                    addChatMessage(`Nice to meet you, ${firstName}.`);
+                    // Debounced greeting message - only show once when user stops typing
+                    if (!nameGreetingShown) {
+                        clearTimeout(nameTimeout);
+                        nameTimeout = setTimeout(() => {
+                            const firstName = value.split(' ')[0];
+                            addChatMessage(`Nice to meet you, ${firstName}.`, 500, 1);
+                            nameGreetingShown = true;
+                        }, 800); // Wait 800ms after user stops typing
+                    }
                     
                     if (step === 0) {
                         setTimeout(() => showBusinessNameField(), 1000);
@@ -1823,17 +1848,27 @@
                     updateContinueButton();
                 } else {
                     continueBtn.disabled = true;
+                    nameGreetingShown = false; // Reset if name is deleted
                 }
             });
 
+            let businessTimeout;
+            let businessGreetingShown = false;
+            
             businessNameInput.addEventListener('input', (e) => {
                 const value = e.target.value.trim();
                 formData.businessName = value;
                 updateProfilePreview(); // Update profile preview
                 
-                // Add interactive greeting message for business name
-                if (value.length > 2) {
-                    addChatMessage(`Sounds great — ${value}. Let's get to know your business better.`);
+                // Debounced greeting message for business name
+                if (value.length > 2 && !businessGreetingShown) {
+                    clearTimeout(businessTimeout);
+                    businessTimeout = setTimeout(() => {
+                        addChatMessage(`Sounds great — ${value}. Let's get to know your business better.`, 500, 1);
+                        businessGreetingShown = true;
+                    }, 800);
+                } else if (value.length <= 2) {
+                    businessGreetingShown = false; // Reset if business name is deleted
                 }
                 
                 updateContinueButton();
@@ -1967,24 +2002,24 @@
                     'others': 'Other Industry'
                 };
                 const typeLabel = businessTypeLabels[answers[questionId]] || answers[questionId];
-                addChatMessage(`Got it, ${typeLabel} businesses are going digital faster than ever!`);
+                addChatMessage(`Got it, ${typeLabel} businesses are going digital faster than ever!`, 500, 2);
             }
             
-            // Add interactive messages for Screen 2 questions
+            // Add interactive messages for Screen 2 questions - only once per question
             if (questionId === 'goals' && answers[questionId] && answers[questionId].length > 0) {
-                addChatMessage("Got it. Everyone's growth goals are unique — we'll tailor the plan just for you.");
+                addChatMessage("Got it. Everyone's growth goals are unique — we'll tailor the plan just for you.", 500, 2);
             }
             
             if (questionId === 'digitalStatus' && answers[questionId]) {
-                addChatMessage("Makes sense. Many businesses start here — we'll help you go beyond visibility.");
+                addChatMessage("Makes sense. Many businesses start here — we'll help you go beyond visibility.", 500, 2);
             }
             
             if (questionId === 'budget' && answers[questionId]) {
-                addChatMessage("Perfect. That helps us suggest the most effective plan for your scale.");
+                addChatMessage("Perfect. That helps us suggest the most effective plan for your scale.", 500, 2);
             }
             
             if (questionId === 'challenge' && answers[questionId]) {
-                addChatMessage("We hear this a lot — you're not alone, and that's exactly what this checkup solves.");
+                addChatMessage("We hear this a lot — you're not alone, and that's exactly what this checkup solves.", 500, 2);
             }
             
             // Update profile preview whenever an answer is selected
@@ -2028,6 +2063,9 @@
             const verifyBtn = document.getElementById('verifyBtn');
             const backBtn = document.getElementById('backBtn3');
             
+            let locationTimeout;
+            let locationGreetingShown = false;
+            
             function checkFields() {
                 const mobileValid = mobileInput.value.trim().length >= 10;
                 const locationValid = locationInput.value.trim().length >= 3;
@@ -2037,10 +2075,16 @@
                     formData.location = locationInput.value.trim();
                     updateProfilePreview();
                     
-                    // Add interactive greeting for location
-                    if (locationInput.value.trim().length > 2) {
-                        const city = locationInput.value.trim().split(',')[0]; // Get city part
-                        addChatMessage(`${city} has a growing business community — love that!`);
+                    // Debounced location greeting
+                    if (locationValid && !locationGreetingShown) {
+                        clearTimeout(locationTimeout);
+                        locationTimeout = setTimeout(() => {
+                            const city = locationInput.value.trim().split(',')[0];
+                            addChatMessage(`${city} has a growing business community — love that!`, 500, 3);
+                            locationGreetingShown = true;
+                        }, 800);
+                    } else if (!locationValid) {
+                        locationGreetingShown = false;
                     }
                 }
                 
