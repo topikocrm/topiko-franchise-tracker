@@ -5,6 +5,10 @@
       "dest": "/register/index.html"
     },
     {
+      "src": "/digitalreadiness",
+      "dest": "/digitalreadiness/index.html"
+    },
+    {
       "src": "/api/send-otp",
       "dest": "/api/send-otp.js"
     },

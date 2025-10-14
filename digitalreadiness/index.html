@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Digital Readiness Assessment - Topiko</title>
+    <meta name="description" content="Discover your business's digital readiness and get a personalized growth plan in just 3 minutes.">
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Progressive Web App -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* === CSS VARIABLES === */
+        :root {
+            /* Colors - Premium Gradient System */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            
+            /* Text Colors */
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --text-white: #ffffff;
+            --text-glass: rgba(255,255,255,0.9);
+            
+            /* Background */
+            --bg-primary: #f8fafc;
+            --bg-card: rgba(255,255,255,0.95);
+            --bg-glass: rgba(255,255,255,0.1);
+            --bg-overlay: rgba(0,0,0,0.5);
+            
+            /* Shadows */
+            --shadow-glass: 0 8px 32px rgba(31,38,135,0.37);
+            --shadow-card: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+            
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            
+            /* Typography */
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.5rem;
+            --font-size-2xl: 2rem;
+            --font-size-3xl: 2.5rem;
+            
+            /* Animation */
+            --transition-fast: 0.2s ease-out;
+            --transition-smooth: 0.3s ease-out;
+            --transition-slow: 0.5s ease-out;
+        }
+
+        /* === RESET & BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* === GLASSMORPHIC COMPONENTS === */
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-glass);
+            transition: all var(--transition-smooth);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(31,38,135,0.5);
+        }
+
+        /* === LAYOUT === */
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
+                padding: var(--spacing-xl);
+            }
+        }
+
+        /* === SCREEN SYSTEM === */
+        .screen {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            min-height: calc(100vh - 4rem);
+            padding: var(--spacing-lg) 0;
+        }
+
+        .screen.active {
+            display: block;
+            animation: screenSlideIn var(--transition-smooth) forwards;
+        }
+
+        @keyframes screenSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* === HEADER === */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto var(--spacing-md);
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            font-weight: 800;
+            font-size: var(--font-size-xl);
+            box-shadow: var(--shadow-card);
+            animation: logoFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .header h1 {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: var(--spacing-sm);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: var(--font-size-lg);
+            color: var(--text-glass);
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        /* === PROGRESS BAR === */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--success-gradient);
+            width: 0%;
+            transition: width var(--transition-smooth);
+            border-radius: 0 2px 2px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: progressShine 2s ease-in-out infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* === FORM ELEMENTS === */
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp var(--transition-smooth) forwards;
+        }
+
+        .form-group.active {
+            animation-delay: 0.1s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-white);
+            margin-bottom: var(--spacing-md);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--bg-glass);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-md);
+            color: var(--text-white);
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-smooth);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        /* === OPTION CARDS === */
+        .options-grid {
+            display: grid;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .option-card {
+            background: var(--bg-glass);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left var(--transition-smooth);
+        }
+
+        .option-card:hover::before {
+            left: 100%;
+        }
+
+        .option-card:hover {
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .option-card.selected {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.6);
+            transform: scale(1.02);
+        }
+
+        .option-card input[type="radio"],
+        .option-card input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .option-card label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-white);
+            line-height: 1.4;
+        }
+
+        .option-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: var(--spacing-sm);
+            opacity: 0.8;
+        }
+
+        /* === BUTTONS === */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            font-size: var(--font-size-md);
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-smooth);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            min-height: 56px;
+        }
+
+        .btn-primary {
+            background: var(--success-gradient);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-glass);
+            color: var(--text-white);
+            border: 2px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        /* === CHAT BUBBLES === */
+        .chat-container {
+            max-width: 100%;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .chat-bubble {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: var(--shadow-glass);
+            animation: bubbleSlideIn 0.5s ease-out;
+        }
+
+        @keyframes bubbleSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .chat-bubble.user {
+            background: var(--success-gradient);
+            margin-left: 20%;
+            box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .chat-text {
+            color: var(--text-white);
+            font-size: var(--font-size-md);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* === LOADING STATES === */
+        .loading-dots {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: loadingBounce 1.4s ease-in-out infinite both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+        .loading-dot:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes loadingBounce {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* === SCORE DISPLAY === */
+        .score-container {
+            text-align: center;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto var(--spacing-lg);
+            position: relative;
+            background: var(--bg-glass);
+            border-radius: 50%;
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .score-number {
+            font-size: var(--font-size-3xl);
+            font-weight: 800;
+            color: var(--text-white);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .score-label {
+            font-size: var(--font-size-sm);
+            color: var(--text-glass);
+            margin-top: var(--spacing-xs);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 480px) {
+            .container {
+                padding: var(--spacing-sm);
+            }
+            
+            .header h1 {
+                font-size: var(--font-size-xl);
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .option-card {
+                padding: var(--spacing-sm);
+            }
+        }
+
+        /* === ACCESSIBILITY === */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* === UTILITY CLASSES === */
+        .text-center { text-align: center; }
+        .mb-lg { margin-bottom: var(--spacing-lg); }
+        .mt-lg { margin-top: var(--spacing-lg); }
+        .hidden { display: none; }
+        .fade-in { animation: fadeInUp 0.5s ease-out forwards; }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="container">
+        <!-- Screen 1: Personal Details -->
+        <div id="screen1" class="screen active">
+            <div class="header">
+                <div class="logo">T</div>
+                <h1>Tell Us About Yourself</h1>
+                <p>Let's get to know you and your business better</p>
+            </div>
+
+            <div class="chat-container" id="chatContainer1">
+                <div class="chat-bubble">
+                    <div class="chat-text">Hi! I'm excited to help you discover your business's digital potential. What's your full name?</div>
+                </div>
+            </div>
+
+            <form id="personalForm">
+                <div class="form-group active">
+                    <label class="form-label" for="fullName">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        class="form-input" 
+                        placeholder="Enter your full name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group" id="businessNameGroup" style="display: none;">
+                    <label class="form-label" for="businessName">Business Name</label>
+                    <input 
+                        type="text" 
+                        id="businessName" 
+                        class="form-input" 
+                        placeholder="What's your business called?"
+                        required
+                    >
+                </div>
+
+                <div class="form-group" id="businessTypeGroup" style="display: none;">
+                    <label class="form-label">What type of business is it?</label>
+                    <div class="options-grid">
+                        <div class="option-card">
+                            <input type="radio" id="retail" name="businessType" value="retail">
+                            <label for="retail">
+                                <span class="option-icon">🛍️</span>
+                                Retail / E-commerce
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="services" name="businessType" value="services">
+                            <label for="services">
+                                <span class="option-icon">💼</span>
+                                Professional Services
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="manufacturing" name="businessType" value="manufacturing">
+                            <label for="manufacturing">
+                                <span class="option-icon">🏭</span>
+                                Manufacturing
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="others" name="businessType" value="others">
+                            <label for="others">
+                                <span class="option-icon">🏢</span>
+                                Others
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="locationGroup" style="display: none;">
+                    <label class="form-label" for="location">Where are you located?</label>
+                    <input 
+                        type="text" 
+                        id="location" 
+                        class="form-input" 
+                        placeholder="City, State"
+                        required
+                    >
+                </div>
+            </form>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" id="continueBtn1" disabled>
+                    Continue 
+                    <span class="loading-dots" id="loading1" style="display: none; margin-left: 8px;">
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Screen 2: Business Goals -->
+        <div id="screen2" class="screen">
+            <div class="header">
+                <h1>Understanding Your Goals</h1>
+                <p>What would you like to achieve with your business?</p>
+            </div>
+
+            <div class="chat-container" id="chatContainer2"></div>
+
+            <form id="goalsForm">
+                <div class="form-group active">
+                    <label class="form-label">What would you like to achieve? (Select all that apply)</label>
+                    <div class="options-grid">
+                        <div class="option-card">
+                            <input type="checkbox" id="moreCustomers" name="goals" value="more_customers">
+                            <label for="moreCustomers">
+                                <span class="option-icon">📈</span>
+                                Get more customers
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="checkbox" id="showcase" name="goals" value="showcase">
+                            <label for="showcase">
+                                <span class="option-icon">🌐</span>
+                                Showcase products/services online
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="checkbox" id="brand" name="goals" value="brand">
+                            <label for="brand">
+                                <span class="option-icon">✨</span>
+                                Build a professional brand identity
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="checkbox" id="automate" name="goals" value="automate">
+                            <label for="automate">
+                                <span class="option-icon">🤖</span>
+                                Automate orders & customer management
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="checkbox" id="app" name="goals" value="app">
+                            <label for="app">
+                                <span class="option-icon">📱</span>
+                                Create my own branded app/website
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="digitalStatusGroup" style="display: none;">
+                    <label class="form-label">What's your current digital status?</label>
+                    <div class="options-grid">
+                        <div class="option-card">
+                            <input type="radio" id="noPresence" name="digitalStatus" value="no_presence">
+                            <label for="noPresence">
+                                <span class="option-icon">🌱</span>
+                                No digital presence yet
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="basicSocial" name="digitalStatus" value="basic_social">
+                            <label for="basicSocial">
+                                <span class="option-icon">💬</span>
+                                Only on WhatsApp / Google
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="basicWebsite" name="digitalStatus" value="basic_website">
+                            <label for="basicWebsite">
+                                <span class="option-icon">🌐</span>
+                                Have a basic website or page
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="noResults" name="digitalStatus" value="no_results">
+                            <label for="noResults">
+                                <span class="option-icon">📉</span>
+                                Already digital, but not getting results
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="budgetGroup" style="display: none;">
+                    <label class="form-label">What's your approximate monthly digital budget?</label>
+                    <div class="options-grid">
+                        <div class="option-card">
+                            <input type="radio" id="budget1" name="budget" value="below_2k">
+                            <label for="budget1">
+                                <span class="option-icon">💰</span>
+                                Below ₹2,000
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="budget2" name="budget" value="2k_10k">
+                            <label for="budget2">
+                                <span class="option-icon">💳</span>
+                                ₹2,000 – ₹10,000
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="budget3" name="budget" value="10k_25k">
+                            <label for="budget3">
+                                <span class="option-icon">💎</span>
+                                ₹10,000 – ₹25,000
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="budget4" name="budget" value="25k_plus">
+                            <label for="budget4">
+                                <span class="option-icon">🚀</span>
+                                ₹25,000+
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="challengeGroup" style="display: none;">
+                    <label class="form-label">What's the biggest challenge you face right now?</label>
+                    <div class="options-grid">
+                        <div class="option-card">
+                            <input type="radio" id="noLeads" name="challenge" value="no_leads">
+                            <label for="noLeads">
+                                <span class="option-icon">📢</span>
+                                Not getting leads
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="dontKnow" name="challenge" value="dont_know">
+                            <label for="dontKnow">
+                                <span class="option-icon">❓</span>
+                                Don't know where to start
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="noTime" name="challenge" value="no_time">
+                            <label for="noTime">
+                                <span class="option-icon">⏰</span>
+                                No time to manage digital presence
+                            </label>
+                        </div>
+                        <div class="option-card">
+                            <input type="radio" id="lowSales" name="challenge" value="low_sales">
+                            <label for="lowSales">
+                                <span class="option-icon">📊</span>
+                                Low sales despite being online
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" id="backBtn2">
+                    ← Back
+                </button>
+                <button type="button" class="btn btn-primary" id="continueBtn2" disabled>
+                    Continue
+                    <span class="loading-dots" id="loading2" style="display: none; margin-left: 8px;">
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Screen 3: Verification -->
+        <div id="screen3" class="screen">
+            <div class="header">
+                <h1>Almost Ready!</h1>
+                <p>We've prepared your personalized business readiness summary</p>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-bubble">
+                    <div class="chat-text">
+                        Before showing your results, please verify your mobile number. We'll send your private preview link securely — no spam, ever! 📱
+                    </div>
+                </div>
+            </div>
+
+            <form id="verificationForm">
+                <div class="form-group active">
+                    <label class="form-label" for="mobile">Mobile Number</label>
+                    <input 
+                        type="tel" 
+                        id="mobile" 
+                        class="form-input" 
+                        placeholder="+91 98765 43210"
+                        required
+                    >
+                </div>
+
+                <div class="form-group" id="otpGroup" style="display: none;">
+                    <label class="form-label" for="otp">Verification Code</label>
+                    <input 
+                        type="text" 
+                        id="otp" 
+                        class="form-input" 
+                        placeholder="Enter 4-digit OTP"
+                        maxlength="4"
+                        required
+                    >
+                    <p style="color: var(--text-glass); font-size: var(--font-size-sm); margin-top: var(--spacing-xs);">
+                        Demo Mode: Use <strong>1111</strong> as OTP
+                    </p>
+                </div>
+            </form>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" id="backBtn3">
+                    ← Back
+                </button>
+                <button type="button" class="btn btn-primary" id="sendOtpBtn">
+                    Send OTP
+                    <span class="loading-dots" id="loading3" style="display: none; margin-left: 8px;">
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                    </span>
+                </button>
+                <button type="button" class="btn btn-primary" id="verifyBtn" style="display: none;">
+                    Verify & View Results
+                    <span class="loading-dots" id="loading4" style="display: none; margin-left: 8px;">
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                        <span class="loading-dot"></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Screen 4: Results -->
+        <div id="screen4" class="screen">
+            <div class="header">
+                <h1 id="resultsTitle">Great work, [Name]!</h1>
+                <p>Here's your personalized digital readiness summary</p>
+            </div>
+
+            <div class="glass-card mb-lg" id="summaryCard">
+                <div style="padding: var(--spacing-lg);">
+                    <div class="chat-text" id="personalizedStory">
+                        <!-- Dynamic story will be generated here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="score-container">
+                <div class="score-circle">
+                    <div>
+                        <div class="score-number" id="scoreNumber">0</div>
+                        <div class="score-label">Digital Readiness</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card mb-lg">
+                <div style="padding: var(--spacing-lg);">
+                    <h3 style="color: var(--text-white); margin-bottom: var(--spacing-md); font-size: var(--font-size-lg);">
+                        Score Breakdown
+                    </h3>
+                    <div id="scoreBreakdown">
+                        <!-- Score dimensions will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card mb-lg">
+                <div style="padding: var(--spacing-lg);">
+                    <h3 style="color: var(--text-white); margin-bottom: var(--spacing-md); font-size: var(--font-size-lg);">
+                        🎯 Recommended Next Step
+                    </h3>
+                    <div id="recommendedProduct">
+                        <!-- Product recommendation will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" id="viewPlanBtn">
+                    📊 View My Plan
+                </button>
+                <button type="button" class="btn btn-secondary" id="consultationBtn">
+                    📞 Book Consultation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === GLOBAL VARIABLES === //
+        let currentScreen = 1;
+        let formData = {
+            fullName: '',
+            businessName: '',
+            businessType: '',
+            location: '',
+            goals: [],
+            digitalStatus: '',
+            budget: '',
+            challenge: '',
+            mobile: '',
+            sessionId: generateSessionId(),
+            browserInfo: getBrowserInfo(),
+            startTime: new Date().toISOString(),
+            campaignSource: 'digital_readiness'
+        };
+        let currentStep = 0;
+        let supabase;
+
+        // === SUPABASE INITIALIZATION === //
+        function initializeSupabase() {
+            try {
+                const SUPABASE_URL = 'https://uyaubwfmxmxelcshuyaf.supabase.co';
+                const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YXVid2ZteG14ZWxjc2h1eWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NDA0MTksImV4cCI6MjA2OTUxNjQxOX0.Sc9qUUXr73x8yw5-2rs-pcI03lFpMTSyuhW9RDLcOLI';
+                
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase initialized successfully');
+                return true;
+            } catch (error) {
+                console.error('Supabase initialization failed:', error);
+                return false;
+            }
+        }
+
+        // === UTILITY FUNCTIONS === //
+        function generateSessionId() {
+            return 'dr_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+        }
+
+        function getBrowserInfo() {
+            return {
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                cookieEnabled: navigator.cookieEnabled,
+                viewport: {
+                    width: window.innerWidth,
+                    height: window.innerHeight
+                },
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        function updateProgressBar() {
+            const progress = (currentScreen / 4) * 100;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+        }
+
+        // === FORM PROGRESSION === //
+        function showScreen(screenNumber) {
+            // Hide current screen
+            const currentScreenEl = document.querySelector('.screen.active');
+            if (currentScreenEl) {
+                currentScreenEl.classList.remove('active');
+            }
+
+            // Show new screen
+            const newScreenEl = document.getElementById(`screen${screenNumber}`);
+            newScreenEl.classList.add('active');
+            
+            currentScreen = screenNumber;
+            updateProgressBar();
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // === SCREEN 1 LOGIC === //
+        function initScreen1() {
+            const fullNameInput = document.getElementById('fullName');
+            const continueBtn = document.getElementById('continueBtn1');
+            const chatContainer = document.getElementById('chatContainer1');
+            
+            let currentStep = 0;
+            const steps = [
+                { field: 'fullName', nextGroup: 'businessNameGroup' },
+                { field: 'businessName', nextGroup: 'businessTypeGroup' },
+                { field: 'businessType', nextGroup: 'locationGroup' },
+                { field: 'location', nextGroup: null }
+            ];
+
+            fullNameInput.addEventListener('input', (e) => {
+                if (e.target.value.trim().length > 2) {
+                    continueBtn.disabled = false;
+                    if (currentStep === 0) {
+                        setTimeout(() => {
+                            showNextStep();
+                        }, 1000);
+                    }
+                } else {
+                    continueBtn.disabled = true;
+                }
+            });
+
+            function showNextStep() {
+                if (currentStep >= steps.length) return;
+
+                const step = steps[currentStep];
+                const fieldValue = document.getElementById(step.field).value.trim();
+                
+                if (!fieldValue) return;
+
+                // Add chat response
+                addChatBubble(getChatResponse(step.field, fieldValue), false);
+                
+                // Show next form group
+                if (step.nextGroup) {
+                    setTimeout(() => {
+                        document.getElementById(step.nextGroup).style.display = 'block';
+                        document.getElementById(step.nextGroup).classList.add('active');
+                    }, 500);
+                }
+
+                currentStep++;
+                
+                if (currentStep >= steps.length) {
+                    continueBtn.textContent = 'Continue to Goals →';
+                    continueBtn.disabled = false;
+                }
+            }
+
+            // Add event listeners for other fields
+            document.getElementById('businessName').addEventListener('input', (e) => {
+                if (e.target.value.trim().length > 1 && currentStep === 1) {
+                    setTimeout(showNextStep, 1000);
+                }
+            });
+
+            document.querySelectorAll('input[name="businessType"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (currentStep === 2) {
+                        setTimeout(showNextStep, 500);
+                    }
+                });
+            });
+
+            document.getElementById('location').addEventListener('input', (e) => {
+                if (e.target.value.trim().length > 2 && currentStep === 3) {
+                    setTimeout(showNextStep, 1000);
+                }
+            });
+
+            continueBtn.addEventListener('click', () => {
+                saveScreenData(1);
+                showScreen(2);
+                initScreen2();
+            });
+
+            function addChatBubble(text, isUser = false) {
+                const bubble = document.createElement('div');
+                bubble.className = `chat-bubble ${isUser ? 'user' : ''}`;
+                bubble.innerHTML = `<div class="chat-text">${text}</div>`;
+                chatContainer.appendChild(bubble);
+                
+                // Scroll to new bubble
+                bubble.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function getChatResponse(field, value) {
+                const responses = {
+                    fullName: `Nice to meet you, <strong>${value}</strong>! 👋`,
+                    businessName: `<strong>${value}</strong> sounds great! Let's get to know your business better.`,
+                    businessType: `Got it! ${value.replace('_', ' ')} businesses are going digital faster than ever! 🚀`,
+                    location: `<strong>${value}</strong> has a growing business community — love that! 🌟`
+                };
+                return responses[field] || 'Great!';
+            }
+        }
+
+        // === SCREEN 2 LOGIC === //
+        function initScreen2() {
+            const continueBtn = document.getElementById('continueBtn2');
+            const backBtn = document.getElementById('backBtn2');
+            const chatContainer = document.getElementById('chatContainer2');
+            
+            let currentStep = 0;
+            const steps = [
+                { name: 'goals', nextGroup: 'digitalStatusGroup' },
+                { name: 'digitalStatus', nextGroup: 'budgetGroup' },
+                { name: 'budget', nextGroup: 'challengeGroup' },
+                { name: 'challenge', nextGroup: null }
+            ];
+
+            // Add personalized greeting
+            setTimeout(() => {
+                addChatBubble(`Thanks, <strong>${formData.fullName}</strong>! Now let's understand what you want to achieve with your business.`);
+            }, 500);
+
+            function checkGoalsSelection() {
+                const selectedGoals = document.querySelectorAll('input[name="goals"]:checked');
+                if (selectedGoals.length > 0 && currentStep === 0) {
+                    setTimeout(() => {
+                        addChatBubble("Perfect choices! Everyone's growth goals are unique — we'll tailor the plan just for you. ✨");
+                        showNextStep();
+                    }, 1000);
+                }
+            }
+
+            function showNextStep() {
+                if (currentStep >= steps.length) return;
+                
+                const step = steps[currentStep];
+                if (step.nextGroup) {
+                    setTimeout(() => {
+                        document.getElementById(step.nextGroup).style.display = 'block';
+                        document.getElementById(step.nextGroup).classList.add('active');
+                    }, 800);
+                }
+                
+                currentStep++;
+                updateContinueButton();
+            }
+
+            function updateContinueButton() {
+                const allFieldsFilled = checkAllFieldsFilled();
+                continueBtn.disabled = !allFieldsFilled;
+                
+                if (currentStep >= steps.length && allFieldsFilled) {
+                    continueBtn.innerHTML = `
+                        Almost done! →
+                        <span class="loading-dots" id="loading2" style="display: none; margin-left: 8px;">
+                            <span class="loading-dot"></span>
+                            <span class="loading-dot"></span>
+                            <span class="loading-dot"></span>
+                        </span>
+                    `;
+                }
+            }
+
+            function checkAllFieldsFilled() {
+                const goals = document.querySelectorAll('input[name="goals"]:checked').length > 0;
+                const digitalStatus = document.querySelector('input[name="digitalStatus"]:checked') !== null;
+                const budget = document.querySelector('input[name="budget"]:checked') !== null;
+                const challenge = document.querySelector('input[name="challenge"]:checked') !== null;
+                
+                return goals && digitalStatus && budget && challenge;
+            }
+
+            // Event listeners
+            document.querySelectorAll('input[name="goals"]').forEach(checkbox => {
+                checkbox.addEventListener('change', checkGoalsSelection);
+            });
+
+            document.querySelectorAll('input[name="digitalStatus"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (currentStep === 1) {
+                        setTimeout(() => {
+                            addChatBubble("Makes sense. Many businesses start here — we'll help you go beyond visibility! 🎯");
+                            showNextStep();
+                        }, 500);
+                    }
+                });
+            });
+
+            document.querySelectorAll('input[name="budget"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (currentStep === 2) {
+                        setTimeout(() => {
+                            addChatBubble("Perfect! That helps us suggest the most effective plan for your scale. 💡");
+                            showNextStep();
+                        }, 500);
+                    }
+                });
+            });
+
+            document.querySelectorAll('input[name="challenge"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (currentStep === 3) {
+                        setTimeout(() => {
+                            addChatBubble("We hear this a lot — you're not alone, and that's exactly what this checkup solves! 🔥");
+                            updateContinueButton();
+                        }, 500);
+                    }
+                });
+            });
+
+            backBtn.addEventListener('click', () => {
+                showScreen(1);
+            });
+
+            continueBtn.addEventListener('click', () => {
+                saveScreenData(2);
+                showScreen(3);
+                initScreen3();
+            });
+
+            function addChatBubble(text, isUser = false) {
+                const bubble = document.createElement('div');
+                bubble.className = `chat-bubble ${isUser ? 'user' : ''}`;
+                bubble.innerHTML = `<div class="chat-text">${text}</div>`;
+                chatContainer.appendChild(bubble);
+                
+                bubble.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // === SCREEN 3 LOGIC === //
+        function initScreen3() {
+            const mobileInput = document.getElementById('mobile');
+            const otpInput = document.getElementById('otp');
+            const sendOtpBtn = document.getElementById('sendOtpBtn');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const backBtn = document.getElementById('backBtn3');
+            
+            mobileInput.addEventListener('input', (e) => {
+                const value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 10) {
+                    sendOtpBtn.disabled = false;
+                } else {
+                    sendOtpBtn.disabled = true;
+                }
+            });
+
+            sendOtpBtn.addEventListener('click', async () => {
+                const mobile = mobileInput.value.trim();
+                if (mobile.length < 10) return;
+
+                const loading = document.getElementById('loading3');
+                loading.style.display = 'inline-flex';
+                sendOtpBtn.disabled = true;
+
+                // Simulate OTP sending
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                loading.style.display = 'none';
+                document.getElementById('otpGroup').style.display = 'block';
+                document.getElementById('otpGroup').classList.add('active');
+                sendOtpBtn.style.display = 'none';
+                verifyBtn.style.display = 'inline-flex';
+                otpInput.focus();
+            });
+
+            otpInput.addEventListener('input', (e) => {
+                if (e.target.value.length === 4) {
+                    verifyBtn.disabled = false;
+                } else {
+                    verifyBtn.disabled = true;
+                }
+            });
+
+            verifyBtn.addEventListener('click', async () => {
+                const otp = otpInput.value.trim();
+                if (otp !== '1111') {
+                    alert('Please use 1111 as the OTP for demo mode');
+                    return;
+                }
+
+                const loading = document.getElementById('loading4');
+                loading.style.display = 'inline-flex';
+                verifyBtn.disabled = true;
+
+                // Save verification data and show loading animation
+                await saveScreenData(3);
+                
+                // Show analyzing animation
+                await new Promise(resolve => setTimeout(resolve, 3000));
+
+                loading.style.display = 'none';
+                showScreen(4);
+                initScreen4();
+            });
+
+            backBtn.addEventListener('click', () => {
+                showScreen(2);
+            });
+        }
+
+        // === SCREEN 4 LOGIC === //
+        function initScreen4() {
+            generateResults();
+        }
+
+        async function generateResults() {
+            // Update title with name
+            document.getElementById('resultsTitle').innerHTML = `🎉 Great work, <strong>${formData.fullName}</strong>!`;
+            
+            // Generate personalized story
+            const story = generatePersonalizedStory();
+            document.getElementById('personalizedStory').innerHTML = story;
+            
+            // Calculate and animate score
+            const score = calculateDigitalReadinessScore();
+            animateScore(score);
+            
+            // Show score breakdown
+            showScoreBreakdown(score);
+            
+            // Show product recommendation
+            showProductRecommendation();
+            
+            // Add final touch animations
+            gsap.from('.glass-card', {
+                duration: 0.8,
+                y: 30,
+                opacity: 0,
+                stagger: 0.2,
+                ease: 'power2.out',
+                delay: 0.5
+            });
+        }
+
+        function generatePersonalizedStory() {
+            const { fullName, businessName, businessType, location, digitalStatus, challenge, budget } = formData;
+            
+            const businessTypeLabels = {
+                retail: 'retail business',
+                services: 'professional services business', 
+                manufacturing: 'manufacturing business',
+                others: 'business'
+            };
+
+            const statusLabels = {
+                no_presence: 'is just getting started with digital',
+                basic_social: 'currently uses WhatsApp and Google',
+                basic_website: 'has a basic online presence',
+                no_results: 'is online but seeking better results'
+            };
+
+            const challengeLabels = {
+                no_leads: 'wants to generate more leads',
+                dont_know: 'is looking for guidance on where to start',
+                no_time: 'needs help managing their digital presence',
+                low_sales: 'wants to improve their online sales'
+            };
+
+            return `
+                <strong>${fullName}</strong> runs <strong>${businessName}</strong>, a ${businessTypeLabels[businessType] || 'business'} 
+                based in <strong>${location}</strong>. They ${statusLabels[digitalStatus] || 'are exploring digital options'} 
+                and ${challengeLabels[challenge] || 'are looking to grow online'} with a monthly budget of <strong>${getBudgetLabel(budget)}</strong>.
+            `;
+        }
+
+        function getBudgetLabel(budget) {
+            const labels = {
+                below_2k: 'below ₹2,000',
+                '2k_10k': '₹2,000-₹10,000',
+                '10k_25k': '₹10,000-₹25,000',
+                '25k_plus': '₹25,000+'
+            };
+            return labels[budget] || 'flexible budget';
+        }
+
+        function calculateDigitalReadinessScore() {
+            let score = 0;
+            
+            // Goals scoring (0-25 points)
+            const goals = formData.goals || [];
+            score += Math.min(goals.length * 5, 25);
+            
+            // Digital status scoring (0-30 points)
+            const statusScores = {
+                no_presence: 5,
+                basic_social: 15,
+                basic_website: 25,
+                no_results: 30
+            };
+            score += statusScores[formData.digitalStatus] || 0;
+            
+            // Budget scoring (0-25 points)
+            const budgetScores = {
+                below_2k: 10,
+                '2k_10k': 15,
+                '10k_25k': 20,
+                '25k_plus': 25
+            };
+            score += budgetScores[formData.budget] || 0;
+            
+            // Challenge scoring (0-20 points)
+            const challengeScores = {
+                no_leads: 20,
+                dont_know: 10,
+                no_time: 15,
+                low_sales: 18
+            };
+            score += challengeScores[formData.challenge] || 0;
+            
+            return Math.min(score, 100);
+        }
+
+        function animateScore(finalScore) {
+            const scoreElement = document.getElementById('scoreNumber');
+            let currentScore = 0;
+            const increment = finalScore / 50; // 50 frames
+            
+            const animation = setInterval(() => {
+                currentScore += increment;
+                if (currentScore >= finalScore) {
+                    currentScore = finalScore;
+                    clearInterval(animation);
+                }
+                scoreElement.textContent = Math.round(currentScore);
+            }, 50);
+        }
+
+        function showScoreBreakdown(totalScore) {
+            const breakdown = document.getElementById('scoreBreakdown');
+            const dimensions = [
+                { label: 'Visibility', score: Math.min(85, totalScore + 15), icon: '👁️' },
+                { label: 'Engagement', score: Math.max(40, totalScore - 20), icon: '💬' },
+                { label: 'Automation', score: Math.max(20, totalScore - 40), icon: '🤖' },
+                { label: 'Brand Presentation', score: Math.min(95, totalScore + 5), icon: '✨' }
+            ];
+
+            breakdown.innerHTML = dimensions.map(dim => `
+                <div style="display: flex; align-items: center; margin-bottom: var(--spacing-sm);">
+                    <span style="margin-right: var(--spacing-sm); font-size: var(--font-size-lg);">${dim.icon}</span>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-xs);">
+                            <span style="color: var(--text-white); font-weight: 500;">${dim.label}</span>
+                            <span style="color: var(--text-white); font-weight: 600;">${dim.score}%</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; background: var(--success-gradient); width: ${dim.score}%; transition: width 1s ease-out; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showProductRecommendation() {
+            const { goals, budget, digitalStatus } = formData;
+            let recommendedProduct = 'Topiko'; // Default
+            
+            // Simple recommendation logic
+            if (budget === 'below_2k' || digitalStatus === 'no_presence') {
+                recommendedProduct = 'Disblay';
+            } else if (budget === '25k_plus' && goals.includes('app')) {
+                recommendedProduct = 'HEBT';
+            } else if (goals.includes('brand')) {
+                recommendedProduct = 'Topiko + Brandpreneuring';
+            }
+
+            const productInfo = {
+                'Disblay': {
+                    icon: '🌱',
+                    description: 'Perfect for getting started with digital presence',
+                    features: ['Basic online presence', 'WhatsApp integration', 'Simple analytics']
+                },
+                'Topiko': {
+                    icon: '🚀',
+                    description: 'Comprehensive solution for growing businesses',
+                    features: ['Full website & app', 'Lead management', 'Digital marketing tools']
+                },
+                'HEBT': {
+                    icon: '⚡',
+                    description: 'Advanced custom solutions for established businesses',
+                    features: ['Custom development', 'Enterprise features', 'Full tech support']
+                },
+                'Topiko + Brandpreneuring': {
+                    icon: '✨',
+                    description: 'Complete brand building and digital presence',
+                    features: ['Brand strategy', 'Premium design', 'Marketing campaigns']
+                }
+            };
+
+            const product = productInfo[recommendedProduct];
+            document.getElementById('recommendedProduct').innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: var(--spacing-sm);">${product.icon}</div>
+                    <h4 style="color: var(--text-white); font-size: var(--font-size-xl); margin-bottom: var(--spacing-sm);">
+                        ${recommendedProduct}
+                    </h4>
+                    <p style="color: var(--text-glass); margin-bottom: var(--spacing-md); line-height: 1.5;">
+                        ${product.description}
+                    </p>
+                    <div style="text-align: left;">
+                        ${product.features.map(feature => `
+                            <div style="display: flex; align-items: center; margin-bottom: var(--spacing-xs);">
+                                <span style="color: #4facfe; margin-right: var(--spacing-sm);">✓</span>
+                                <span style="color: var(--text-glass);">${feature}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // === DATA MANAGEMENT === //
+        async function saveScreenData(screenNumber) {
+            // Collect current screen data
+            if (screenNumber === 1) {
+                formData.fullName = document.getElementById('fullName').value.trim();
+                formData.businessName = document.getElementById('businessName').value.trim();
+                formData.businessType = document.querySelector('input[name="businessType"]:checked')?.value || '';
+                formData.location = document.getElementById('location').value.trim();
+            } else if (screenNumber === 2) {
+                formData.goals = Array.from(document.querySelectorAll('input[name="goals"]:checked')).map(cb => cb.value);
+                formData.digitalStatus = document.querySelector('input[name="digitalStatus"]:checked')?.value || '';
+                formData.budget = document.querySelector('input[name="budget"]:checked')?.value || '';
+                formData.challenge = document.querySelector('input[name="challenge"]:checked')?.value || '';
+            } else if (screenNumber === 3) {
+                formData.mobile = document.getElementById('mobile').value.trim();
+                formData.otpVerified = true;
+                formData.verifiedAt = new Date().toISOString();
+            }
+
+            // Save to database
+            if (supabase) {
+                try {
+                    const leadData = {
+                        // Basic info
+                        first_name: formData.fullName.split(' ')[0] || '',
+                        last_name: formData.fullName.split(' ').slice(1).join(' ') || '',
+                        phone: formData.mobile || '',
+                        city: formData.location || '',
+                        business_name: formData.businessName || '',
+                        business_type: formData.businessType || '',
+                        
+                        // Form data
+                        answers: {
+                            goals: formData.goals,
+                            digitalStatus: formData.digitalStatus,
+                            budget: formData.budget,
+                            challenge: formData.challenge
+                        },
+                        
+                        // Campaign tracking
+                        campaign_source: 'digital_readiness',
+                        session_id: formData.sessionId,
+                        browser_info: formData.browserInfo,
+                        
+                        // Status tracking
+                        lead_status: `phase_${screenNumber}`,
+                        created_at: formData.startTime,
+                        
+                        // Timestamps
+                        [`phase_${screenNumber}_completed_at`]: new Date().toISOString()
+                    };
+
+                    const { data, error } = await supabase
+                        .from('franchise_leads')
+                        .upsert(leadData, { 
+                            onConflict: 'session_id',
+                            ignoreDuplicates: false 
+                        });
+
+                    if (error) {
+                        console.error('Database save error:', error);
+                    } else {
+                        console.log(`Screen ${screenNumber} data saved successfully`);
+                    }
+                } catch (error) {
+                    console.error('Save operation failed:', error);
+                }
+            }
+        }
+
+        // === INITIALIZATION === //
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Supabase
+            if (!initializeSupabase()) {
+                console.warn('Supabase initialization failed - running in offline mode');
+            }
+            
+            // Initialize first screen
+            initScreen1();
+            updateProgressBar();
+            
+            // Add haptic feedback for mobile
+            if ('vibrate' in navigator) {
+                document.addEventListener('click', (e) => {
+                    if (e.target.matches('.btn, .option-card')) {
+                        navigator.vibrate(50);
+                    }
+                });
+            }
+
+            // Add global styles for better mobile experience
+            if (window.innerWidth <= 768) {
+                document.body.style.fontSize = '16px'; // Prevent zoom on iOS
+            }
+        });
+
+        // === RESIZE HANDLER === //
+        window.addEventListener('resize', () => {
+            // Update browser info
+            formData.browserInfo.viewport = {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        });
+    </script>
+</body>
+</html>
