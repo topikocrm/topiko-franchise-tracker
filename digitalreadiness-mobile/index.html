@@ -253,14 +253,14 @@
         <div id="screen1" class="screen active">
             <div class="question-card">
                 <div class="question-title">What's your full name?</div>
-                <input type="text" class="form-input" id="fullName" placeholder="Enter your full name" onkeyup="handleInput()">
+                <input type="text" class="form-input" id="fullName" placeholder="Enter your full name">
                 
                 <div id="businessNameSection" style="display: none;">
                     <div class="question-title" style="margin-top: 20px;">What's your business name?</div>
-                    <input type="text" class="form-input" id="businessName" placeholder="Enter your business name" onkeyup="handleInput()">
+                    <input type="text" class="form-input" id="businessName" placeholder="Enter your business name">
                 </div>
                 
-                <button class="btn" id="continueBtn" disabled onclick="nextScreen()">Continue to Assessment</button>
+                <button class="btn" id="continueBtn" disabled>Continue to Assessment</button>
             </div>
         </div>
 
@@ -271,7 +271,7 @@
             <div class="question-card">
                 <div class="question-title">What type of business do you run?</div>
                 
-                <div class="option-card" onclick="selectOption('retail')">
+                <div class="option-card" data-value="retail">
                     <div class="option-icon">🛍️</div>
                     <div class="option-content">
                         <div class="option-title">Retail / E-commerce</div>
@@ -279,7 +279,7 @@
                     </div>
                 </div>
                 
-                <div class="option-card" onclick="selectOption('services')">
+                <div class="option-card" data-value="services">
                     <div class="option-icon">💼</div>
                     <div class="option-content">
                         <div class="option-title">Professional Services</div>
@@ -287,7 +287,7 @@
                     </div>
                 </div>
                 
-                <div class="option-card" onclick="selectOption('manufacturing')">
+                <div class="option-card" data-value="manufacturing">
                     <div class="option-icon">🏭</div>
                     <div class="option-content">
                         <div class="option-title">Manufacturing</div>
@@ -295,7 +295,7 @@
                     </div>
                 </div>
                 
-                <div class="option-card" onclick="selectOption('food')">
+                <div class="option-card" data-value="food">
                     <div class="option-icon">🍽️</div>
                     <div class="option-content">
                         <div class="option-title">Restaurant / Food</div>
@@ -303,7 +303,7 @@
                     </div>
                 </div>
                 
-                <button class="btn" id="businessTypeBtn" disabled onclick="nextScreen()">Continue</button>
+                <button class="btn" id="businessTypeBtn" disabled>Continue</button>
             </div>
         </div>
 
@@ -320,7 +320,7 @@
                     <div style="font-size: 14px; color: rgba(255, 255, 255, 0.7);">Excellent potential for digital growth!</div>
                 </div>
                 
-                <button class="btn" onclick="alert('Thank you! Our team will contact you soon with your personalized recommendations.')">Get My Full Report</button>
+                <button class="btn" id="getReportBtn">Get My Full Report</button>
             </div>
         </div>
     </div>
@@ -342,6 +342,32 @@
         
         let currentScreen = 1;
         let formData = {};
+
+        // Initialize event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners for form inputs
+            document.getElementById('fullName').addEventListener('input', handleInput);
+            document.getElementById('businessName').addEventListener('input', handleInput);
+            
+            // Add event listener for continue button
+            document.getElementById('continueBtn').addEventListener('click', nextScreen);
+            
+            // Add event listeners for business type option cards
+            document.querySelectorAll('#screen2 .option-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const type = this.getAttribute('data-value');
+                    selectOption(type);
+                });
+            });
+            
+            // Add event listener for business type continue button
+            document.getElementById('businessTypeBtn').addEventListener('click', nextScreen);
+            
+            // Add event listener for get report button
+            document.getElementById('getReportBtn').addEventListener('click', function() {
+                alert('Thank you! Our team will contact you soon with your personalized recommendations.');
+            });
+        });
 
         function handleInput() {
             const fullName = document.getElementById('fullName').value.trim();
@@ -412,7 +438,7 @@
             });
             
             // Select current option
-            event.currentTarget.classList.add('selected');
+            document.querySelector(`#screen2 .option-card[data-value="${type}"]`).classList.add('selected');
             formData.businessType = type;
             
             // Update profile immediately when business type is selected
