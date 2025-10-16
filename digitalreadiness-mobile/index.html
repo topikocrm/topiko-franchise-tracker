@@ -136,6 +136,32 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
+        /* CHECKBOXES */
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item:hover, .checkbox-item.selected {
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin: 0;
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
         /* FORM INPUTS */
         .form-input {
             width: 100%;
@@ -182,6 +208,11 @@
             cursor: not-allowed;
         }
 
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
         /* SCREEN MANAGEMENT */
         .screen {
             display: none;
@@ -207,6 +238,57 @@
             line-height: 1.4;
         }
 
+        /* PROGRESS BAR */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            height: 6px;
+            margin: 0 8px 16px 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* RESULTS STYLES */
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#667eea 0deg, #667eea 306deg, rgba(255,255,255,0.1) 306deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+
+        .score-inner {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .score-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .score-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
         /* TOPIKO BRAND */
         .topiko-text {
             font-family: 'Poppins', sans-serif;
@@ -214,6 +296,17 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        /* NAVIGATION BUTTONS */
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .nav-buttons .btn {
+            margin-top: 0;
         }
 
         /* HIDE ON LARGER SCREENS */
@@ -240,6 +333,11 @@
 </head>
 <body>
     <div class="mobile-container">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
         <!-- Mobile Profile Bar -->
         <div class="mobile-profile" id="mobileProfile" style="display: none;">
             <div class="profile-avatar" id="profileAvatar">?</div>
@@ -249,10 +347,13 @@
             </div>
         </div>
 
-        <!-- Screen 1: Welcome -->
+        <!-- Screen 1: Welcome & Basic Info -->
         <div id="screen1" class="screen active">
             <div class="question-card">
-                <div class="question-title">What's your full name?</div>
+                <div class="question-title">Welcome! Let's discover your <span class="topiko-text">Digital Readiness</span></div>
+                <div class="chat-message" id="chatMessage1">👋 Hi! I'm your digital consultant. Let's find the perfect solution for your business.</div>
+                
+                <div class="question-title" style="margin-top: 20px;">What's your full name?</div>
                 <input type="text" class="form-input" id="fullName" placeholder="Enter your full name">
                 
                 <div id="businessNameSection" style="display: none;">
@@ -264,63 +365,78 @@
             </div>
         </div>
 
-        <!-- Screen 2: Business Type -->
+        <!-- Screen 2: Business Assessment -->
         <div id="screen2" class="screen">
-            <div class="chat-message" id="chatMessage">Great! Now let's understand your business better.</div>
+            <div class="chat-message" id="chatMessage2">Great! Now let's understand your business better.</div>
             
             <div class="question-card">
-                <div class="question-title">What type of business do you run?</div>
-                
-                <div class="option-card" data-value="retail">
-                    <div class="option-icon">🛍️</div>
-                    <div class="option-content">
-                        <div class="option-title">Retail / E-commerce</div>
-                        <div class="option-subtitle">Sell products online or offline</div>
-                    </div>
+                <div class="question-title" id="currentQuestion">What type of business do you run?</div>
+                <div id="questionContent">
+                    <!-- Dynamic content will be inserted here -->
                 </div>
                 
-                <div class="option-card" data-value="services">
-                    <div class="option-icon">💼</div>
-                    <div class="option-content">
-                        <div class="option-title">Professional Services</div>
-                        <div class="option-subtitle">Consulting, legal, medical, etc.</div>
-                    </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" id="backBtn" onclick="previousQuestion()">Back</button>
+                    <button class="btn" id="nextBtn" disabled onclick="nextQuestion()">Next</button>
                 </div>
-                
-                <div class="option-card" data-value="manufacturing">
-                    <div class="option-icon">🏭</div>
-                    <div class="option-content">
-                        <div class="option-title">Manufacturing</div>
-                        <div class="option-subtitle">Produce goods or materials</div>
-                    </div>
-                </div>
-                
-                <div class="option-card" data-value="food">
-                    <div class="option-icon">🍽️</div>
-                    <div class="option-content">
-                        <div class="option-title">Restaurant / Food</div>
-                        <div class="option-subtitle">Food service and hospitality</div>
-                    </div>
-                </div>
-                
-                <button class="btn" id="businessTypeBtn" disabled>Continue</button>
             </div>
         </div>
 
-        <!-- Screen 3: Results -->
+        <!-- Screen 3: Contact & Verification -->
         <div id="screen3" class="screen">
+            <div class="chat-message" id="chatMessage3">Almost there! We need your contact details to share your personalized recommendations.</div>
+            
             <div class="question-card">
-                <div class="question-title">🎉 Assessment Complete!</div>
-                <div class="chat-message">Based on your answers, we've prepared personalized recommendations for your business growth.</div>
+                <div class="question-title">Contact Information</div>
                 
-                <div style="text-align: center; padding: 20px;">
-                    <div style="font-size: 48px; margin-bottom: 12px;">🚀</div>
-                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Your Digital Readiness Score</div>
-                    <div style="font-size: 36px; font-weight: 700; color: #667eea; margin-bottom: 16px;">85/100</div>
-                    <div style="font-size: 14px; color: rgba(255, 255, 255, 0.7);">Excellent potential for digital growth!</div>
+                <div class="question-title" style="margin-top: 20px; font-size: 16px;">Mobile Number *</div>
+                <input type="tel" class="form-input" id="mobileNumber" placeholder="Enter 10-digit mobile number" maxlength="10">
+                
+                <div class="question-title" style="margin-top: 20px; font-size: 16px;">City/Location *</div>
+                <input type="text" class="form-input" id="cityLocation" placeholder="Enter your city">
+                
+                <div id="otpSection" style="display: none;">
+                    <div class="question-title" style="margin-top: 20px; font-size: 16px;">Verification Code</div>
+                    <input type="text" class="form-input" id="otpInput" placeholder="Enter 4-digit code" maxlength="4">
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 8px;">
+                        Demo: Use 1111 as verification code
+                    </div>
                 </div>
                 
-                <button class="btn" id="getReportBtn">Get My Full Report</button>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="showScreen(2)">Back</button>
+                    <button class="btn" id="otpBtn" disabled onclick="handleOTP()">Send OTP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 4: Results -->
+        <div id="screen4" class="screen">
+            <div class="chat-message" id="chatMessage4">🎉 Congratulations! Your personalized digital strategy is ready.</div>
+            
+            <div class="question-card">
+                <div class="question-title" style="text-align: center;">Your Digital Readiness Score</div>
+                
+                <div class="score-circle">
+                    <div class="score-inner">
+                        <div class="score-number" id="finalScore">85</div>
+                        <div class="score-label">Score</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;" id="scoreTitle">Excellent Digital Potential!</div>
+                    <div style="font-size: 14px; color: rgba(255, 255, 255, 0.7);" id="scoreDescription">You're ready for serious digital transformation.</div>
+                </div>
+                
+                <div id="recommendationContent">
+                    <!-- Personalized recommendations will be inserted here -->
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn" onclick="alert('Thank you! Our team will contact you within 24 hours.')">Get My Detailed Plan</button>
+                    <button class="btn btn-secondary" onclick="alert('Booking consultation...')">Book Free Consultation</button>
+                </div>
             </div>
         </div>
     </div>
@@ -329,7 +445,6 @@
         // Auto-redirect desktop users to main version
         function checkDevice() {
             if (window.innerWidth > 768) {
-                // Desktop user - redirect to main version
                 window.location.href = '../digitalreadiness/';
                 return false;
             }
@@ -342,55 +457,135 @@
         }
         
         let currentScreen = 1;
-        let formData = {};
+        let currentQuestionIndex = 0;
+        let formData = {
+            fullName: '',
+            businessName: '',
+            businessType: '',
+            goals: [],
+            digitalStatus: '',
+            budget: '',
+            challenge: '',
+            mobileNumber: '',
+            cityLocation: '',
+            otpVerified: false
+        };
+
+        // Assessment questions for Screen 2
+        const questions = [
+            {
+                id: 'businessType',
+                question: 'What type of business do you run?',
+                type: 'radio',
+                options: [
+                    { value: 'retail', label: 'Retail / E-commerce', subtitle: 'Sell products online or offline', icon: '🛍️' },
+                    { value: 'services', label: 'Professional Services', subtitle: 'Consulting, legal, medical, etc.', icon: '💼' },
+                    { value: 'manufacturing', label: 'Manufacturing', subtitle: 'Produce goods or materials', icon: '🏭' },
+                    { value: 'food', label: 'Restaurant / Food', subtitle: 'Food service and hospitality', icon: '🍽️' }
+                ]
+            },
+            {
+                id: 'goals',
+                question: 'What are your main goals? (Select all that apply)',
+                type: 'checkbox',
+                options: [
+                    { value: 'customers', label: 'Get more customers' },
+                    { value: 'showcase', label: 'Showcase products/services' },
+                    { value: 'brand', label: 'Build brand identity' },
+                    { value: 'automate', label: 'Automate operations' },
+                    { value: 'website', label: 'Create website/app' }
+                ]
+            },
+            {
+                id: 'digitalStatus',
+                question: 'What\'s your current digital presence?',
+                type: 'radio',
+                options: [
+                    { value: 'none', label: 'No digital presence', icon: '🌱' },
+                    { value: 'whatsapp', label: 'Only WhatsApp/Google', icon: '💬' },
+                    { value: 'website', label: 'Basic website', icon: '🌐' },
+                    { value: 'digital_no_results', label: 'Digital but no results', icon: '📉' }
+                ]
+            },
+            {
+                id: 'budget',
+                question: 'What\'s your monthly digital budget?',
+                type: 'radio',
+                options: [
+                    { value: 'below_2k', label: 'Below ₹2,000', icon: '💰' },
+                    { value: '2k_10k', label: '₹2,000 - ₹10,000', icon: '💳' },
+                    { value: '10k_25k', label: '₹10,000 - ₹25,000', icon: '💎' },
+                    { value: '25k_plus', label: '₹25,000+', icon: '🚀' }
+                ]
+            },
+            {
+                id: 'challenge',
+                question: 'What\'s your biggest challenge?',
+                type: 'radio',
+                options: [
+                    { value: 'no_leads', label: 'Not getting leads', icon: '📢' },
+                    { value: 'dont_know', label: 'Don\'t know where to start', icon: '❓' },
+                    { value: 'no_time', label: 'No time to manage', icon: '⏰' },
+                    { value: 'low_sales', label: 'Low sales despite being online', icon: '📉' }
+                ]
+            }
+        ];
 
         // Initialize event listeners when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Add event listeners for form inputs
-            document.getElementById('fullName').addEventListener('input', handleInput);
-            document.getElementById('businessName').addEventListener('input', handleInput);
+            // Screen 1 inputs
+            document.getElementById('fullName').addEventListener('input', handleNameInput);
+            document.getElementById('businessName').addEventListener('input', handleBusinessNameInput);
+            document.getElementById('continueBtn').addEventListener('click', () => showScreen(2));
             
-            // Add event listener for continue button
-            document.getElementById('continueBtn').addEventListener('click', nextScreen);
+            // Screen 3 inputs
+            document.getElementById('mobileNumber').addEventListener('input', handleContactInput);
+            document.getElementById('cityLocation').addEventListener('input', handleContactInput);
+            document.getElementById('otpInput').addEventListener('input', handleOTPInput);
             
-            // Add event listeners for business type option cards
-            document.querySelectorAll('#screen2 .option-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const type = this.getAttribute('data-value');
-                    selectOption(type);
-                });
-            });
-            
-            // Add event listener for business type continue button
-            document.getElementById('businessTypeBtn').addEventListener('click', nextScreen);
-            
-            // Add event listener for get report button
-            document.getElementById('getReportBtn').addEventListener('click', function() {
-                alert('Thank you! Our team will contact you soon with your personalized recommendations.');
-            });
+            // Initialize first question
+            loadQuestion(0);
+            updateProgress();
         });
 
-        function handleInput() {
+        function handleNameInput() {
             const fullName = document.getElementById('fullName').value.trim();
-            const businessName = document.getElementById('businessName').value.trim();
-            const continueBtn = document.getElementById('continueBtn');
+            formData.fullName = fullName;
             
-            // Update profile
             if (fullName.length > 2) {
-                formData.fullName = fullName;
-                updateProfile();
-                
-                // Show business name field
+                // Show business name section
                 document.getElementById('businessNameSection').style.display = 'block';
+                
+                // Update chat message
+                const firstName = fullName.split(' ')[0];
+                document.getElementById('chatMessage1').textContent = `Nice to meet you, ${firstName}! What's your business called?`;
+                
+                // Update profile
+                updateProfile();
             }
+            
+            validateScreen1();
+        }
+
+        function handleBusinessNameInput() {
+            const businessName = document.getElementById('businessName').value.trim();
+            formData.businessName = businessName;
             
             if (businessName.length > 1) {
-                formData.businessName = businessName;
+                // Update chat message
+                document.getElementById('chatMessage1').textContent = `${businessName} - great name! Ready to assess your digital potential?`;
+                
+                // Update profile
                 updateProfile();
             }
             
-            // Enable continue button
-            continueBtn.disabled = !(fullName.length > 2 && businessName.length > 1);
+            validateScreen1();
+        }
+
+        function validateScreen1() {
+            const continueBtn = document.getElementById('continueBtn');
+            const isValid = formData.fullName.length > 2 && formData.businessName.length > 1;
+            continueBtn.disabled = !isValid;
         }
 
         function updateProfile() {
@@ -400,75 +595,327 @@
             const status = document.getElementById('profileStatus');
             
             if (formData.fullName) {
-                // Show profile immediately when name is entered
                 profile.style.display = 'flex';
                 avatar.textContent = formData.fullName.charAt(0).toUpperCase();
                 
                 const firstName = formData.fullName.split(' ')[0];
                 if (formData.businessName) {
                     name.textContent = `${firstName} - ${formData.businessName}`;
-                    status.textContent = 'Ready for assessment';
                 } else {
                     name.textContent = firstName;
-                    status.textContent = 'Tell us about your business';
                 }
                 
-                // Update status based on current screen and progress
-                if (currentScreen === 2) {
-                    if (formData.businessType) {
-                        const businessTypes = {
-                            retail: 'Retail/E-commerce',
-                            services: 'Professional Services', 
-                            manufacturing: 'Manufacturing',
-                            food: 'Restaurant/Food'
-                        };
-                        status.textContent = `${businessTypes[formData.businessType]} business owner`;
-                    } else {
-                        status.textContent = 'Choose your business type';
-                    }
-                } else if (currentScreen === 3) {
-                    status.textContent = 'Assessment complete!';
-                }
+                // Update status based on current screen
+                const statusMessages = {
+                    1: 'Getting started...',
+                    2: 'Assessment in progress...',
+                    3: 'Almost complete!',
+                    4: 'Assessment complete!'
+                };
+                status.textContent = statusMessages[currentScreen] || 'Building profile...';
             }
         }
 
-        function selectOption(type) {
-            // Remove previous selections
-            document.querySelectorAll('#screen2 .option-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            
-            // Select current option
-            document.querySelector(`#screen2 .option-card[data-value="${type}"]`).classList.add('selected');
-            formData.businessType = type;
-            
-            // Update profile immediately when business type is selected
-            updateProfile();
-            
-            // Enable button
-            document.getElementById('businessTypeBtn').disabled = false;
-            
-            // Update chat
-            const messages = {
-                retail: "Retail is booming online! Perfect timing for digital transformation.",
-                services: "Service businesses see amazing growth with the right digital tools!",
-                manufacturing: "Manufacturing is embracing Industry 4.0 - exciting times!",
-                food: "Food industry is evolving rapidly with digital innovations!"
-            };
-            
-            document.getElementById('chatMessage').textContent = messages[type];
-        }
-
-        function nextScreen() {
+        function showScreen(screenNumber) {
             // Hide current screen
             document.getElementById(`screen${currentScreen}`).classList.remove('active');
             
-            // Show next screen
-            currentScreen++;
+            // Show new screen
+            currentScreen = screenNumber;
             document.getElementById(`screen${currentScreen}`).classList.add('active');
             
-            // Update profile with new screen context
+            // Update progress and profile
+            updateProgress();
             updateProfile();
+            
+            // Screen-specific initialization
+            if (screenNumber === 2) {
+                loadQuestion(0);
+            } else if (screenNumber === 4) {
+                generateResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentScreen - 1) / 3) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // Question management for Screen 2
+        function loadQuestion(index) {
+            if (index >= questions.length) {
+                showScreen(3);
+                return;
+            }
+            
+            currentQuestionIndex = index;
+            const question = questions[index];
+            
+            document.getElementById('currentQuestion').textContent = question.question;
+            
+            let html = '';
+            
+            if (question.type === 'radio') {
+                question.options.forEach(option => {
+                    const selected = formData[question.id] === option.value ? 'selected' : '';
+                    html += `
+                        <div class="option-card ${selected}" data-question="${question.id}" data-value="${option.value}">
+                            ${option.icon ? `<div class="option-icon">${option.icon}</div>` : ''}
+                            <div class="option-content">
+                                <div class="option-title">${option.label}</div>
+                                ${option.subtitle ? `<div class="option-subtitle">${option.subtitle}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else if (question.type === 'checkbox') {
+                question.options.forEach(option => {
+                    const checked = formData[question.id].includes(option.value) ? 'checked' : '';
+                    html += `
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="${option.value}" ${checked} data-question="${question.id}">
+                            <span>${option.label}</span>
+                        </label>
+                    `;
+                });
+            }
+            
+            document.getElementById('questionContent').innerHTML = html;
+            
+            // Add event listeners for new content
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', handleOptionSelect);
+            });
+            
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', handleCheckboxChange);
+            });
+            
+            // Update navigation
+            document.getElementById('backBtn').style.display = index > 0 ? 'inline-block' : 'none';
+            validateCurrentQuestion();
+        }
+
+        function handleOptionSelect(e) {
+            const card = e.currentTarget;
+            const questionId = card.dataset.question;
+            const value = card.dataset.value;
+            
+            // Remove previous selections for this question
+            document.querySelectorAll(`[data-question="${questionId}"]`).forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            // Select current option
+            card.classList.add('selected');
+            formData[questionId] = value;
+            
+            // Update chat message based on selection
+            updateChatMessage(questionId, value);
+            
+            validateCurrentQuestion();
+        }
+
+        function handleCheckboxChange(e) {
+            const checkbox = e.target;
+            const questionId = checkbox.dataset.question;
+            const value = checkbox.value;
+            
+            if (!Array.isArray(formData[questionId])) {
+                formData[questionId] = [];
+            }
+            
+            if (checkbox.checked) {
+                if (!formData[questionId].includes(value)) {
+                    formData[questionId].push(value);
+                }
+            } else {
+                formData[questionId] = formData[questionId].filter(v => v !== value);
+            }
+            
+            validateCurrentQuestion();
+        }
+
+        function updateChatMessage(questionId, value) {
+            const messages = {
+                businessType: {
+                    retail: "E-commerce is booming! Perfect timing for digital growth.",
+                    services: "Service businesses see amazing results with digital tools!",
+                    manufacturing: "B2B digitalization is the future!",
+                    food: "Food delivery and online ordering changed everything!"
+                },
+                digitalStatus: {
+                    none: "Perfect blank canvas! We'll build something amazing.",
+                    whatsapp: "Smart start! Let's expand your reach.",
+                    website: "Good foundation! Time to optimize it.",
+                    digital_no_results: "Let's diagnose and fix that!"
+                },
+                budget: {
+                    below_2k: "Smart budgeting! We'll maximize every rupee.",
+                    '2k_10k': "Perfect range for serious growth!",
+                    '10k_25k': "Ready for scale! Let's optimize.",
+                    '25k_plus': "Enterprise level! Custom solutions await."
+                },
+                challenge: {
+                    no_leads: "We'll fix your lead pipeline!",
+                    dont_know: "That's why I'm here! We'll guide you.",
+                    no_time: "We'll handle everything for you!",
+                    low_sales: "Time to convert that traffic!"
+                }
+            };
+            
+            if (messages[questionId] && messages[questionId][value]) {
+                document.getElementById('chatMessage2').textContent = messages[questionId][value];
+            }
+        }
+
+        function validateCurrentQuestion() {
+            const question = questions[currentQuestionIndex];
+            const nextBtn = document.getElementById('nextBtn');
+            let isValid = false;
+            
+            if (question.type === 'radio') {
+                isValid = !!formData[question.id];
+            } else if (question.type === 'checkbox') {
+                isValid = formData[question.id] && formData[question.id].length > 0;
+            }
+            
+            nextBtn.disabled = !isValid;
+        }
+
+        function nextQuestion() {
+            loadQuestion(currentQuestionIndex + 1);
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            } else {
+                showScreen(1);
+            }
+        }
+
+        // Screen 3 Contact handling
+        function handleContactInput() {
+            const mobile = document.getElementById('mobileNumber').value.trim();
+            const city = document.getElementById('cityLocation').value.trim();
+            
+            formData.mobileNumber = mobile;
+            formData.cityLocation = city;
+            
+            const otpBtn = document.getElementById('otpBtn');
+            const isValid = mobile.length === 10 && /^\d+$/.test(mobile) && city.length > 2;
+            
+            otpBtn.disabled = !isValid;
+            
+            if (isValid && !formData.otpSent) {
+                otpBtn.textContent = 'Send OTP';
+            }
+        }
+
+        function handleOTP() {
+            if (!formData.otpSent) {
+                // Send OTP
+                document.getElementById('otpSection').style.display = 'block';
+                document.getElementById('otpBtn').textContent = 'View My Results';
+                document.getElementById('otpBtn').disabled = true;
+                formData.otpSent = true;
+                
+                // Update chat
+                document.getElementById('chatMessage3').textContent = 'Verification code sent! Enter 1111 to continue.';
+            } else if (formData.otpVerified) {
+                // Show results
+                showScreen(4);
+            }
+        }
+
+        function handleOTPInput() {
+            const otp = document.getElementById('otpInput').value.trim();
+            const otpBtn = document.getElementById('otpBtn');
+            
+            if (otp === '1111') {
+                formData.otpVerified = true;
+                otpBtn.disabled = false;
+                document.getElementById('chatMessage3').textContent = '✅ Verified! Click to view your results.';
+            } else {
+                formData.otpVerified = false;
+                otpBtn.disabled = true;
+            }
+        }
+
+        // Results generation
+        function generateResults() {
+            // Calculate score based on answers
+            let score = 60; // Base score
+            
+            if (formData.digitalStatus === 'website') score += 15;
+            else if (formData.digitalStatus === 'whatsapp') score += 10;
+            else if (formData.digitalStatus === 'none') score += 5;
+            
+            if (formData.budget === '25k_plus') score += 20;
+            else if (formData.budget === '10k_25k') score += 15;
+            else if (formData.budget === '2k_10k') score += 10;
+            
+            if (formData.goals.length > 3) score += 10;
+            else if (formData.goals.length > 1) score += 5;
+            
+            score = Math.min(score, 95); // Cap at 95
+            
+            // Update score display
+            document.getElementById('finalScore').textContent = score;
+            
+            // Update score description
+            let title, description;
+            if (score >= 85) {
+                title = "Excellent Digital Potential!";
+                description = "You're ready for serious digital transformation.";
+            } else if (score >= 70) {
+                title = "Good Digital Foundation!";
+                description = "With the right strategy, you'll see great results.";
+            } else {
+                title = "Great Starting Point!";
+                description = "Lots of opportunity for digital growth ahead.";
+            }
+            
+            document.getElementById('scoreTitle').textContent = title;
+            document.getElementById('scoreDescription').textContent = description;
+            
+            // Generate personalized recommendations
+            generateRecommendations();
+        }
+
+        function generateRecommendations() {
+            const firstName = formData.fullName.split(' ')[0];
+            let recommendations = `
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Perfect for ${formData.businessName}:</div>
+            `;
+            
+            // Business type specific recommendations
+            if (formData.businessType === 'retail') {
+                recommendations += '<div style="margin-bottom: 8px;">✓ E-commerce website with payment gateway</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Social media marketing automation</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Inventory management system</div>';
+            } else if (formData.businessType === 'services') {
+                recommendations += '<div style="margin-bottom: 8px;">✓ Professional service website</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Online booking system</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Client management tools</div>';
+            } else if (formData.businessType === 'food') {
+                recommendations += '<div style="margin-bottom: 8px;">✓ Online ordering system</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Delivery integration</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Menu management</div>';
+            } else {
+                recommendations += '<div style="margin-bottom: 8px;">✓ Professional business website</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Lead generation system</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Customer management tools</div>';
+            }
+            
+            recommendations += '</div>';
+            
+            document.getElementById('recommendationContent').innerHTML = recommendations;
+            
+            // Update final chat message
+            document.getElementById('chatMessage4').textContent = `🎉 ${firstName}, your personalized digital strategy is ready! Based on ${formData.businessName}'s needs, we've identified the perfect solutions for you.`;
         }
     </script>
 </body>
