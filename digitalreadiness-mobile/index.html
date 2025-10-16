@@ -1148,32 +1148,35 @@
             }
         }
 
-        // Topiko Recommendation Engine
+        // Digital Readiness & Recommendation Engine
         function generateResults() {
             const recommendation = getTopikkoRecommendation(formData);
+            const digitalReadiness = calculateDigitalReadiness(formData);
             
-            // Update score display - ensure we have a valid confidence score
-            const confidence = recommendation?.primary_recommendation?.confidence || recommendation?.confidence || 75;
-            document.getElementById('finalScore').textContent = confidence;
+            // Update score display with actual digital readiness
+            document.getElementById('finalScore').textContent = digitalReadiness;
             
-            // Update score description based on confidence
+            // Update score description based on digital readiness level
             let title, description;
-            if (confidence >= 85) {
-                title = "Perfect Match Found!";
-                description = "High confidence recommendation based on your needs.";
-            } else if (confidence >= 70) {
-                title = "Great Solution Identified!";
-                description = "Strong match for your business requirements.";
+            if (digitalReadiness >= 80) {
+                title = "Digital Leader!";
+                description = "You're ahead of the curve with strong digital presence.";
+            } else if (digitalReadiness >= 60) {
+                title = "Digital Growth Mode!";
+                description = "Good foundation, ready for the next level.";
+            } else if (digitalReadiness >= 40) {
+                title = "Digital Potential!";
+                description = "Great starting point with room to grow.";
             } else {
-                title = "Good Starting Point!";
-                description = "Solid foundation for your digital journey.";
+                title = "Digital Opportunity!";
+                description = "Perfect time to start your digital transformation.";
             }
             
             document.getElementById('scoreTitle').textContent = title;
             document.getElementById('scoreDescription').textContent = description;
             
             // Generate recommendations based on engine results
-            generateRecommendations(recommendation);
+            generateRecommendations(recommendation, digitalReadiness);
         }
         
         function getTopikkoRecommendation(data) {
@@ -1208,7 +1211,7 @@
             // Scoring rules
             const scores = calculateProductScores(data);
             const topProduct = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-            const confidence = Math.min(95, Math.max(60, scores[topProduct]));
+            const confidence = Math.min(95, Math.max(60, Math.round(scores[topProduct] * 0.8))); // Reduce confidence calculation
             
             // Generate secondary recommendations
             const sortedProducts = Object.entries(scores)
@@ -1460,9 +1463,99 @@
             return tags;
         }
 
-        function generateRecommendations(recommendation) {
+        function calculateDigitalReadiness(data) {
+            let readinessScore = 0;
+            
+            // Base digital presence assessment (40% of score)
+            switch(data.digitalStatus) {
+                case 'none':
+                    readinessScore += 15; // Starting from scratch
+                    break;
+                case 'whatsapp_only':
+                    readinessScore += 30; // Basic communication tool
+                    break;
+                case 'basic_website':
+                    readinessScore += 50; // Has online presence
+                    break;
+                case 'social_only':
+                    readinessScore += 40; // Active on social but missing website
+                    break;
+                case 'full_website_no_results':
+                    readinessScore += 55; // Has website but needs optimization
+                    break;
+                case 'active_no_results':
+                    readinessScore += 60; // Active but needs improvement
+                    break;
+            }
+            
+            // Goals clarity and ambition (20% of score)
+            if (data.goals && data.goals.length > 0) {
+                const goalPoints = Math.min(20, data.goals.length * 5); // 5 points per goal, max 20
+                readinessScore += goalPoints;
+            }
+            
+            // Investment readiness (20% of score)
+            switch(data.budget) {
+                case 'nothing':
+                    readinessScore += 5;
+                    break;
+                case 'below_2k':
+                    readinessScore += 10;
+                    break;
+                case '2k_10k':
+                    readinessScore += 15;
+                    break;
+                case '10k_25k':
+                    readinessScore += 18;
+                    break;
+                case '25k_plus':
+                    readinessScore += 20;
+                    break;
+            }
+            
+            // Timeline urgency (10% of score)
+            switch(data.timeline) {
+                case 'immediately':
+                    readinessScore += 10;
+                    break;
+                case '1_3_months':
+                    readinessScore += 8;
+                    break;
+                case '3_6_months':
+                    readinessScore += 6;
+                    break;
+                case 'exploring':
+                    readinessScore += 3;
+                    break;
+            }
+            
+            // Management readiness (10% of score)
+            switch(data.managedBy) {
+                case 'nobody':
+                    readinessScore += 3; // Needs help
+                    break;
+                case 'myself':
+                    readinessScore += 6;
+                    break;
+                case 'family':
+                    readinessScore += 5;
+                    break;
+                case 'employee':
+                    readinessScore += 8;
+                    break;
+                case 'agency':
+                    readinessScore += 10; // Already has digital help
+                    break;
+            }
+            
+            // Ensure score is within 0-100 range
+            return Math.min(100, Math.max(0, Math.round(readinessScore)));
+        }
+        
+        function generateRecommendations(recommendation, digitalReadiness) {
             const firstName = formData.fullName.split(' ')[0];
             const primary = recommendation.primary_recommendation;
+            const solutionMatch = recommendation?.primary_recommendation?.confidence || recommendation?.confidence || 75;
             
             // Get product details for pricing
             const products = {
@@ -1479,6 +1572,16 @@
                 `Starts from ₹${productInfo.price.toLocaleString()}` :
                 `Starts from ₹${productInfo.price.toLocaleString()}/${productInfo.period}`;
             
+            // Create contextual recommendation message based on digital readiness
+            let recommendationContext = "";
+            if (digitalReadiness < 40) {
+                recommendationContext = "Perfect starting point for your digital journey! ";
+            } else if (digitalReadiness < 60) {
+                recommendationContext = "Great foundation to build upon! ";
+            } else {
+                recommendationContext = "Excellent choice to accelerate your growth! ";
+            }
+            
             let recommendations = `
                 <div style="text-align: left; margin-bottom: 20px;">
                     <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #667eea;">
@@ -1490,8 +1593,11 @@
                     <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">
                         ${priceText}
                     </div>
-                    <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 16px; font-style: italic;">
-                        "${primary.reason}"
+                    <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px; font-style: italic;">
+                        "${recommendationContext}${primary.reason}"
+                    </div>
+                    <div style="font-size: 12px; color: rgba(102, 126, 234, 0.8); margin-bottom: 16px;">
+                        Solution Match: ${solutionMatch}% confidence
                     </div>
             `;
             
