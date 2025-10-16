@@ -326,6 +326,20 @@
     </div>
 
     <script>
+        // Auto-redirect desktop users to main version
+        function checkDevice() {
+            if (window.innerWidth > 768) {
+                // Desktop user - redirect to main version
+                window.location.href = '../digitalreadiness/';
+                return false;
+            }
+            return true;
+        }
+        
+        // Check on load and resize
+        if (!checkDevice()) return;
+        window.addEventListener('resize', checkDevice);
+        
         let currentScreen = 1;
         let formData = {};
 

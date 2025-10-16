@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Readiness Assessment</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .loader {
+            text-align: center;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <div class="spinner"></div>
+        <div class="message">Detecting your device...</div>
+    </div>
+
+    <script>
+        // Smart device detection and redirect
+        function isMobileDevice() {
+            // Check screen width
+            if (window.innerWidth <= 768) return true;
+            
+            // Check user agent for mobile indicators
+            const userAgent = navigator.userAgent.toLowerCase();
+            const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'tablet', 'blackberry', 'windows phone'];
+            
+            return mobileKeywords.some(keyword => userAgent.includes(keyword));
+        }
+        
+        function redirect() {
+            const isMobile = isMobileDevice();
+            
+            // Add small delay for better UX
+            setTimeout(() => {
+                if (isMobile) {
+                    window.location.href = '../digitalreadiness-mobile/';
+                } else {
+                    window.location.href = '../digitalreadiness/';
+                }
+            }, 800);
+        }
+        
+        // Start redirect process
+        redirect();
+    </script>
+</body>
+</html>
