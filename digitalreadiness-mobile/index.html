@@ -306,9 +306,10 @@
         }
 
         .score-number {
-            font-size: 36px;
-            font-weight: 700;
+            font-size: 48px;
+            font-weight: 800;
             color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         /* TOPIKO BRAND */
@@ -855,8 +856,18 @@
             if (currentScreen === 1) {
                 // Screen 1 progress based on currentStep (0-4)
                 progress = (currentStep / 4) * 25; // 25% for screen 1
+            } else if (currentScreen === 2) {
+                // Screen 2 - questions progress (25% to 75%)
+                const questionProgress = currentQuestionIndex / questions.length;
+                progress = 25 + (questionProgress * 50);
+            } else if (currentScreen === 3) {
+                // Screen 3 - contact (75% to 90%)
+                progress = 75;
+            } else if (currentScreen === 4) {
+                // Screen 4 - results (100%)
+                progress = 100;
             } else {
-                // Other screens
+                // Fallback
                 progress = 25 + ((currentScreen - 2) / 2) * 75;
             }
             document.getElementById('progressBar').style.width = `${progress}%`;
@@ -953,6 +964,7 @@
                 }
             }
             
+            updateProgress();
             validateCurrentQuestion();
             
             // Remove previous selections for this question
@@ -1077,6 +1089,7 @@
 
         function nextQuestion() {
             loadQuestion(currentQuestionIndex + 1);
+            updateProgress();
         }
 
         function previousQuestion() {
@@ -1100,6 +1113,7 @@
             
             if (isValid && !formData.otpSent) {
                 otpBtn.textContent = 'Send OTP';
+                updateProgress(); // Update progress when valid number entered
             }
         }
 
@@ -1110,6 +1124,7 @@
                 document.getElementById('otpBtn').textContent = 'View My Results';
                 document.getElementById('otpBtn').disabled = true;
                 formData.otpSent = true;
+                updateProgress(); // Update progress when OTP sent
                 
                 // Update chat
                 document.getElementById('chatMessage3').textContent = 'Verification code sent! Enter 1111 to continue.';
@@ -1164,7 +1179,7 @@
             // Products available
             const products = {
                 disblay: { name: "Disblay", price: 1499, description: "Starter showcase website" },
-                topiko_basic: { name: "Topiko Basic", price: 4999, description: "Professional website + domain" },
+                topiko_basic: { name: "Topiko Basic", price: 4999, description: "Professional Website + Android & iOS App Space + Customer Engagement" },
                 topiko_pro: { name: "Topiko Pro", price: 9999, description: "Full digital presence + CRM" },
                 marketing: { name: "Digital Marketing", price: 4999, description: "Lead generation + campaigns" },
                 brandpreneuring: { name: "Brandpreneuring", price: 999, description: "Logo + brand identity" },
