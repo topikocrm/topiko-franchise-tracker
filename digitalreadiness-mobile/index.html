@@ -3140,57 +3140,68 @@ We have all the information needed to help you get started!`);
         }
         
         function getRecommendationBasedBoxes() {
-            // Get current form data
-            const currentFormData = {
-                goals: formData.goals || [],
-                digitalStatus: formData.digitalStatus || 'none',
-                budget: formData.budget || 'below_2k',
-                businessType: formData.businessType || 'retail',
-                brandHelp: formData.brandHelp || 'no',
-                challenge: formData.challenge || 'no_leads'
-            };
-            
-            // Debug logging
-            console.log('🔍 Getting recommendation for form data:', currentFormData);
-            
-            // Get preliminary recommendation with current data
-            let recommendation;
-            try {
-                recommendation = getTopikkoRecommendation(currentFormData);
-                console.log('📊 Recommendation result:', recommendation);
-            } catch (error) {
-                console.log('❌ Recommendation failed:', error);
-                // Fallback to default if recommendation fails
-                return ['Website'];
-            }
-            
             const boxes = [];
+            const goals = formData.goals || [];
+            const businessType = formData.businessType || '';
+            const budget = formData.budget || '';
             
-            // Add primary recommendation
-            if (recommendation.primary_recommendation) {
-                const primaryBox = mapProductToVisualCategory(recommendation.primary_recommendation.product_id);
-                boxes.push(primaryBox);
+            console.log('🎯 Current form data - Goals:', goals, 'Type:', businessType, 'Budget:', budget);
+            
+            // Simple goal-to-box mapping (as requested)
+            if (goals.includes('showcase_products')) {
+                boxes.push('Showcase');
+            }
+            if (goals.includes('get_customers')) {
+                boxes.push('Marketing');
+            }
+            if (goals.includes('build_brand')) {
+                boxes.push('Branding');
+            }
+            if (goals.includes('create_website')) {
+                // Determine Website vs Website Pro based on budget/requirements
+                if (budget === '10k_25k' || budget === '25k_plus' || goals.includes('get_customers')) {
+                    boxes.push('Website Pro');
+                } else {
+                    boxes.push('Website');
+                }
+            }
+            if (goals.includes('custom_solution')) {
+                boxes.push('Custom Solutions');
             }
             
-            // Add secondary recommendations (max 2 more for total of 3)
-            if (recommendation.secondary_recommendations) {
-                recommendation.secondary_recommendations.slice(0, 2).forEach(secondary => {
-                    const secondaryBox = mapProductToVisualCategory(secondary.product_id);
-                    // Avoid duplicates
-                    if (!boxes.includes(secondaryBox)) {
-                        boxes.push(secondaryBox);
-                    }
-                });
-            }
-            
-            // Ensure we have at least 1 box, max 3 boxes
+            // Smart fallbacks if no goals are selected yet
             if (boxes.length === 0) {
-                console.log('⚠️ No boxes generated, using fallback');
-                return ['Website']; // Fallback
+                // Provide intelligent defaults based on business type
+                if (businessType === 'retail') {
+                    boxes.push('Showcase', 'Marketing');
+                } else if (businessType === 'services') {
+                    boxes.push('Website', 'Marketing');
+                } else if (businessType === 'food') {
+                    boxes.push('Showcase', 'Website');
+                } else if (businessType === 'manufacturing') {
+                    boxes.push('Website Pro', 'Marketing');
+                } else {
+                    // Default fallback
+                    boxes.push('Website');
+                }
             }
             
-            const finalBoxes = boxes.slice(0, 3); // Limit to 3 boxes max
-            console.log('📦 Final boxes generated:', finalBoxes);
+            // Ensure we have at least 2 boxes for better visual impact
+            if (boxes.length === 1) {
+                if (boxes[0] === 'Showcase') {
+                    boxes.push('Marketing');
+                } else if (boxes[0] === 'Marketing') {
+                    boxes.push('Website');
+                } else {
+                    boxes.push('Marketing');
+                }
+            }
+            
+            // Remove duplicates and limit to 3
+            const uniqueBoxes = [...new Set(boxes)];
+            const finalBoxes = uniqueBoxes.slice(0, 3);
+            
+            console.log('📦 Goal-based boxes generated:', finalBoxes);
             return finalBoxes;
         }
 
