@@ -567,7 +567,8 @@
                     { value: 'not_getting_leads', label: 'Not getting leads', icon: '📢' },
                     { value: 'low_sales', label: 'Low sales despite being online', icon: '📉' },
                     { value: 'dont_know_start', label: 'Don\'t know where to start', icon: '❓' },
-                    { value: 'no_time', label: 'No time to manage', icon: '⏰' }
+                    { value: 'no_time', label: 'No time to manage', icon: '⏰' },
+                    { value: 'other', label: 'Others', icon: '📝' }
                 ]
             },
             {
@@ -622,6 +623,7 @@
                 // Show next step indicator
                 document.getElementById('nextIndicator').classList.add('show');
                 currentStep = 1;
+                updateProgress();
                 updateProfile();
                 
                 // Debounced chat message update
@@ -684,6 +686,7 @@
             if (businessName.length > 1) {
                 // Show next step indicator
                 currentStep = 2;
+                updateProgress();
                 updateProfile();
                 
                 // Debounced chat message update
@@ -701,6 +704,7 @@
             } else {
                 // Reset to previous step
                 currentStep = 1;
+                updateProgress();
                 document.getElementById('businessTypeSection').style.display = 'none';
                 document.getElementById('cityLocationSection').style.display = 'none';
                 document.getElementById('continueBtn').style.display = 'none';
@@ -716,6 +720,7 @@
             if (businessType) {
                 // Show next step
                 currentStep = 3;
+                updateProgress();
                 
                 const typeMessages = {
                     retail: "Retail stores are perfect for digital transformation! Where are you located?",
@@ -743,6 +748,7 @@
             } else {
                 // Reset to previous step
                 currentStep = 2;
+                updateProgress();
                 document.getElementById('cityLocationSection').style.display = 'none';
                 document.getElementById('continueBtn').style.display = 'none';
             }
@@ -760,6 +766,7 @@
             if (city.length > 2) {
                 // Show final step - replace arrow with button
                 currentStep = 4;
+                updateProgress();
                 document.getElementById('nextIndicator').classList.remove('show');
                 document.getElementById('continueBtn').style.display = 'block';
                 updateProfile();
@@ -778,6 +785,7 @@
             } else {
                 // Reset to previous step
                 currentStep = 3;
+                updateProgress();
                 document.getElementById('nextIndicator').classList.add('show');
                 document.getElementById('continueBtn').style.display = 'none';
             }
@@ -843,7 +851,14 @@
         }
 
         function updateProgress() {
-            const progress = ((currentScreen - 1) / 3) * 100;
+            let progress;
+            if (currentScreen === 1) {
+                // Screen 1 progress based on currentStep (0-4)
+                progress = (currentStep / 4) * 25; // 25% for screen 1
+            } else {
+                // Other screens
+                progress = 25 + ((currentScreen - 2) / 2) * 75;
+            }
             document.getElementById('progressBar').style.width = `${progress}%`;
         }
 
@@ -897,6 +912,14 @@
                 checkbox.addEventListener('change', handleCheckboxChange);
             });
             
+            // Add input handler for challenge other text
+            const challengeOtherInput = document.getElementById('challengeOtherInput');
+            if (challengeOtherInput) {
+                challengeOtherInput.addEventListener('input', function() {
+                    formData.challengeOther = this.value.trim();
+                });
+            }
+            
             // Update navigation
             document.getElementById('backBtn').style.display = index > 0 ? 'inline-block' : 'none';
             validateCurrentQuestion();
@@ -906,6 +929,26 @@
             const card = e.currentTarget;
             const questionId = card.dataset.question;
             const value = card.dataset.value;
+            
+            // Clear previous selections for this question
+            document.querySelectorAll(`[data-question="${questionId}"]`).forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            
+            formData[questionId] = value;
+            
+            // Show/hide other text box for challenge question
+            if (questionId === 'challenge') {
+                const otherTextDiv = document.getElementById('otherChallengeText');
+                if (value === 'other') {
+                    otherTextDiv.style.display = 'block';
+                    setTimeout(() => document.getElementById('challengeOtherInput').focus(), 100);
+                } else {
+                    otherTextDiv.style.display = 'none';
+                    formData.challengeOther = '';
+                }
+            }
+            
+            validateCurrentQuestion();
             
             // Remove previous selections for this question
             document.querySelectorAll(`[data-question="${questionId}"]`).forEach(c => {
@@ -1232,12 +1275,12 @@
         
         function calculateProductScores(data) {
             const scores = {
-                disblay: 0,
-                topiko_basic: 0,
-                topiko_pro: 0,
-                marketing: 0,
-                brandpreneuring: 0,
-                hebt: 0
+                disblay: 25,  // Base score to avoid zero
+                topiko_basic: 30,
+                topiko_pro: 35,
+                marketing: 20,
+                brandpreneuring: 15,
+                hebt: 10
             };
             
             // Goal-based scoring
@@ -1316,16 +1359,51 @@
         }
         
         function generateReason(data, topProduct, scores) {
-            const reasons = {
-                disblay: `Perfect starter solution for showcasing ${data.businessType} business`,
-                topiko_basic: `Professional website ideal for ${data.businessType} with your budget`,
-                topiko_pro: `Complete digital presence to grow your ${data.businessType} business`,
-                marketing: `Lead generation essential for customer acquisition goals`,
-                brandpreneuring: `Strong branding foundation for business growth`,
-                hebt: `Custom solution for unique business requirements`
+            let reason = "";
+            
+            // Goal-based reasoning
+            if (data.goals && data.goals.length > 0) {
+                const goalReasons = {
+                    'get_customers': 'helps drive customer acquisition',
+                    'showcase_products': 'perfectly showcases your products/services',
+                    'build_brand': 'strengthens your brand presence',
+                    'create_website': 'gives you a professional website',
+                    'manage_customers': 'includes customer management tools'
+                };
+                
+                const goalTexts = data.goals.map(goal => goalReasons[goal]).filter(Boolean);
+                if (goalTexts.length > 0) {
+                    reason += `This solution ${goalTexts.join(' and ')}. `;
+                }
+            }
+            
+            // Budget and business type reasoning
+            const businessType = data.businessType || 'business';
+            const productReasons = {
+                disblay: `Perfect starter solution for your ${businessType}`,
+                topiko_basic: `Professional website ideal for ${businessType} businesses`,
+                topiko_pro: `Complete digital presence to grow your ${businessType}`,
+                marketing: `Lead generation focused solution`,
+                brandpreneuring: `Strong branding foundation`,
+                hebt: `Custom solution for unique requirements`
             };
             
-            return reasons[topProduct] || `Best match based on your requirements`;
+            reason += productReasons[topProduct] || 'Best match for your needs';
+            
+            // Budget-based reasoning
+            if (data.budget) {
+                const budgetReasons = {
+                    'below_2k': ' that fits your budget perfectly.',
+                    '2k_10k': ' with excellent value in your budget range.',
+                    '10k_25k': ' allowing for comprehensive features.',
+                    '25k_plus': ' with premium capabilities.'
+                };
+                reason += budgetReasons[data.budget] || '.';
+            } else {
+                reason += '.';
+            }
+            
+            return reason;
         }
         
         function getSecondaryNote(product, primary) {
