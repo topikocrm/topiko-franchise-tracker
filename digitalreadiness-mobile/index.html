@@ -359,16 +359,34 @@
             const status = document.getElementById('profileStatus');
             
             if (formData.fullName) {
+                // Show profile immediately when name is entered
                 profile.style.display = 'flex';
                 avatar.textContent = formData.fullName.charAt(0).toUpperCase();
                 
                 const firstName = formData.fullName.split(' ')[0];
                 if (formData.businessName) {
                     name.textContent = `${firstName} - ${formData.businessName}`;
-                    status.textContent = 'Building your business profile...';
+                    status.textContent = 'Ready for assessment';
                 } else {
                     name.textContent = firstName;
                     status.textContent = 'Tell us about your business';
+                }
+                
+                // Update status based on current screen and progress
+                if (currentScreen === 2) {
+                    if (formData.businessType) {
+                        const businessTypes = {
+                            retail: 'Retail/E-commerce',
+                            services: 'Professional Services', 
+                            manufacturing: 'Manufacturing',
+                            food: 'Restaurant/Food'
+                        };
+                        status.textContent = `${businessTypes[formData.businessType]} business owner`;
+                    } else {
+                        status.textContent = 'Choose your business type';
+                    }
+                } else if (currentScreen === 3) {
+                    status.textContent = 'Assessment complete!';
                 }
             }
         }
@@ -382,6 +400,9 @@
             // Select current option
             event.currentTarget.classList.add('selected');
             formData.businessType = type;
+            
+            // Update profile immediately when business type is selected
+            updateProfile();
             
             // Enable button
             document.getElementById('businessTypeBtn').disabled = false;
@@ -405,12 +426,8 @@
             currentScreen++;
             document.getElementById(`screen${currentScreen}`).classList.add('active');
             
-            // Update profile status
-            if (currentScreen === 2) {
-                document.getElementById('profileStatus').textContent = 'Understanding your business type...';
-            } else if (currentScreen === 3) {
-                document.getElementById('profileStatus').textContent = 'Assessment complete!';
-            }
+            // Update profile with new screen context
+            updateProfile();
         }
     </script>
 </body>
