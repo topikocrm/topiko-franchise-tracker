@@ -472,7 +472,7 @@
                 <div class="question-title" style="text-align: center;">Your Digital Readiness Score</div>
                 
                 <div class="score-circle">
-                    <div class="score-number" id="finalScore">85</div>
+                    <div class="score-number" id="finalScore">75</div>
                 </div>
                 
                 <div style="text-align: center; margin-bottom: 20px;">
@@ -1152,15 +1152,16 @@
         function generateResults() {
             const recommendation = getTopikkoRecommendation(formData);
             
-            // Update score display
-            document.getElementById('finalScore').textContent = recommendation.confidence;
+            // Update score display - ensure we have a valid confidence score
+            const confidence = recommendation?.primary_recommendation?.confidence || recommendation?.confidence || 75;
+            document.getElementById('finalScore').textContent = confidence;
             
             // Update score description based on confidence
             let title, description;
-            if (recommendation.confidence >= 85) {
+            if (confidence >= 85) {
                 title = "Perfect Match Found!";
                 description = "High confidence recommendation based on your needs.";
-            } else if (recommendation.confidence >= 70) {
+            } else if (confidence >= 70) {
                 title = "Great Solution Identified!";
                 description = "Strong match for your business requirements.";
             } else {
@@ -1178,12 +1179,12 @@
         function getTopikkoRecommendation(data) {
             // Products available
             const products = {
-                disblay: { name: "Disblay", price: 1499, description: "Starter showcase website" },
-                topiko_basic: { name: "Topiko Basic", price: 4999, description: "Professional Website + Android & iOS App Space + Customer Engagement" },
-                topiko_pro: { name: "Topiko Pro", price: 9999, description: "Full digital presence + CRM" },
-                marketing: { name: "Digital Marketing", price: 4999, description: "Lead generation + campaigns" },
-                brandpreneuring: { name: "Brandpreneuring", price: 999, description: "Logo + brand identity" },
-                hebt: { name: "HEBT Custom", price: 300000, description: "Custom enterprise solution" }
+                disblay: { name: "Disblay", price: 1499, description: "Starter showcase website", period: "year" },
+                topiko_basic: { name: "Topiko Basic", price: 4999, description: "Professional Website + Android & iOS App Space + Customer Engagement", period: "year" },
+                topiko_pro: { name: "Topiko Pro", price: 9999, description: "Full digital presence + CRM", period: "year" },
+                marketing: { name: "Digital Marketing", price: 9999, description: "Lead generation + campaigns", period: "month" },
+                brandpreneuring: { name: "Brandpreneuring", price: 999, description: "Logo + brand identity", period: "project" },
+                hebt: { name: "HEBT Custom", price: 300000, description: "Custom enterprise solution", period: "project" }
             };
             
             // Hard overrides first
@@ -1309,19 +1310,19 @@
                     switch(goal) {
                         case 'showcase_products':
                             scores.disblay += 40;
-                            scores.topiko_basic += 20;
+                            scores.topiko_basic += 30;
                             break;
                         case 'get_customers':
-                            scores.marketing += 30;
-                            scores.topiko_pro += 25;
+                            scores.topiko_pro += 45;
+                            scores.marketing += 25; // As addon service
                             break;
                         case 'build_brand':
-                            scores.brandpreneuring += 40;
-                            scores.topiko_basic += 20;
+                            scores.topiko_basic += 40;
+                            scores.brandpreneuring += 25; // As addon service
                             break;
                         case 'create_website':
-                            scores.topiko_basic += 35;
-                            scores.disblay += 15;
+                            scores.topiko_basic += 45;
+                            scores.disblay += 20;
                             break;
                         case 'custom_solution':
                             scores.hebt += 100;
@@ -1463,16 +1464,31 @@
             const firstName = formData.fullName.split(' ')[0];
             const primary = recommendation.primary_recommendation;
             
+            // Get product details for pricing
+            const products = {
+                disblay: { name: "Disblay", price: 1499, period: "year" },
+                topiko_basic: { name: "Topiko Basic", price: 4999, period: "year" },
+                topiko_pro: { name: "Topiko Pro", price: 9999, period: "year" },
+                marketing: { name: "Digital Marketing", price: 9999, period: "month" },
+                brandpreneuring: { name: "Brandpreneuring", price: 999, period: "project" },
+                hebt: { name: "HEBT Custom", price: 300000, period: "project" }
+            };
+            
+            const productInfo = products[primary.product_id] || products['topiko_basic'];
+            const priceText = productInfo.period === 'project' ? 
+                `Starts from ₹${productInfo.price.toLocaleString()}` :
+                `Starts from ₹${productInfo.price.toLocaleString()}/${productInfo.period}`;
+            
             let recommendations = `
                 <div style="text-align: left; margin-bottom: 20px;">
                     <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #667eea;">
-                        💎 ${primary.product_name}
+                        💎 ${primary.product_name || productInfo.name}
                     </div>
                     <div style="font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 12px;">
                         ${primary.description}
                     </div>
                     <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">
-                        ₹${primary.price.toLocaleString()}${primary.price < 10000 ? '/year' : primary.price > 100000 ? ' starting' : '/year'}
+                        ${priceText}
                     </div>
                     <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 16px; font-style: italic;">
                         "${primary.reason}"
