@@ -352,6 +352,271 @@
                 display: none;
             }
         }
+
+        /* PROFESSIONAL AUDIT STYLES */
+        .audit-progress {
+            background: rgba(255, 255, 255, 0.1);
+            height: 4px;
+            border-radius: 2px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .audit-progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #f093fb 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .audit-question-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .audit-question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .audit-question-number {
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .audit-category {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .audit-question-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .audit-explanation {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 3px solid #667eea;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .audit-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .audit-option {
+            flex: 1;
+            min-width: 120px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .audit-option:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .audit-option:hover:before {
+            left: 100%;
+        }
+
+        .audit-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .audit-option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            border-color: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .audit-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .audit-nav-info {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .audit-next-btn {
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .audit-next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .audit-next-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* DETAILED PLAN STYLES */
+        .plan-container {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .plan-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .plan-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .plan-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            border-radius: 3px;
+        }
+
+        .plan-section {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .plan-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .plan-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .plan-btn {
+            flex: 1;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: center;
+        }
+
+        .plan-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .plan-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .plan-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .plan-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* MOBILE RESPONSIVENESS FOR AUDIT */
+        @media (max-width: 480px) {
+            .audit-options {
+                flex-direction: column;
+            }
+            
+            .audit-option {
+                min-width: 100%;
+            }
+            
+            .plan-actions {
+                flex-direction: column;
+            }
+            
+            .audit-question-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -502,9 +767,63 @@
                 </div>
                 
                 <div class="nav-buttons">
-                    <button class="btn" onclick="alert('Thank you! Our team will contact you within 24 hours.')">Get My Detailed Plan</button>
+                    <button class="btn" onclick="startDetailedAudit()">Get My Detailed Plan</button>
                     <button class="btn btn-secondary" onclick="alert('Booking consultation...')">Book Free Consultation</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Screen 5: Professional Digital Audit -->
+        <div id="screen5" class="screen">
+            <div class="chat-message" id="chatMessage5">🎯 Let's create your personalized digital roadmap! I'll ask a few targeted questions to build your detailed action plan.</div>
+            
+            <!-- Audit Progress Bar -->
+            <div class="audit-progress">
+                <div class="audit-progress-fill" id="auditProgressFill" style="width: 12.5%;"></div>
+            </div>
+            
+            <div class="audit-question-card">
+                <div class="audit-question-header">
+                    <div class="audit-question-number" id="auditQuestionNumber">1</div>
+                    <div class="audit-category" id="auditCategory">Technical Infrastructure</div>
+                </div>
+                
+                <div class="audit-question-title" id="auditQuestion">Do you own a domain name for your business?</div>
+                
+                <div class="audit-explanation" id="auditExplanation">
+                    A domain is your web address (like yourbusiness.com). We can help you choose and register the perfect domain that matches your brand.
+                </div>
+                
+                <div class="audit-options" id="auditOptions">
+                    <div class="audit-option" data-value="yes" onclick="handleAuditAnswer('yes')">
+                        ✅ Yes, I have one
+                    </div>
+                    <div class="audit-option" data-value="no" onclick="handleAuditAnswer('no')">
+                        ❌ No, I need help
+                    </div>
+                    <div class="audit-option" data-value="unsure" onclick="handleAuditAnswer('unsure')">
+                        🤔 I'm not sure
+                    </div>
+                </div>
+                
+                <div class="audit-navigation">
+                    <div class="audit-nav-info" id="auditNavInfo">Question 1 of 8</div>
+                    <button class="audit-next-btn" onclick="nextAuditQuestion()" id="auditNextBtn" disabled>Next Question</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 6: Detailed Plan Results -->
+        <div id="screen6" class="screen">
+            <div class="chat-message" id="chatMessage6">🎉 Your personalized digital roadmap is ready! Here's your comprehensive action plan.</div>
+            
+            <div class="plan-container" id="detailedPlanContent">
+                <!-- Detailed plan will be generated here -->
+            </div>
+            
+            <div class="plan-actions">
+                <button class="plan-btn plan-btn-primary" onclick="alert('Our expert will call you within 2 hours!')">📞 Schedule Call</button>
+                <button class="plan-btn plan-btn-secondary" onclick="downloadPlan()">📄 Download Plan</button>
             </div>
         </div>
     </div>
@@ -540,7 +859,106 @@
             mobileNumber: '',
             otpVerified: false
         };
+        
+        let auditData = {};
+        let currentAuditIndex = 0;
+        let auditQuestions = [];
+        let recommendedProduct = '';
 
+        // Professional Audit Questions - Dynamic based on recommendation
+        const auditQuestionSets = {
+            website: [
+                {
+                    id: 'domain',
+                    question: 'Do you own a domain name for your business?',
+                    explanation: 'A domain is your web address (like yourbusiness.com). We can help you choose and register the perfect domain that matches your brand.',
+                    category: 'Technical Infrastructure'
+                },
+                {
+                    id: 'content_photos',
+                    question: 'Do you have professional photos of your products/services?',
+                    explanation: 'High-quality visuals are crucial for website success. Professional photos increase customer trust and conversion rates by 40%.',
+                    category: 'Content Readiness'
+                },
+                {
+                    id: 'business_info',
+                    question: 'Do you have your business description, services list, and contact details ready?',
+                    explanation: 'Well-structured content helps customers understand your value and improves search engine visibility.',
+                    category: 'Content Readiness'
+                },
+                {
+                    id: 'mobile_responsive',
+                    question: 'Is having a mobile-friendly website important for your business?',
+                    explanation: 'Over 60% of web traffic comes from mobile devices. Mobile-responsive design is essential for customer experience and Google rankings.',
+                    category: 'Technical Requirements'
+                },
+                {
+                    id: 'online_payments',
+                    question: 'Do you need to accept payments online?',
+                    explanation: 'Online payment systems increase sales by 35% and provide 24/7 revenue opportunities. We integrate secure payment gateways.',
+                    category: 'Business Operations'
+                }
+            ],
+            marketing: [
+                {
+                    id: 'social_accounts',
+                    question: 'Do you have active social media accounts (Facebook, Instagram, etc.)?',
+                    explanation: 'Social media presence amplifies your marketing reach. We can optimize existing accounts or create new ones for maximum impact.',
+                    category: 'Marketing Infrastructure'
+                },
+                {
+                    id: 'lead_tracking',
+                    question: 'Do you currently have a system to track and follow up with potential customers?',
+                    explanation: 'A proper CRM system ensures no leads are lost and helps convert 30% more inquiries into sales.',
+                    category: 'Lead Management'
+                },
+                {
+                    id: 'marketing_content',
+                    question: 'Do you have marketing content like product videos, testimonials, or case studies?',
+                    explanation: 'Authentic content builds trust and credibility. Video testimonials increase conversion rates by 80%.',
+                    category: 'Content Marketing'
+                },
+                {
+                    id: 'target_audience',
+                    question: 'Do you have a clear understanding of your target customers?',
+                    explanation: 'Defined target audience helps create focused marketing campaigns with 3x better results and lower costs.',
+                    category: 'Marketing Strategy'
+                },
+                {
+                    id: 'ad_budget',
+                    question: 'Are you prepared to invest in paid advertising (Google Ads, Facebook Ads)?',
+                    explanation: 'Paid advertising provides immediate visibility and measurable results. Typically generates 4-8x return on investment.',
+                    category: 'Marketing Investment'
+                }
+            ],
+            branding: [
+                {
+                    id: 'logo_design',
+                    question: 'Do you have a professional logo and brand colors?',
+                    explanation: 'Consistent visual identity makes your business 3x more memorable and builds customer trust.',
+                    category: 'Visual Identity'
+                },
+                {
+                    id: 'brand_messaging',
+                    question: 'Do you have defined brand messaging and tone of voice?',
+                    explanation: 'Clear brand messaging helps customers understand what makes you unique and builds emotional connection.',
+                    category: 'Brand Strategy'
+                },
+                {
+                    id: 'competitor_analysis',
+                    question: 'Are you aware of how your competitors present their brand online?',
+                    explanation: 'Competitive analysis helps position your brand uniquely and identify market opportunities.',
+                    category: 'Market Positioning'
+                },
+                {
+                    id: 'brand_guidelines',
+                    question: 'Do you need help creating consistent brand guidelines for all marketing materials?',
+                    explanation: 'Brand guidelines ensure consistent presentation across all platforms, increasing brand recognition by 60%.',
+                    category: 'Brand Consistency'
+                }
+            ]
+        };
+        
         // Assessment questions for Screen 2
         const questions = [
             {
@@ -1682,6 +2100,543 @@
             }
             
             document.getElementById('chatMessage4').textContent = chatMessage;
+        }
+        
+        // Professional Audit Functions
+        function startDetailedAudit() {
+            // Determine audit questions based on recommended product and user context
+            const recommendation = getTopikkoRecommendation(formData);
+            recommendedProduct = recommendation.primary_recommendation.product_id;
+            
+            // Build audit questions using smart routing logic
+            auditQuestions = [];
+            
+            // Smart question routing based on product and context
+            if (shouldIncludeWebsiteQuestions(recommendedProduct, formData.digitalStatus)) {
+                auditQuestions.push(...auditQuestionSets.website);
+            }
+            
+            if (shouldIncludeMarketingQuestions(formData, recommendedProduct)) {
+                auditQuestions.push(...auditQuestionSets.marketing);
+            }
+            
+            if (shouldIncludeBrandingQuestions(formData, recommendedProduct, formData.businessType)) {
+                auditQuestions.push(...auditQuestionSets.branding);
+            }
+            
+            // Add product-specific additional questions
+            auditQuestions.push(...getProductSpecificQuestions(recommendedProduct, formData));
+            
+            // Remove duplicates and prioritize based on user context
+            auditQuestions = prioritizeQuestions(auditQuestions, formData);
+            
+            currentAuditIndex = 0;
+            auditData = {};
+            
+            // Show audit screen
+            document.getElementById('screen4').classList.remove('active');
+            document.getElementById('screen5').classList.add('active');
+            
+            loadAuditQuestion();
+        }
+        
+        function shouldIncludeWebsiteQuestions(primaryProduct, digitalStatus) {
+            // Include website questions for most products except pure branding
+            if (primaryProduct === 'brandpreneuring' && digitalStatus === 'none') {
+                return false; // Focus on branding first for new businesses
+            }
+            return ['disblay', 'topiko_basic', 'topiko_pro', 'hebt'].includes(primaryProduct) || 
+                   primaryProduct.includes('topiko');
+        }
+        
+        function shouldIncludeMarketingQuestions(formData, primaryProduct) {
+            return (
+                formData.goals.includes('get_customers') ||
+                formData.challenge === 'not_getting_leads' ||
+                primaryProduct === 'marketing' ||
+                formData.budget === '25k_plus' // High budget clients likely need marketing
+            );
+        }
+        
+        function shouldIncludeBrandingQuestions(formData, primaryProduct, businessType) {
+            return (
+                formData.goals.includes('build_brand') ||
+                formData.brandHelp === 'yes' ||
+                primaryProduct === 'brandpreneuring' ||
+                ['retail', 'food'].includes(businessType) // Visual businesses need strong branding
+            );
+        }
+        
+        function getProductSpecificQuestions(primaryProduct, formData) {
+            const specificQuestions = [];
+            
+            // Add product-specific questions based on recommendation
+            switch(primaryProduct) {
+                case 'hebt':
+                    specificQuestions.push({
+                        id: 'custom_requirements',
+                        question: 'Do you have specific technical requirements or integrations needed?',
+                        explanation: 'Custom solutions require detailed requirement analysis to ensure perfect fit and successful implementation.',
+                        category: 'Technical Specifications'
+                    });
+                    break;
+                    
+                case 'topiko_pro':
+                    specificQuestions.push({
+                        id: 'crm_integration',
+                        question: 'Do you need integration with existing business tools (accounting, inventory, etc.)?',
+                        explanation: 'Integrations streamline operations and provide unified business management from one platform.',
+                        category: 'Business Integration'
+                    });
+                    break;
+                    
+                case 'marketing':
+                    specificQuestions.push({
+                        id: 'marketing_experience',
+                        question: 'Have you run digital marketing campaigns before?',
+                        explanation: 'Your experience level helps us design the right level of support and training for maximum success.',
+                        category: 'Marketing Experience'
+                    });
+                    break;
+            }
+            
+            return specificQuestions;
+        }
+        
+        function prioritizeQuestions(questions, formData) {
+            // Remove duplicates first
+            let uniqueQuestions = questions.filter((question, index, self) => 
+                index === self.findIndex(q => q.id === question.id)
+            );
+            
+            // Sort by priority - critical business questions first
+            const priorityOrder = {
+                'Technical Infrastructure': 1,
+                'Technical Specifications': 2,
+                'Business Operations': 3,
+                'Business Integration': 4,
+                'Content Readiness': 5,
+                'Marketing Strategy': 6,
+                'Lead Management': 7,
+                'Brand Strategy': 8,
+                'Visual Identity': 9,
+                'Marketing Experience': 10
+            };
+            
+            return uniqueQuestions.sort((a, b) => {
+                const priorityA = priorityOrder[a.category] || 10;
+                const priorityB = priorityOrder[b.category] || 10;
+                return priorityA - priorityB;
+            }).slice(0, 8); // Limit to 8 questions for better UX
+        }
+        
+        function loadAuditQuestion() {
+            if (currentAuditIndex >= auditQuestions.length) {
+                completeAudit();
+                return;
+            }
+            
+            const question = auditQuestions[currentAuditIndex];
+            const progressPercent = ((currentAuditIndex + 1) / auditQuestions.length) * 100;
+            
+            // Update progress bar
+            document.getElementById('auditProgressFill').style.width = `${progressPercent}%`;
+            
+            // Update question content
+            document.getElementById('auditQuestionNumber').textContent = currentAuditIndex + 1;
+            document.getElementById('auditCategory').textContent = question.category;
+            document.getElementById('auditQuestion').textContent = question.question;
+            document.getElementById('auditExplanation').textContent = question.explanation;
+            document.getElementById('auditNavInfo').textContent = `Question ${currentAuditIndex + 1} of ${auditQuestions.length}`;
+            
+            // Clear previous selections
+            document.querySelectorAll('.audit-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Disable next button until answer is selected
+            document.getElementById('auditNextBtn').disabled = true;
+            
+            // Update button text for last question
+            const nextBtn = document.getElementById('auditNextBtn');
+            if (currentAuditIndex === auditQuestions.length - 1) {
+                nextBtn.textContent = 'Complete Audit';
+                nextBtn.onclick = completeAudit;
+            } else {
+                nextBtn.textContent = 'Next Question';
+                nextBtn.onclick = nextAuditQuestion;
+            }
+        }
+        
+        function handleAuditAnswer(answer) {
+            const question = auditQuestions[currentAuditIndex];
+            auditData[question.id] = {
+                answer: answer,
+                question: question.question,
+                category: question.category
+            };
+            
+            // Mark selected option
+            document.querySelectorAll('.audit-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.dataset.value === answer) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            // Enable next button
+            document.getElementById('auditNextBtn').disabled = false;
+        }
+        
+        function nextAuditQuestion() {
+            if (currentAuditIndex < auditQuestions.length - 1) {
+                currentAuditIndex++;
+                loadAuditQuestion();
+            }
+        }
+        
+        function previousAuditQuestion() {
+            if (currentAuditIndex > 0) {
+                currentAuditIndex--;
+                loadAuditQuestion();
+            }
+        }
+        
+        function completeAudit() {
+            // Generate detailed plan based on audit responses
+            generateDetailedPlan();
+            
+            // Show detailed plan screen
+            document.getElementById('screen5').classList.remove('active');
+            document.getElementById('screen6').classList.add('active');
+        }
+        
+        function generateDetailedPlan() {
+            const firstName = formData.fullName.split(' ')[0];
+            const recommendation = getTopikkoRecommendation(formData);
+            const digitalReadiness = calculateDigitalReadiness(formData);
+            
+            // Analyze audit responses
+            const readinessScore = calculateImplementationReadiness();
+            const priorities = generateActionPriorities();
+            const roadmap = generateImplementationRoadmap();
+            const riskFactors = identifyRiskFactors();
+            const successMetrics = generateSuccessMetrics();
+            const costBreakdown = generateCostBreakdown(recommendation);
+            const timeline = generateProjectTimeline();
+            
+            let planHTML = `
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #667eea; margin-bottom: 12px;">📊 Executive Summary</h3>
+                    <div style="background: rgba(102, 126, 234, 0.1); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                        <p style="font-size: 14px; line-height: 1.5; color: rgba(255,255,255,0.9); margin: 0;">
+                            Hello ${firstName}! Based on your comprehensive assessment, here's your personalized digital transformation roadmap. 
+                            Your implementation readiness score is <strong style="color: #667eea;">${readinessScore}%</strong>.
+                        </p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.7);">Digital Readiness</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #667eea;">${digitalReadiness}%</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.7);">Recommended Product</div>
+                            <div style="font-size: 14px; font-weight: 600; color: #f093fb;">${getProductDisplayName(recommendation.primary_recommendation.product_id)}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #667eea; margin-bottom: 12px;">🎯 Priority Action Items</h3>
+                    ${priorities}
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #667eea; margin-bottom: 12px;">💰 Investment Breakdown</h3>
+                    ${costBreakdown}
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #667eea; margin-bottom: 12px;">📅 Implementation Timeline</h3>
+                    ${timeline}
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #667eea; margin-bottom: 12px;">🎯 Success Metrics</h3>
+                    ${successMetrics}
+                </div>
+                
+                ${riskFactors ? `
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #f5576c; margin-bottom: 12px;">⚠️ Risk Mitigation</h3>
+                    ${riskFactors}
+                </div>
+                ` : ''}
+                
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #667eea; margin-bottom: 12px;">📋 Detailed Implementation Roadmap</h3>
+                    ${roadmap}
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <h3 style="color: #667eea; margin-bottom: 12px;">🚀 Next Steps</h3>
+                    <div style="background: rgba(102, 126, 234, 0.1); padding: 16px; border-radius: 12px; border-left: 4px solid #667eea;">
+                        <div style="font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.9);">
+                            <div style="margin-bottom: 12px;"><strong>Immediate Actions:</strong></div>
+                            <ul style="margin: 0; padding-left: 20px;">
+                                <li>Our expert will call you within 2 hours to discuss this plan</li>
+                                <li>Free 30-minute strategy consultation to refine requirements</li>
+                                <li>Customized proposal with exact pricing and timeline</li>
+                                <li>Optional: Free competitor analysis report</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('detailedPlanContent').innerHTML = planHTML;
+        }
+        
+        function calculateImplementationReadiness() {
+            let readiness = 50; // Base readiness
+            
+            // Add points for positive responses
+            Object.values(auditData).forEach(item => {
+                if (item.answer === 'yes') readiness += 8;
+                else if (item.answer === 'no') readiness += 3; // Still gets points for honesty
+                else if (item.answer === 'unsure') readiness += 1;
+            });
+            
+            return Math.min(95, Math.max(30, readiness));
+        }
+        
+        function generateActionPriorities() {
+            let priorities = [];
+            
+            Object.entries(auditData).forEach(([key, item]) => {
+                if (item.answer === 'no' || item.answer === 'unsure') {
+                    priorities.push({
+                        category: item.category,
+                        action: getActionForQuestion(key, item.answer),
+                        priority: getPriorityLevel(key)
+                    });
+                }
+            });
+            
+            // Sort by priority
+            priorities.sort((a, b) => {
+                const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
+                return priorityOrder[b.priority] - priorityOrder[a.priority];
+            });
+            
+            return priorities.slice(0, 5).map(item => `
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid ${item.priority === 'High' ? '#f5576c' : item.priority === 'Medium' ? '#f093fb' : '#667eea'};">
+                    <div style="font-size: 13px; font-weight: 600; color: ${item.priority === 'High' ? '#f5576c' : item.priority === 'Medium' ? '#f093fb' : '#667eea'}; margin-bottom: 4px;">
+                        ${item.priority} Priority - ${item.category}
+                    </div>
+                    <div style="font-size: 14px; color: rgba(255,255,255,0.9);">${item.action}</div>
+                </div>
+            `).join('');
+        }
+        
+        function generateImplementationRoadmap() {
+            const phases = [
+                {
+                    title: 'Phase 1: Foundation (Weeks 1-2)',
+                    items: ['Domain & hosting setup', 'Brand identity finalization', 'Content preparation']
+                },
+                {
+                    title: 'Phase 2: Development (Weeks 3-4)',
+                    items: ['Website/platform development', 'Content integration', 'Testing & optimization']
+                },
+                {
+                    title: 'Phase 3: Launch & Marketing (Weeks 5-6)',
+                    items: ['Go-live deployment', 'Marketing campaign setup', 'Performance monitoring']
+                }
+            ];
+            
+            return phases.map(phase => `
+                <div style="margin-bottom: 16px;">
+                    <div style="font-weight: 600; color: #667eea; margin-bottom: 8px;">${phase.title}</div>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        ${phase.items.map(item => `<li style="font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 4px;">${item}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+        
+        function getActionForQuestion(questionId, answer) {
+            const actions = {
+                'domain': 'Secure a professional domain name that matches your brand',
+                'content_photos': 'Arrange professional photography for your products/services',
+                'business_info': 'Prepare comprehensive business information and service descriptions',
+                'social_accounts': 'Set up and optimize social media presence on relevant platforms',
+                'lead_tracking': 'Implement a CRM system for proper lead management',
+                'logo_design': 'Create a professional logo and brand identity package',
+                'target_audience': 'Define your ideal customer profile and target market'
+            };
+            return actions[questionId] || 'Address this requirement for optimal results';
+        }
+        
+        function getPriorityLevel(questionId) {
+            const priorities = {
+                'domain': 'High',
+                'content_photos': 'Medium',
+                'business_info': 'High',
+                'social_accounts': 'Medium',
+                'lead_tracking': 'High',
+                'logo_design': 'Medium',
+                'target_audience': 'High'
+            };
+            return priorities[questionId] || 'Medium';
+        }
+        
+        function getProductDisplayName(productId) {
+            const names = {
+                'disblay': 'Disblay Showcase',
+                'topiko_basic': 'Topiko Basic',
+                'topiko_pro': 'Topiko Pro',
+                'marketing': 'Digital Marketing',
+                'brandpreneuring': 'Brandpreneuring',
+                'hebt': 'HEBT Custom'
+            };
+            return names[productId] || 'Professional Solution';
+        }
+        
+        function generateCostBreakdown(recommendation) {
+            const product = recommendation.primary_recommendation;
+            const productId = product.product_id;
+            
+            // Base costs from recommendation engine
+            const costs = {
+                'disblay': { setup: 1499, monthly: 0, description: 'Annual showcase website' },
+                'topiko_basic': { setup: 4999, monthly: 0, description: 'Professional website + domain' },
+                'topiko_pro': { setup: 9999, monthly: 0, description: 'Complete business platform' },
+                'marketing': { setup: 2999, monthly: 9999, description: 'Lead generation campaigns' },
+                'brandpreneuring': { setup: 999, monthly: 0, description: 'Brand identity package' },
+                'hebt': { setup: 300000, monthly: 0, description: 'Custom development project' }
+            };
+            
+            const cost = costs[productId] || costs['topiko_basic'];
+            const yearOneTotal = cost.setup + (cost.monthly * 12);
+            
+            return `
+                <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">Setup Investment</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #667eea;">₹${cost.setup.toLocaleString()}</div>
+                            <div style="font-size: 11px; color: rgba(255,255,255,0.6);">${cost.description}</div>
+                        </div>
+                        ${cost.monthly > 0 ? `
+                        <div>
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">Monthly Services</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #f093fb;">₹${cost.monthly.toLocaleString()}</div>
+                            <div style="font-size: 11px; color: rgba(255,255,255,0.6);">Ongoing marketing management</div>
+                        </div>
+                        ` : `
+                        <div>
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px;">Monthly Cost</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #f093fb;">₹0</div>
+                            <div style="font-size: 11px; color: rgba(255,255,255,0.6);">One-time investment</div>
+                        </div>
+                        `}
+                    </div>
+                    ${cost.monthly > 0 ? `
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.7);">First Year Total Investment</div>
+                        <div style="font-size: 24px; font-weight: 800; color: #667eea;">₹${yearOneTotal.toLocaleString()}</div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        function generateProjectTimeline() {
+            const phases = [
+                { week: 'Week 1', tasks: ['Project kickoff', 'Requirements finalization', 'Content collection'] },
+                { week: 'Week 2-3', tasks: ['Design & development', 'Content integration', 'Initial testing'] },
+                { week: 'Week 4', tasks: ['Final testing', 'Client review', 'Go-live preparation'] },
+                { week: 'Week 5+', tasks: ['Launch & monitoring', 'Marketing activation', 'Ongoing optimization'] }
+            ];
+            
+            return phases.map(phase => `
+                <div style="display: flex; align-items: flex-start; margin-bottom: 16px;">
+                    <div style="min-width: 80px; background: rgba(102, 126, 234, 0.2); padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #667eea; margin-right: 16px;">
+                        ${phase.week}
+                    </div>
+                    <div style="flex: 1;">
+                        <ul style="margin: 0; padding-left: 16px; list-style: none;">
+                            ${phase.tasks.map(task => `
+                                <li style="font-size: 13px; color: rgba(255,255,255,0.8); margin-bottom: 4px; position: relative;">
+                                    <span style="position: absolute; left: -12px; color: #667eea;">•</span>
+                                    ${task}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generateSuccessMetrics() {
+            const metrics = [
+                { metric: 'Website Traffic', target: '500% increase in 3 months', icon: '📈' },
+                { metric: 'Lead Generation', target: '25+ qualified leads monthly', icon: '🎯' },
+                { metric: 'Brand Visibility', target: 'Top 3 Google search results', icon: '🔍' },
+                { metric: 'Customer Engagement', target: '40% higher conversion rate', icon: '💬' }
+            ];
+            
+            return `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    ${metrics.map(metric => `
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+                            <div style="font-size: 16px; margin-bottom: 4px;">${metric.icon}</div>
+                            <div style="font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 4px;">${metric.metric}</div>
+                            <div style="font-size: 11px; color: rgba(255,255,255,0.7);">${metric.target}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function identifyRiskFactors() {
+            const risks = [];
+            
+            // Analyze audit responses for potential risks
+            if (auditData.domain && auditData.domain.answer === 'no') {
+                risks.push({
+                    risk: 'Domain Registration Delay',
+                    mitigation: 'We handle domain registration as priority #1 to avoid launch delays'
+                });
+            }
+            
+            if (auditData.content_photos && auditData.content_photos.answer === 'no') {
+                risks.push({
+                    risk: 'Content Quality Issues',
+                    mitigation: 'Professional photography service included to ensure high-quality visuals'
+                });
+            }
+            
+            if (auditData.target_audience && auditData.target_audience.answer === 'no') {
+                risks.push({
+                    risk: 'Unfocused Marketing',
+                    mitigation: 'Comprehensive market research and audience definition in Phase 1'
+                });
+            }
+            
+            if (risks.length === 0) return null;
+            
+            return risks.map(risk => `
+                <div style="background: rgba(245, 87, 108, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #f5576c;">
+                    <div style="font-size: 13px; font-weight: 600; color: #f5576c; margin-bottom: 4px;">${risk.risk}</div>
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.8);">✓ ${risk.mitigation}</div>
+                </div>
+            `).join('');
+        }
+
+        function downloadPlan() {
+            alert('Your detailed plan will be emailed to you within 30 minutes. Our team will also call to discuss implementation.');
         }
     </script>
 </body>
