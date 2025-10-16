@@ -188,18 +188,17 @@
             height: 32px;
             border-radius: 50%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             margin: 16px auto;
             cursor: pointer;
             transition: all 0.3s ease;
-            opacity: 0;
             transform: scale(0.8);
         }
         
         .next-indicator.show {
-            opacity: 1;
+            display: flex;
             transform: scale(1);
         }
         
