@@ -889,6 +889,7 @@
         <div class="nav-tabs">
             <div class="nav-tab active" data-tab="overview">📊 Overview</div>
             <div class="nav-tab" data-tab="leads">👥 Leads Management</div>
+            <div class="nav-tab" data-tab="assessments">📱 Digital Assessments</div>
             <div class="nav-tab" data-tab="analytics">📈 Analytics</div>
             <div class="nav-tab" data-tab="funnel">🔄 Conversion Funnel</div>
             <div class="nav-tab" data-tab="followups">📝 Follow-ups</div>
@@ -994,6 +995,36 @@
                         <div class="loading">
                             <div class="loading-spinner"></div>
                             Loading comprehensive lead data...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Digital Assessments Tab -->
+        <div id="assessments-tab" class="tab-content">
+            <div class="neu-card">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2>📱 Digital Readiness Assessments</h2>
+                        <div>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-filter="all" onclick="filterAssessments('all')">All Assessments</button>
+                                <button class="filter-btn" data-filter="today" onclick="filterAssessments('today')">Today</button>
+                                <button class="filter-btn" data-filter="week" onclick="filterAssessments('week')">This Week</button>
+                                <button class="filter-btn" data-filter="high-score" onclick="filterAssessments('high-score')">High Score (80+)</button>
+                                <button class="filter-btn" data-filter="converted" onclick="filterAssessments('converted')">Converted</button>
+                            </div>
+                            <button class="neu-button primary" onclick="loadAssessments()">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="assessments-content">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            Loading digital readiness assessments...
                         </div>
                     </div>
                 </div>
@@ -1146,7 +1177,9 @@
         let supabase = null;
         let allLeads = [];
         let allSiteVisits = [];
+        let allAssessments = [];
         let currentFilter = 'all';
+        let currentAssessmentFilter = 'all';
         let charts = {};
 
         function initializeSupabase() {
@@ -1361,6 +1394,311 @@
                 updateConversionFunnel();
                 updateRecentActivity();
             }
+        }
+
+        // Load assessments from Supabase
+        async function loadAssessments() {
+            try {
+                updateTimestamp();
+                
+                if (supabase) {
+                    console.log('📡 Loading assessments from Supabase...');
+                    
+                    // Fetch digital readiness assessments
+                    const { data: assessmentsData, error: assessmentsError } = await supabase
+                        .from('digital_readiness_assessments')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (assessmentsError) throw assessmentsError;
+                    allAssessments = assessmentsData || [];
+                    console.log(`✅ Loaded ${allAssessments.length} assessments from Supabase`);
+                    
+                    if (allAssessments.length > 0) {
+                        console.log('📊 Sample assessment:', allAssessments[0]);
+                    }
+                } else {
+                    console.log('🧪 Loading demo assessment data...');
+                    allAssessments = generateDemoAssessments();
+                    console.log(`✅ Generated ${allAssessments.length} demo assessments`);
+                }
+                
+                displayAssessments();
+                
+            } catch (error) {
+                console.error('Error loading assessments:', error);
+                showError('Failed to load assessments: ' + error.message);
+                
+                // Fallback to demo data
+                console.log('🔄 Falling back to demo assessment data...');
+                allAssessments = generateDemoAssessments();
+                displayAssessments();
+            }
+        }
+
+        // Filter assessments based on current filter
+        function filterAssessments(filter) {
+            currentAssessmentFilter = filter;
+            
+            // Update active filter button
+            document.querySelectorAll('#assessments-tab .filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.filter === filter) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            displayAssessments();
+        }
+
+        // Display assessments in table
+        function displayAssessments() {
+            const filteredAssessments = getFilteredAssessments();
+            const content = document.getElementById('assessments-content');
+            
+            if (filteredAssessments.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📱</div>
+                        <div>No assessments found for the selected filter</div>
+                        <button class="neu-button primary" onclick="generateDemoAssessments(); displayAssessments();" style="margin-top: 1rem;">
+                            🔧 Generate Demo Data
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            console.log(`📊 Displaying ${filteredAssessments.length} assessments`);
+
+            const tableHTML = `
+                <table class="leads-table">
+                    <thead>
+                        <tr>
+                            <th>👤 Contact Info</th>
+                            <th>🏢 Business</th>
+                            <th>📊 Scores</th>
+                            <th>💡 Recommendation</th>
+                            <th>📱 Status</th>
+                            <th>📅 Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredAssessments.map(assessment => `
+                            <tr class="lead-row" data-assessment-id="${assessment.id}" onclick="showAssessmentDetail('${assessment.id}')">
+                                <td>
+                                    <div style="font-weight: 500;">${assessment.full_name}</div>
+                                    <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">${assessment.mobile_number}</div>
+                                    ${assessment.email ? `<div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">${assessment.email}</div>` : ''}
+                                </td>
+                                <td>
+                                    <div style="font-weight: 500;">${assessment.business_name}</div>
+                                    <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">${getBusinessTypeLabel(assessment.business_type)}</div>
+                                    <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">${assessment.city_location}</div>
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                        <div style="text-align: center;">
+                                            <div style="font-weight: 600; color: ${getScoreColor(assessment.digital_readiness_score)};">${assessment.digital_readiness_score || 0}%</div>
+                                            <div style="font-size: 0.7rem; color: rgba(255,255,255,0.6);">Digital</div>
+                                        </div>
+                                        <div style="text-align: center;">
+                                            <div style="font-weight: 600; color: ${getScoreColor(assessment.solution_match_score)};">${assessment.solution_match_score || 0}%</div>
+                                            <div style="font-size: 0.7rem; color: rgba(255,255,255,0.6);">Match</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 500;">${getProductDisplayName(assessment.recommended_product)}</div>
+                                    ${assessment.audit_completed ? '<div style="font-size: 0.8rem; color: #48bb78;">✓ Audit Complete</div>' : '<div style="font-size: 0.8rem; color: #ed8936;">○ Basic Only</div>'}
+                                </td>
+                                <td>
+                                    <span class="status-badge ${assessment.status}">${getStatusLabel(assessment.status)}</span>
+                                </td>
+                                <td>
+                                    <div>${formatDate(assessment.created_at)}</div>
+                                    <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">${formatTime(assessment.created_at)}</div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            content.innerHTML = tableHTML;
+        }
+
+        // Get filtered assessments based on current filter
+        function getFilteredAssessments() {
+            let filtered = [...allAssessments];
+            
+            switch (currentAssessmentFilter) {
+                case 'today':
+                    const today = new Date().toDateString();
+                    filtered = allAssessments.filter(assessment => 
+                        new Date(assessment.created_at).toDateString() === today
+                    );
+                    break;
+                case 'week':
+                    const weekAgo = new Date();
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    filtered = allAssessments.filter(assessment => 
+                        new Date(assessment.created_at) >= weekAgo
+                    );
+                    break;
+                case 'high-score':
+                    filtered = allAssessments.filter(assessment => 
+                        assessment.digital_readiness_score >= 80
+                    );
+                    break;
+                case 'converted':
+                    filtered = allAssessments.filter(assessment => 
+                        assessment.status === 'converted'
+                    );
+                    break;
+            }
+            
+            return filtered;
+        }
+
+        // Utility functions for assessments
+        function getBusinessTypeLabel(type) {
+            const types = {
+                retail: 'Retail/E-commerce',
+                services: 'Professional Services',
+                manufacturing: 'Manufacturing',
+                food: 'Restaurant/Food'
+            };
+            return types[type] || type;
+        }
+
+        function getProductDisplayName(productId) {
+            const products = {
+                disblay: 'Disblay Showcase',
+                topiko_basic: 'Topiko Basic',
+                topiko_pro: 'Topiko Pro',
+                marketing: 'Digital Marketing',
+                brandpreneuring: 'Brandpreneuring',
+                hebt: 'HEBT Custom'
+            };
+            return products[productId] || productId || 'Not Set';
+        }
+
+        function getScoreColor(score) {
+            if (score >= 80) return '#48bb78';
+            if (score >= 60) return '#ed8936';
+            if (score >= 40) return '#f56565';
+            return '#718096';
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                new: 'New',
+                contacted: 'Contacted',
+                qualified: 'Qualified',
+                converted: 'Converted',
+                lost: 'Lost'
+            };
+            return labels[status] || status;
+        }
+
+        function showAssessmentDetail(assessmentId) {
+            const assessment = allAssessments.find(a => a.id === assessmentId);
+            if (!assessment) {
+                console.error('Assessment not found:', assessmentId);
+                return;
+            }
+            
+            // Check if this person is also a franchise lead
+            const matchingLead = findMatchingFranchiseLead(assessment);
+            
+            let detailText = `Assessment Detail for ${assessment.full_name}\n\nBusiness: ${assessment.business_name}\nDigital Score: ${assessment.digital_readiness_score}%\nMatch Score: ${assessment.solution_match_score}%\nRecommendation: ${getProductDisplayName(assessment.recommended_product)}`;
+            
+            if (matchingLead) {
+                detailText += `\n\n🔗 ALSO A FRANCHISE LEAD!\nFranchise Interest: ${matchingLead.interested_in_business || 'General'}\nLead Score: ${matchingLead.lead_score || 0}%`;
+            }
+            
+            // TODO: Show detailed assessment modal
+            console.log('📱 Assessment detail:', assessment);
+            alert(detailText);
+        }
+
+        // Cross-reference logic between assessments and franchise leads
+        function findMatchingFranchiseLead(assessment) {
+            if (!assessment.mobile_number || !allLeads.length) return null;
+            
+            // Clean phone number for comparison (remove country code, spaces, etc.)
+            const cleanAssessmentPhone = assessment.mobile_number.replace(/[^\d]/g, '').slice(-10);
+            
+            return allLeads.find(lead => {
+                if (!lead.phone) return false;
+                const cleanLeadPhone = lead.phone.replace(/[^\d]/g, '').slice(-10);
+                return cleanAssessmentPhone === cleanLeadPhone;
+            });
+        }
+
+        function findMatchingAssessment(lead) {
+            if (!lead.phone || !allAssessments.length) return null;
+            
+            // Clean phone number for comparison
+            const cleanLeadPhone = lead.phone.replace(/[^\d]/g, '').slice(-10);
+            
+            return allAssessments.find(assessment => {
+                if (!assessment.mobile_number) return false;
+                const cleanAssessmentPhone = assessment.mobile_number.replace(/[^\d]/g, '').slice(-10);
+                return cleanLeadPhone === cleanAssessmentPhone;
+            });
+        }
+
+        // Enhance lead details with assessment data
+        function getLeadWithAssessmentData(lead) {
+            const matchingAssessment = findMatchingAssessment(lead);
+            
+            if (matchingAssessment) {
+                return {
+                    ...lead,
+                    hasAssessment: true,
+                    digitalReadinessScore: matchingAssessment.digital_readiness_score,
+                    solutionMatchScore: matchingAssessment.solution_match_score,
+                    recommendedProduct: matchingAssessment.recommended_product,
+                    assessmentDate: matchingAssessment.created_at
+                };
+            }
+            
+            return lead;
+        }
+
+        // Generate demo assessment data
+        function generateDemoAssessments() {
+            const demoAssessments = [];
+            const businesses = ['Tech Solutions', 'Fashion Store', 'Restaurant Hub', 'Consulting Firm', 'Retail Chain'];
+            const cities = ['Mumbai, Maharashtra', 'Delhi, NCR', 'Bangalore, Karnataka', 'Pune, Maharashtra', 'Chennai, Tamil Nadu'];
+            const types = ['retail', 'services', 'food', 'manufacturing'];
+            const products = ['disblay', 'topiko_basic', 'topiko_pro', 'marketing', 'brandpreneuring'];
+            const statuses = ['new', 'contacted', 'qualified', 'converted'];
+            
+            for (let i = 1; i <= 25; i++) {
+                const createdAt = new Date();
+                createdAt.setDate(createdAt.getDate() - Math.floor(Math.random() * 30));
+                
+                demoAssessments.push({
+                    id: `assessment_${i}`,
+                    full_name: `User ${i}`,
+                    business_name: businesses[Math.floor(Math.random() * businesses.length)],
+                    business_type: types[Math.floor(Math.random() * types.length)],
+                    city_location: cities[Math.floor(Math.random() * cities.length)],
+                    mobile_number: `+91${Math.floor(Math.random() * 9000000000) + 1000000000}`,
+                    email: Math.random() > 0.5 ? `user${i}@example.com` : null,
+                    digital_readiness_score: Math.floor(Math.random() * 100),
+                    solution_match_score: Math.floor(Math.random() * 35) + 60,
+                    recommended_product: products[Math.floor(Math.random() * products.length)],
+                    audit_completed: Math.random() > 0.6,
+                    status: statuses[Math.floor(Math.random() * statuses.length)],
+                    created_at: createdAt.toISOString()
+                });
+            }
+            
+            return demoAssessments;
         }
 
         // Generate comprehensive demo data
@@ -3075,9 +3413,11 @@
                     const tabId = tab.dataset.tab + '-tab';
                     document.getElementById(tabId).classList.add('active');
                     
-                    // Load follow-ups when that tab is selected
+                    // Load data when specific tabs are selected
                     if (tab.dataset.tab === 'followups') {
                         await loadFollowups();
+                    } else if (tab.dataset.tab === 'assessments') {
+                        await loadAssessments();
                     }
                 });
             });
