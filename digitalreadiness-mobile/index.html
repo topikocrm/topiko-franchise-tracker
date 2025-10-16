@@ -865,99 +865,8 @@
         let auditQuestions = [];
         let recommendedProduct = '';
 
-        // Professional Audit Questions - Dynamic based on recommendation
-        const auditQuestionSets = {
-            website: [
-                {
-                    id: 'domain',
-                    question: 'Do you own a domain name for your business?',
-                    explanation: 'A domain is your web address (like yourbusiness.com). We can help you choose and register the perfect domain that matches your brand.',
-                    category: 'Technical Infrastructure'
-                },
-                {
-                    id: 'content_photos',
-                    question: 'Do you have professional photos of your products/services?',
-                    explanation: 'High-quality visuals are crucial for website success. Professional photos increase customer trust and conversion rates by 40%.',
-                    category: 'Content Readiness'
-                },
-                {
-                    id: 'business_info',
-                    question: 'Do you have your business description, services list, and contact details ready?',
-                    explanation: 'Well-structured content helps customers understand your value and improves search engine visibility.',
-                    category: 'Content Readiness'
-                },
-                {
-                    id: 'mobile_responsive',
-                    question: 'Is having a mobile-friendly website important for your business?',
-                    explanation: 'Over 60% of web traffic comes from mobile devices. Mobile-responsive design is essential for customer experience and Google rankings.',
-                    category: 'Technical Requirements'
-                },
-                {
-                    id: 'online_payments',
-                    question: 'Do you need to accept payments online?',
-                    explanation: 'Online payment systems increase sales by 35% and provide 24/7 revenue opportunities. We integrate secure payment gateways.',
-                    category: 'Business Operations'
-                }
-            ],
-            marketing: [
-                {
-                    id: 'social_accounts',
-                    question: 'Do you have active social media accounts (Facebook, Instagram, etc.)?',
-                    explanation: 'Social media presence amplifies your marketing reach. We can optimize existing accounts or create new ones for maximum impact.',
-                    category: 'Marketing Infrastructure'
-                },
-                {
-                    id: 'lead_tracking',
-                    question: 'Do you currently have a system to track and follow up with potential customers?',
-                    explanation: 'A proper CRM system ensures no leads are lost and helps convert 30% more inquiries into sales.',
-                    category: 'Lead Management'
-                },
-                {
-                    id: 'marketing_content',
-                    question: 'Do you have marketing content like product videos, testimonials, or case studies?',
-                    explanation: 'Authentic content builds trust and credibility. Video testimonials increase conversion rates by 80%.',
-                    category: 'Content Marketing'
-                },
-                {
-                    id: 'target_audience',
-                    question: 'Do you have a clear understanding of your target customers?',
-                    explanation: 'Defined target audience helps create focused marketing campaigns with 3x better results and lower costs.',
-                    category: 'Marketing Strategy'
-                },
-                {
-                    id: 'ad_budget',
-                    question: 'Are you prepared to invest in paid advertising (Google Ads, Facebook Ads)?',
-                    explanation: 'Paid advertising provides immediate visibility and measurable results. Typically generates 4-8x return on investment.',
-                    category: 'Marketing Investment'
-                }
-            ],
-            branding: [
-                {
-                    id: 'logo_design',
-                    question: 'Do you have a professional logo and brand colors?',
-                    explanation: 'Consistent visual identity makes your business 3x more memorable and builds customer trust.',
-                    category: 'Visual Identity'
-                },
-                {
-                    id: 'brand_messaging',
-                    question: 'Do you have defined brand messaging and tone of voice?',
-                    explanation: 'Clear brand messaging helps customers understand what makes you unique and builds emotional connection.',
-                    category: 'Brand Strategy'
-                },
-                {
-                    id: 'competitor_analysis',
-                    question: 'Are you aware of how your competitors present their brand online?',
-                    explanation: 'Competitive analysis helps position your brand uniquely and identify market opportunities.',
-                    category: 'Market Positioning'
-                },
-                {
-                    id: 'brand_guidelines',
-                    question: 'Do you need help creating consistent brand guidelines for all marketing materials?',
-                    explanation: 'Brand guidelines ensure consistent presentation across all platforms, increasing brand recognition by 60%.',
-                    category: 'Brand Consistency'
-                }
-            ]
-        };
+        // Professional Audit Questions are now product-specific
+        // Each product has its own focused question set
         
         // Assessment questions for Screen 2
         const questions = [
@@ -2104,31 +2013,12 @@
         
         // Professional Audit Functions
         function startDetailedAudit() {
-            // Determine audit questions based on recommended product and user context
+            // Get the actual recommendation first
             const recommendation = getTopikkoRecommendation(formData);
             recommendedProduct = recommendation.primary_recommendation.product_id;
             
-            // Build audit questions using smart routing logic
-            auditQuestions = [];
-            
-            // Smart question routing based on product and context
-            if (shouldIncludeWebsiteQuestions(recommendedProduct, formData.digitalStatus)) {
-                auditQuestions.push(...auditQuestionSets.website);
-            }
-            
-            if (shouldIncludeMarketingQuestions(formData, recommendedProduct)) {
-                auditQuestions.push(...auditQuestionSets.marketing);
-            }
-            
-            if (shouldIncludeBrandingQuestions(formData, recommendedProduct, formData.businessType)) {
-                auditQuestions.push(...auditQuestionSets.branding);
-            }
-            
-            // Add product-specific additional questions
-            auditQuestions.push(...getProductSpecificQuestions(recommendedProduct, formData));
-            
-            // Remove duplicates and prioritize based on user context
-            auditQuestions = prioritizeQuestions(auditQuestions, formData);
+            // Select audit questions based PRIMARILY on the recommendation
+            auditQuestions = selectAuditQuestionsForProduct(recommendedProduct, formData);
             
             currentAuditIndex = 0;
             auditData = {};
@@ -2140,95 +2030,327 @@
             loadAuditQuestion();
         }
         
-        function shouldIncludeWebsiteQuestions(primaryProduct, digitalStatus) {
-            // Include website questions for most products except pure branding
-            if (primaryProduct === 'brandpreneuring' && digitalStatus === 'none') {
-                return false; // Focus on branding first for new businesses
-            }
-            return ['disblay', 'topiko_basic', 'topiko_pro', 'hebt'].includes(primaryProduct) || 
-                   primaryProduct.includes('topiko');
-        }
-        
-        function shouldIncludeMarketingQuestions(formData, primaryProduct) {
-            return (
-                formData.goals.includes('get_customers') ||
-                formData.challenge === 'not_getting_leads' ||
-                primaryProduct === 'marketing' ||
-                formData.budget === '25k_plus' // High budget clients likely need marketing
-            );
-        }
-        
-        function shouldIncludeBrandingQuestions(formData, primaryProduct, businessType) {
-            return (
-                formData.goals.includes('build_brand') ||
-                formData.brandHelp === 'yes' ||
-                primaryProduct === 'brandpreneuring' ||
-                ['retail', 'food'].includes(businessType) // Visual businesses need strong branding
-            );
-        }
-        
-        function getProductSpecificQuestions(primaryProduct, formData) {
-            const specificQuestions = [];
+        function selectAuditQuestionsForProduct(recommendedProduct, formData) {
+            let selectedQuestions = [];
             
-            // Add product-specific questions based on recommendation
-            switch(primaryProduct) {
-                case 'hebt':
-                    specificQuestions.push({
-                        id: 'custom_requirements',
-                        question: 'Do you have specific technical requirements or integrations needed?',
-                        explanation: 'Custom solutions require detailed requirement analysis to ensure perfect fit and successful implementation.',
-                        category: 'Technical Specifications'
-                    });
+            switch(recommendedProduct) {
+                case 'disblay':
+                    selectedQuestions = getDisblayAuditQuestions(formData);
                     break;
-                    
+                case 'topiko_basic':
+                    selectedQuestions = getTopikoBasicAuditQuestions(formData);
+                    break;
                 case 'topiko_pro':
-                    specificQuestions.push({
-                        id: 'crm_integration',
-                        question: 'Do you need integration with existing business tools (accounting, inventory, etc.)?',
-                        explanation: 'Integrations streamline operations and provide unified business management from one platform.',
-                        category: 'Business Integration'
-                    });
+                    selectedQuestions = getTopikoProAuditQuestions(formData);
                     break;
-                    
                 case 'marketing':
-                    specificQuestions.push({
-                        id: 'marketing_experience',
-                        question: 'Have you run digital marketing campaigns before?',
-                        explanation: 'Your experience level helps us design the right level of support and training for maximum success.',
-                        category: 'Marketing Experience'
-                    });
+                    selectedQuestions = getMarketingAuditQuestions(formData);
                     break;
+                case 'brandpreneuring':
+                    selectedQuestions = getBrandingAuditQuestions(formData);
+                    break;
+                case 'hebt':
+                    selectedQuestions = getHEBTAuditQuestions(formData);
+                    break;
+                default:
+                    // Fallback to website questions for unknown products
+                    selectedQuestions = getTopikoBasicAuditQuestions(formData);
             }
             
-            return specificQuestions;
+            return selectedQuestions.slice(0, 8); // Limit to 8 questions max
         }
         
-        function prioritizeQuestions(questions, formData) {
-            // Remove duplicates first
-            let uniqueQuestions = questions.filter((question, index, self) => 
-                index === self.findIndex(q => q.id === question.id)
-            );
+        function getDisblayAuditQuestions(formData) {
+            const questions = [
+                {
+                    id: 'domain',
+                    question: 'Do you own a domain name for your business?',
+                    explanation: 'Disblay needs a domain to showcase your business. We can help you choose and register the perfect domain.',
+                    category: 'Technical Setup'
+                },
+                {
+                    id: 'content_photos',
+                    question: 'Do you have professional photos of your products/services?',
+                    explanation: 'Disblay is a showcase website. High-quality visuals are essential for creating a compelling first impression.',
+                    category: 'Content Readiness'
+                },
+                {
+                    id: 'business_info',
+                    question: 'Do you have your business description and contact details ready?',
+                    explanation: 'Clear business information helps visitors understand your value proposition quickly.',
+                    category: 'Content Readiness'
+                },
+                {
+                    id: 'mobile_visitors',
+                    question: 'Do most of your customers find you through mobile searches?',
+                    explanation: 'Disblay is mobile-first designed. Understanding your customer behavior helps optimize the experience.',
+                    category: 'User Experience'
+                },
+                {
+                    id: 'future_growth',
+                    question: 'Are you planning to add online payments or advanced features later?',
+                    explanation: 'Disblay can be upgraded to Topiko. Knowing your growth plans helps us prepare the foundation.',
+                    category: 'Growth Planning'
+                }
+            ];
             
-            // Sort by priority - critical business questions first
-            const priorityOrder = {
-                'Technical Infrastructure': 1,
-                'Technical Specifications': 2,
-                'Business Operations': 3,
-                'Business Integration': 4,
-                'Content Readiness': 5,
-                'Marketing Strategy': 6,
-                'Lead Management': 7,
-                'Brand Strategy': 8,
-                'Visual Identity': 9,
-                'Marketing Experience': 10
-            };
-            
-            return uniqueQuestions.sort((a, b) => {
-                const priorityA = priorityOrder[a.category] || 10;
-                const priorityB = priorityOrder[b.category] || 10;
-                return priorityA - priorityB;
-            }).slice(0, 8); // Limit to 8 questions for better UX
+            return questions;
         }
+        
+        function getTopikoBasicAuditQuestions(formData) {
+            const questions = [
+                {
+                    id: 'domain',
+                    question: 'Do you own a domain name for your business?',
+                    explanation: 'Topiko Basic includes domain setup. We can help you choose and register the perfect domain.',
+                    category: 'Technical Setup'
+                },
+                {
+                    id: 'content_photos',
+                    question: 'Do you have professional photos of your products/services?',
+                    explanation: 'High-quality visuals increase customer trust and conversion rates by 40%.',
+                    category: 'Content Readiness'
+                },
+                {
+                    id: 'business_info',
+                    question: 'Do you have your business description, services list, and contact details ready?',
+                    explanation: 'Well-structured content helps customers understand your value and improves search rankings.',
+                    category: 'Content Readiness'
+                },
+                {
+                    id: 'online_payments',
+                    question: 'Do you need to accept payments online?',
+                    explanation: 'Topiko Basic can integrate payment gateways to enable 24/7 sales.',
+                    category: 'Business Operations'
+                },
+                {
+                    id: 'customer_inquiries',
+                    question: 'How do customers currently contact you for inquiries?',
+                    explanation: 'Topiko includes customer engagement tools to streamline communication.',
+                    category: 'Customer Management'
+                }
+            ];
+            
+            return questions;
+        }
+        
+        function getTopikoProAuditQuestions(formData) {
+            let questions = [
+                {
+                    id: 'domain',
+                    question: 'Do you own a domain name for your business?',
+                    explanation: 'Topiko Pro includes professional domain setup and management.',
+                    category: 'Technical Setup'
+                },
+                {
+                    id: 'business_tools',
+                    question: 'Do you currently use any business management tools (accounting, inventory, etc.)?',
+                    explanation: 'Topiko Pro can integrate with existing tools to provide unified business management.',
+                    category: 'Business Integration'
+                },
+                {
+                    id: 'customer_database',
+                    question: 'Do you have a system to track customer information and interactions?',
+                    explanation: 'Topiko Pro includes advanced CRM capabilities to manage your customer relationships.',
+                    category: 'Customer Management'
+                },
+                {
+                    id: 'analytics_needs',
+                    question: 'Do you need detailed insights about your website visitors and sales?',
+                    explanation: 'Topiko Pro includes comprehensive analytics and reporting tools.',
+                    category: 'Analytics & Insights'
+                }
+            ];
+            
+            // Context-aware refinement based on business size and needs
+            if (formData.challenge === 'no_time') {
+                questions.push({
+                    id: 'automation_priority',
+                    question: 'Which repetitive tasks take up most of your time?',
+                    explanation: 'Topiko Pro can automate many routine tasks to free up your time for strategic work.',
+                    category: 'Time Management'
+                });
+            } else {
+                questions.push({
+                    id: 'team_access',
+                    question: 'Do multiple team members need access to manage your online presence?',
+                    explanation: 'Topiko Pro supports multi-user access with role-based permissions.',
+                    category: 'Team Management'
+                });
+            }
+            
+            // Add scalability question for growing businesses
+            if (formData.budget === '10k_25k' || formData.budget === '25k_plus') {
+                questions.push({
+                    id: 'scalability_plans',
+                    question: 'Are you planning to scale your business operations in the next 1-2 years?',
+                    explanation: 'Topiko Pro is designed to grow with your business and handle increased demand.',
+                    category: 'Growth Planning'
+                });
+            }
+            
+            return questions.slice(0, 6); // Keep focused with 6 questions
+        }
+        
+        function getMarketingAuditQuestions(formData) {
+            let questions = [
+                {
+                    id: 'current_marketing',
+                    question: 'What marketing channels do you currently use?',
+                    explanation: 'Understanding your current efforts helps us optimize and expand your marketing strategy.',
+                    category: 'Current Strategy'
+                },
+                {
+                    id: 'lead_tracking',
+                    question: 'Do you currently track where your customers come from?',
+                    explanation: 'Lead tracking is essential for measuring campaign effectiveness and ROI.',
+                    category: 'Lead Management'
+                },
+                {
+                    id: 'target_audience',
+                    question: 'Do you have a clear understanding of your ideal customers?',
+                    explanation: 'Defined target audience helps create focused campaigns with 3x better results.',
+                    category: 'Audience Strategy'
+                },
+                {
+                    id: 'marketing_content',
+                    question: 'Do you have marketing content like videos, testimonials, or case studies?',
+                    explanation: 'Quality content is the foundation of effective digital marketing campaigns.',
+                    category: 'Content Marketing'
+                },
+                {
+                    id: 'ad_budget',
+                    question: 'Are you prepared to invest in paid advertising (Google Ads, Facebook Ads)?',
+                    explanation: 'Paid advertising provides immediate visibility and typically generates 4-8x return on investment.',
+                    category: 'Advertising Investment'
+                }
+            ];
+            
+            // Context-aware refinement based on user challenges and goals
+            if (formData.challenge === 'not_getting_leads') {
+                questions.push({
+                    id: 'lead_generation_strategy',
+                    question: 'What strategies have you tried to generate more leads?',
+                    explanation: 'Understanding what you\'ve tried helps us avoid repeating ineffective approaches.',
+                    category: 'Lead Generation Focus'
+                });
+            }
+            
+            if (formData.challenge === 'no_time') {
+                questions.push({
+                    id: 'campaign_management',
+                    question: 'Would you prefer fully managed campaigns or training to do it yourself?',
+                    explanation: 'We offer both managed services and training programs to fit your time availability.',
+                    category: 'Service Preference'
+                });
+            } else {
+                questions.push({
+                    id: 'campaign_involvement',
+                    question: 'Do you want to be involved in campaign strategy and optimization?',
+                    explanation: 'Some clients prefer hands-on involvement while others want complete delegation.',
+                    category: 'Campaign Management'
+                });
+            }
+            
+            return questions.slice(0, 6); // Keep focused with 6 questions
+        }
+        
+        function getBrandingAuditQuestions(formData) {
+            let questions = [
+                {
+                    id: 'current_branding',
+                    question: 'Do you have any existing brand assets (logo, colors, fonts)?',
+                    explanation: 'We can work with existing elements or create a completely fresh brand identity.',
+                    category: 'Brand Assets'
+                },
+                {
+                    id: 'brand_personality',
+                    question: 'How would you describe your brand personality (professional, friendly, innovative, etc.)?',
+                    explanation: 'Brand personality guides all design decisions and messaging strategies.',
+                    category: 'Brand Strategy'
+                },
+                {
+                    id: 'competitor_awareness',
+                    question: 'Are you familiar with how your competitors present themselves?',
+                    explanation: 'Competitive analysis helps position your brand uniquely in the market.',
+                    category: 'Market Positioning'
+                },
+                {
+                    id: 'marketing_materials',
+                    question: 'Do you need brand guidelines for consistent marketing materials?',
+                    explanation: 'Brand guidelines ensure consistent presentation across all platforms, increasing recognition by 60%.',
+                    category: 'Brand Consistency'
+                }
+            ];
+            
+            // Context-aware refinement based on business type and brand status
+            if (['retail', 'food'].includes(formData.businessType)) {
+                questions.push({
+                    id: 'visual_appeal',
+                    question: 'How important is visual appeal for attracting your customers?',
+                    explanation: 'Visual businesses need strong visual branding to stand out and attract customers.',
+                    category: 'Visual Impact'
+                });
+            }
+            
+            if (formData.brandHelp === 'improve') {
+                questions.push({
+                    id: 'brand_issues',
+                    question: 'What aspects of your current branding would you like to improve?',
+                    explanation: 'Understanding specific concerns helps us focus on the right improvements.',
+                    category: 'Brand Improvement'
+                });
+            } else if (formData.brandHelp === 'yes') {
+                questions.push({
+                    id: 'brand_vision',
+                    question: 'Do you have a vision for how you want your brand to be perceived?',
+                    explanation: 'Your brand vision guides all creative decisions and positioning strategies.',
+                    category: 'Brand Vision'
+                });
+            }
+            
+            return questions.slice(0, 5); // Keep focused with 5 questions
+        }
+        
+        function getHEBTAuditQuestions(formData) {
+            const questions = [
+                {
+                    id: 'custom_requirements',
+                    question: 'Do you have specific technical requirements or integrations needed?',
+                    explanation: 'Custom solutions require detailed requirement analysis to ensure perfect fit.',
+                    category: 'Technical Requirements'
+                },
+                {
+                    id: 'project_scope',
+                    question: 'Have you defined the scope and objectives of your custom solution?',
+                    explanation: 'Clear project scope helps us deliver exactly what you need within timeline and budget.',
+                    category: 'Project Planning'
+                },
+                {
+                    id: 'scalability_needs',
+                    question: 'Do you need the solution to handle growth and increased usage?',
+                    explanation: 'Scalable architecture prevents future bottlenecks and reduces long-term costs.',
+                    category: 'Scalability'
+                },
+                {
+                    id: 'timeline_flexibility',
+                    question: 'Do you have flexibility in project timeline for optimal development?',
+                    explanation: 'Realistic timelines ensure quality delivery without compromising on features.',
+                    category: 'Timeline Management'
+                },
+                {
+                    id: 'team_involvement',
+                    question: 'Will your team be actively involved in the development process?',
+                    explanation: 'Collaborative development ensures the solution perfectly matches your workflow.',
+                    category: 'Team Collaboration'
+                }
+            ];
+            
+            return questions;
+        }
+        
+        // Legacy function - no longer needed with focused question sets
+        // Questions are now pre-prioritized within each product category
         
         function loadAuditQuestion() {
             if (currentAuditIndex >= auditQuestions.length) {
