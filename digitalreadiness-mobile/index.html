@@ -1195,6 +1195,9 @@
                 document.getElementById('nextIndicator').classList.add('show');
                 currentStep = 1;
                 updateProgress();
+                
+                // Update AI recommendation preview
+                updateRecommendationPreview();
                 updateProfile();
                 
                 // Debounced chat message update
@@ -1292,6 +1295,9 @@
                 // Show next step
                 currentStep = 3;
                 updateProgress();
+                
+                // Update AI recommendation preview immediately
+                updateRecommendationPreview();
                 
                 const typeMessages = {
                     retail: "Retail stores are perfect for digital transformation! Where are you located?",
@@ -1582,6 +1588,11 @@
                 }
             } else {
                 formData[questionId] = formData[questionId].filter(v => v !== value);
+            }
+            
+            // Update AI recommendation preview in real-time for goals
+            if (questionId === 'goals') {
+                updateRecommendationPreview();
             }
             
             // Add engaging messages for goals selection
@@ -3140,69 +3151,135 @@ We have all the information needed to help you get started!`);
         }
         
         function getRecommendationBasedBoxes() {
-            const boxes = [];
             const goals = formData.goals || [];
             const businessType = formData.businessType || '';
             const budget = formData.budget || '';
+            const digitalStatus = formData.digitalStatus || '';
+            const challenge = formData.challenge || '';
             
-            console.log('🎯 Current form data - Goals:', goals, 'Type:', businessType, 'Budget:', budget);
+            console.log('🧠 AI Analysis - Goals:', goals, 'Type:', businessType, 'Budget:', budget, 'Digital:', digitalStatus);
             
-            // Simple goal-to-box mapping (as requested)
-            if (goals.includes('showcase_products')) {
-                boxes.push('Showcase');
+            // AI-powered recommendation engine that gets smarter with each input
+            let recommendations = [];
+            
+            // PHASE 1: Initial Business Type Analysis (appears immediately)
+            if (businessType) {
+                switch (businessType) {
+                    case 'retail':
+                        recommendations = ['Showcase', 'Marketing', 'Website'];
+                        break;
+                    case 'services':
+                        recommendations = ['Website Pro', 'Marketing', 'Branding'];
+                        break;
+                    case 'food':
+                        recommendations = ['Showcase', 'Website', 'Marketing'];
+                        break;
+                    case 'manufacturing':
+                        recommendations = ['Website Pro', 'Marketing', 'Custom Solutions'];
+                        break;
+                    default:
+                        recommendations = ['Website', 'Marketing', 'Branding'];
+                }
+            } else {
+                // Before business type is selected, show generic but appealing options
+                recommendations = ['Website', 'Marketing', 'Branding'];
             }
-            if (goals.includes('get_customers')) {
-                boxes.push('Marketing');
+            
+            // PHASE 2: Goal-Based Refinement (gets more specific)
+            if (goals.length > 0) {
+                const goalBasedRecommendations = [];
+                
+                // Direct goal mapping with priority order
+                if (goals.includes('showcase_products')) {
+                    goalBasedRecommendations.push('Showcase');
+                }
+                if (goals.includes('get_customers')) {
+                    goalBasedRecommendations.push('Marketing');
+                }
+                if (goals.includes('build_brand')) {
+                    goalBasedRecommendations.push('Branding');
+                }
+                if (goals.includes('create_website')) {
+                    // Smart Website vs Website Pro decision
+                    if (budget === '10k_25k' || budget === '25k_plus' || 
+                        goals.includes('get_customers') || businessType === 'services') {
+                        goalBasedRecommendations.push('Website Pro');
+                    } else {
+                        goalBasedRecommendations.push('Website');
+                    }
+                }
+                if (goals.includes('custom_solution')) {
+                    goalBasedRecommendations.push('Custom Solutions');
+                }
+                
+                // Merge goal-based with business type recommendations
+                recommendations = [...new Set([...goalBasedRecommendations, ...recommendations])];
             }
-            if (goals.includes('build_brand')) {
-                boxes.push('Branding');
-            }
-            if (goals.includes('create_website')) {
-                // Determine Website vs Website Pro based on budget/requirements
-                if (budget === '10k_25k' || budget === '25k_plus' || goals.includes('get_customers')) {
-                    boxes.push('Website Pro');
-                } else {
-                    boxes.push('Website');
+            
+            // PHASE 3: Digital Status Intelligence (refines further)
+            if (digitalStatus) {
+                if (digitalStatus === 'none') {
+                    // No digital presence - prioritize foundational solutions
+                    recommendations = recommendations.filter(r => r !== 'Custom Solutions');
+                    if (!recommendations.includes('Website') && !recommendations.includes('Website Pro')) {
+                        recommendations.unshift('Website');
+                    }
+                } else if (digitalStatus === 'basic_website') {
+                    // Has basic website - focus on optimization and marketing
+                    recommendations = recommendations.filter(r => r !== 'Website');
+                    if (!recommendations.includes('Website Pro')) {
+                        recommendations.unshift('Website Pro');
+                    }
+                } else if (digitalStatus === 'active_no_results') {
+                    // Active but no results - prioritize marketing
+                    if (!recommendations.includes('Marketing')) {
+                        recommendations.unshift('Marketing');
+                    }
                 }
             }
-            if (goals.includes('custom_solution')) {
-                boxes.push('Custom Solutions');
-            }
             
-            // Smart fallbacks if no goals are selected yet
-            if (boxes.length === 0) {
-                // Provide intelligent defaults based on business type
-                if (businessType === 'retail') {
-                    boxes.push('Showcase', 'Marketing');
-                } else if (businessType === 'services') {
-                    boxes.push('Website', 'Marketing');
-                } else if (businessType === 'food') {
-                    boxes.push('Showcase', 'Website');
-                } else if (businessType === 'manufacturing') {
-                    boxes.push('Website Pro', 'Marketing');
-                } else {
-                    // Default fallback
-                    boxes.push('Website');
+            // PHASE 4: Budget Intelligence (final optimization)
+            if (budget) {
+                if (budget === 'below_2k') {
+                    // Budget-conscious - prioritize cost-effective solutions
+                    recommendations = recommendations.filter(r => !['Website Pro', 'Custom Solutions'].includes(r));
+                    if (!recommendations.includes('Showcase')) {
+                        recommendations.unshift('Showcase');
+                    }
+                } else if (budget === '25k_plus') {
+                    // High budget - show premium solutions
+                    recommendations = recommendations.map(r => r === 'Website' ? 'Website Pro' : r);
+                    if (!recommendations.includes('Custom Solutions')) {
+                        recommendations.push('Custom Solutions');
+                    }
                 }
             }
             
-            // Ensure we have at least 2 boxes for better visual impact
-            if (boxes.length === 1) {
-                if (boxes[0] === 'Showcase') {
-                    boxes.push('Marketing');
-                } else if (boxes[0] === 'Marketing') {
-                    boxes.push('Website');
-                } else {
-                    boxes.push('Marketing');
+            // PHASE 5: Challenge-Based Fine-tuning
+            if (challenge) {
+                if (challenge === 'no_leads' && !recommendations.includes('Marketing')) {
+                    recommendations.unshift('Marketing');
+                } else if (challenge === 'competitors_ahead' && !recommendations.includes('Branding')) {
+                    recommendations.push('Branding');
                 }
             }
             
-            // Remove duplicates and limit to 3
-            const uniqueBoxes = [...new Set(boxes)];
-            const finalBoxes = uniqueBoxes.slice(0, 3);
+            // Ensure exactly 3 premium recommendations
+            const finalRecommendations = [...new Set(recommendations)].slice(0, 3);
             
-            console.log('📦 Goal-based boxes generated:', finalBoxes);
-            return finalBoxes;
+            // Always ensure we have 3 boxes for visual consistency
+            while (finalRecommendations.length < 3) {
+                const fallbackOptions = ['Website', 'Marketing', 'Branding', 'Showcase'];
+                for (const option of fallbackOptions) {
+                    if (!finalRecommendations.includes(option)) {
+                        finalRecommendations.push(option);
+                        break;
+                    }
+                }
+            }
+            
+            console.log('🎯 AI Recommendations Generated:', finalRecommendations);
+            return finalRecommendations;
         }
 
         function updateRecommendationPreview() {
@@ -3216,39 +3293,49 @@ We have all the information needed to help you get started!`);
                 previewConfidence.textContent = `${confidence}%`;
             }
             
-            // Update text based on progress
+            // AI Coach Messages based on progress and data
             if (previewText) {
                 if (currentScreen === 1) {
-                    previewText.textContent = "Analyzing your profile...";
+                    if (formData.businessType) {
+                        previewText.textContent = `AI analyzing ${getBusinessTypeLabel(formData.businessType)} business needs...`;
+                    } else if (formData.fullName) {
+                        previewText.textContent = "Building your personalized roadmap...";
+                    } else {
+                        previewText.textContent = "AI-powered recommendation engine ready...";
+                    }
                 } else if (currentScreen === 2) {
-                    previewText.textContent = "Understanding your goals...";
+                    if (formData.goals && formData.goals.length > 0) {
+                        previewText.textContent = `Optimizing ${formData.goals.length} goal${formData.goals.length > 1 ? 's' : ''} with budget analysis...`;
+                    } else {
+                        previewText.textContent = "Understanding your business objectives...";
+                    }
                 } else if (currentScreen === 3) {
-                    previewText.textContent = "Finalizing recommendations...";
+                    previewText.textContent = "Finalizing your custom solution stack...";
                 }
             }
             
-            // Reveal products based on recommendation and progress
+            // AI-Powered Dynamic Recommendation Display
             if (products) {
                 let numRevealed = 0;
-                let recommendationBoxes = [];
+                let recommendationBoxes = getRecommendationBasedBoxes(); // Always get fresh recommendations
                 
+                // Show progressive revelation based on data completion
                 if (currentScreen === 1) {
-                    numRevealed = 0; // No boxes on welcome screen
-                    recommendationBoxes = ['?', '?', '?'];
-                } else if (currentScreen >= 2) {
-                    // Get recommendation-based boxes for screens 2+
-                    recommendationBoxes = getRecommendationBasedBoxes();
-                    
-                    if (currentScreen === 2) {
-                        // Show first box when understanding goals
-                        numRevealed = Math.min(1, recommendationBoxes.length);
-                    } else if (currentScreen === 3) {
-                        // Show all relevant boxes on contact screen
-                        numRevealed = recommendationBoxes.length;
+                    // Screen 1: Show initial AI analysis based on available data
+                    if (formData.businessType) {
+                        numRevealed = 3; // Business type selected - show full AI analysis
+                    } else if (formData.fullName && formData.businessName) {
+                        numRevealed = 1; // Basic info - show first recommendation
                     } else {
-                        // Fallback - show all
-                        numRevealed = recommendationBoxes.length;
+                        numRevealed = 0; // Just started - mystery boxes
+                        recommendationBoxes = ['?', '?', '?'];
                     }
+                } else if (currentScreen === 2) {
+                    // Screen 2: Always show all recommendations as AI gets smarter
+                    numRevealed = 3; // Show full AI analysis with goals
+                } else if (currentScreen >= 3) {
+                    // Screen 3+: Full confident recommendations
+                    numRevealed = 3; // Complete AI analysis
                 }
                 
                 // Ensure we have exactly 3 boxes for consistent layout
