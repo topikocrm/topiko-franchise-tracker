@@ -172,6 +172,21 @@
             font-size: 16px;
             color: white;
             margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        /* PROGRESSIVE FORM SECTIONS */
+        #businessNameSection,
+        #businessTypeSection, 
+        #cityLocationSection {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        #businessNameSection.show,
+        #businessTypeSection.show,
+        #cityLocationSection.show {
+            opacity: 1;
         }
 
         .form-input::placeholder {
@@ -359,7 +374,9 @@
                 <div id="businessNameSection" style="display: none;">
                     <div class="question-title" style="margin-top: 20px;">What's your business name?</div>
                     <input type="text" class="form-input" id="businessName" placeholder="Enter your business name">
-                    
+                </div>
+                
+                <div id="businessTypeSection" style="display: none;">
                     <div class="question-title" style="margin-top: 20px;">Type of business</div>
                     <select class="form-input" id="businessType" style="height: 48px;">
                         <option value="">Select your business type</option>
@@ -379,7 +396,9 @@
                         <option value="electronics">Electronics/Tech</option>
                         <option value="other">Other</option>
                     </select>
-                    
+                </div>
+                
+                <div id="cityLocationSection" style="display: none;">
                     <div class="question-title" style="margin-top: 20px;">City/Location</div>
                     <input type="text" class="form-input" id="cityLocation" placeholder="Enter your city">
                 </div>
@@ -567,8 +586,22 @@
             clearTimeout(inputTimeout);
             
             if (fullName.length > 2) {
-                // Show business name section immediately
-                document.getElementById('businessNameSection').style.display = 'block';
+                // Show business name section with smooth animation
+                const businessSection = document.getElementById('businessNameSection');
+                if (businessSection.style.display === 'none') {
+                    businessSection.style.display = 'block';
+                    businessSection.style.opacity = '0';
+                    setTimeout(() => {
+                        businessSection.style.transition = 'opacity 0.3s ease';
+                        businessSection.style.opacity = '1';
+                    }, 50);
+                    
+                    // Focus on business name input after animation
+                    setTimeout(() => {
+                        document.getElementById('businessName').focus();
+                    }, 300);
+                }
+                
                 updateProfile();
                 
                 // Debounced chat message update
@@ -583,6 +616,11 @@
                     const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
                     document.getElementById('chatMessage1').textContent = randomGreeting;
                 }, 1500);
+            } else {
+                // Hide subsequent sections if name is too short
+                document.getElementById('businessNameSection').style.display = 'none';
+                document.getElementById('businessTypeSection').style.display = 'none';
+                document.getElementById('cityLocationSection').style.display = 'none';
             }
             
             validateScreen1();
@@ -596,20 +634,40 @@
             clearTimeout(inputTimeout);
             
             if (businessName.length > 1) {
+                // Show business type section with smooth animation
+                const typeSection = document.getElementById('businessTypeSection');
+                if (typeSection.style.display === 'none') {
+                    typeSection.style.display = 'block';
+                    typeSection.style.opacity = '0';
+                    setTimeout(() => {
+                        typeSection.style.transition = 'opacity 0.3s ease';
+                        typeSection.style.opacity = '1';
+                    }, 50);
+                    
+                    // Focus on business type dropdown after animation
+                    setTimeout(() => {
+                        document.getElementById('businessType').focus();
+                    }, 300);
+                }
+                
                 updateProfile();
                 
                 // Debounced chat message update
                 inputTimeout = setTimeout(() => {
                     const compliments = [
-                        `${businessName} - sounds promising!`,
-                        `${businessName} - I like it!`,
-                        `${businessName} - excellent choice!`,
-                        `${businessName} - that's a solid name!`,
-                        `${businessName} - love the branding potential!`
+                        `${businessName} - sounds promising! What type of business is it?`,
+                        `${businessName} - I like it! Tell me what industry you're in.`,
+                        `${businessName} - excellent choice! What category best describes it?`,
+                        `${businessName} - that's a solid name! What's your business type?`,
+                        `${businessName} - love the branding potential! What industry are you in?`
                     ];
                     const randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
                     document.getElementById('chatMessage1').textContent = randomCompliment;
                 }, 1500);
+            } else {
+                // Hide subsequent sections if business name is too short
+                document.getElementById('businessTypeSection').style.display = 'none';
+                document.getElementById('cityLocationSection').style.display = 'none';
             }
             
             validateScreen1();
@@ -620,29 +678,48 @@
             formData.businessType = businessType;
             
             if (businessType) {
+                // Show city location section with smooth animation
+                const citySection = document.getElementById('cityLocationSection');
+                if (citySection.style.display === 'none') {
+                    citySection.style.display = 'block';
+                    citySection.style.opacity = '0';
+                    setTimeout(() => {
+                        citySection.style.transition = 'opacity 0.3s ease';
+                        citySection.style.opacity = '1';
+                    }, 50);
+                    
+                    // Focus on city input after animation
+                    setTimeout(() => {
+                        document.getElementById('cityLocation').focus();
+                    }, 300);
+                }
+                
                 const typeMessages = {
-                    retail: "Retail stores are perfect for digital transformation!",
-                    restaurant: "Food businesses are booming online! 🍕",
-                    salon: "Beauty services see amazing digital growth! ✨",
-                    boutique: "Fashion brands love digital marketing! 👗",
-                    services: "Professional services thrive online! 💼",
-                    healthcare: "Healthcare digitalization is the future! 🏥",
-                    education: "EdTech is revolutionizing learning! 📚",
-                    manufacturing: "Industry 4.0 is here! 🏭",
-                    consulting: "Consultants scale beautifully online! 📈",
-                    fitness: "Fitness apps and online coaching are huge! 💪",
-                    travel: "Travel booking systems drive great revenue! ✈️",
-                    real_estate: "PropTech is transforming real estate! 🏠",
-                    automotive: "Auto services need strong digital presence! 🚗",
-                    electronics: "Tech businesses must stay cutting-edge! 💻",
-                    other: "Every business has digital potential! 🚀"
+                    retail: "Retail stores are perfect for digital transformation! Where are you located?",
+                    restaurant: "Food businesses are booming online! 🍕 What's your city?",
+                    salon: "Beauty services see amazing digital growth! ✨ Where's your salon?",
+                    boutique: "Fashion brands love digital marketing! 👗 What city are you in?",
+                    services: "Professional services thrive online! 💼 Where do you operate?",
+                    healthcare: "Healthcare digitalization is the future! 🏥 What's your location?",
+                    education: "EdTech is revolutionizing learning! 📚 Where are you based?",
+                    manufacturing: "Industry 4.0 is here! 🏭 What city are you in?",
+                    consulting: "Consultants scale beautifully online! 📈 Where do you work?",
+                    fitness: "Fitness apps and online coaching are huge! 💪 What's your location?",
+                    travel: "Travel booking systems drive great revenue! ✈️ Where are you based?",
+                    real_estate: "PropTech is transforming real estate! 🏠 What city do you serve?",
+                    automotive: "Auto services need strong digital presence! 🚗 Where's your business?",
+                    electronics: "Tech businesses must stay cutting-edge! 💻 What's your city?",
+                    other: "Every business has digital potential! 🚀 Where are you located?"
                 };
                 
                 setTimeout(() => {
-                    document.getElementById('chatMessage1').textContent = typeMessages[businessType] || "Great choice! Let's build your digital strategy.";
+                    document.getElementById('chatMessage1').textContent = typeMessages[businessType] || "Great choice! Where are you located?";
                 }, 500);
                 
                 updateProfile();
+            } else {
+                // Hide city section if no business type selected
+                document.getElementById('cityLocationSection').style.display = 'none';
             }
             
             validateScreen1();
@@ -658,13 +735,13 @@
             if (city.length > 2) {
                 updateProfile();
                 
-                // Debounced chat message update
+                // Debounced chat message update with completion message
                 inputTimeout = setTimeout(() => {
                     const cityMessages = [
-                        `${city} has great business potential! 🌟`,
-                        `${city} is perfect for digital growth! 📍`,
-                        `Love ${city}! Great market for your business! 🎯`,
-                        `${city} - excellent location for expansion! 🚀`
+                        `${city} has great business potential! 🌟 Ready to start your assessment?`,
+                        `${city} is perfect for digital growth! 📍 Let's build your strategy!`,
+                        `Love ${city}! Great market for your business! 🎯 Shall we begin?`,
+                        `${city} - excellent location for expansion! 🚀 Time to assess your digital readiness!`
                     ];
                     const randomCityMessage = cityMessages[Math.floor(Math.random() * cityMessages.length)];
                     document.getElementById('chatMessage1').textContent = randomCityMessage;
