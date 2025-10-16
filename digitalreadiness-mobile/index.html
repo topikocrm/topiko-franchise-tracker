@@ -518,11 +518,11 @@
                 question: 'What are your main goals? (Select all that apply)',
                 type: 'checkbox',
                 options: [
-                    { value: 'customers', label: 'Get more customers' },
-                    { value: 'showcase', label: 'Showcase products/services' },
-                    { value: 'brand', label: 'Build brand identity' },
-                    { value: 'automate', label: 'Automate operations' },
-                    { value: 'website', label: 'Create website/app' }
+                    { value: 'get_customers', label: 'Get more customers' },
+                    { value: 'showcase_products', label: 'Showcase products/services' },
+                    { value: 'build_brand', label: 'Build brand identity' },
+                    { value: 'create_website', label: 'Create website/app' },
+                    { value: 'custom_solution', label: 'Need custom solution' }
                 ]
             },
             {
@@ -531,9 +531,9 @@
                 type: 'radio',
                 options: [
                     { value: 'none', label: 'No digital presence', icon: '🌱' },
-                    { value: 'whatsapp', label: 'Only WhatsApp/Google', icon: '💬' },
-                    { value: 'website', label: 'Basic website', icon: '🌐' },
-                    { value: 'digital_no_results', label: 'Digital but no results', icon: '📉' }
+                    { value: 'whatsapp_only', label: 'Only WhatsApp/Google', icon: '💬' },
+                    { value: 'basic_website', label: 'Basic website', icon: '🌐' },
+                    { value: 'active_no_results', label: 'Active but no results', icon: '📉' }
                 ]
             },
             {
@@ -552,10 +552,31 @@
                 question: 'What\'s your biggest challenge?',
                 type: 'radio',
                 options: [
-                    { value: 'no_leads', label: 'Not getting leads', icon: '📢' },
-                    { value: 'dont_know', label: 'Don\'t know where to start', icon: '❓' },
-                    { value: 'no_time', label: 'No time to manage', icon: '⏰' },
-                    { value: 'low_sales', label: 'Low sales despite being online', icon: '📉' }
+                    { value: 'not_getting_leads', label: 'Not getting leads', icon: '📢' },
+                    { value: 'low_sales', label: 'Low sales despite being online', icon: '📉' },
+                    { value: 'dont_know_start', label: 'Don\'t know where to start', icon: '❓' },
+                    { value: 'no_time', label: 'No time to manage', icon: '⏰' }
+                ]
+            },
+            {
+                id: 'timeline',
+                question: 'When do you need results?',
+                type: 'radio',
+                options: [
+                    { value: 'immediate', label: 'Immediately', icon: '⚡' },
+                    { value: '1_3_months', label: '1-3 months', icon: '📅' },
+                    { value: '3_6_months', label: '3-6 months', icon: '🗓️' },
+                    { value: 'exploring', label: 'Just exploring', icon: '🔍' }
+                ]
+            },
+            {
+                id: 'brandHelp',
+                question: 'Do you need help with branding?',
+                type: 'radio',
+                options: [
+                    { value: 'yes', label: 'Yes, need logo/branding', icon: '🎨' },
+                    { value: 'improve', label: 'Want to improve existing', icon: '✨' },
+                    { value: 'no', label: 'Happy with current branding', icon: '✅' }
                 ]
             }
         ];
@@ -908,11 +929,11 @@
             // Add engaging messages for goals selection
             if (questionId === 'goals') {
                 const goalMessages = {
-                    customers: ["More customers = more revenue! 💰", "Customer acquisition is key to growth! 🎯", "Let's build that customer pipeline! 🚀"],
-                    showcase: ["Visual storytelling sells! 📸", "Show off your amazing work! ✨", "Professional showcase drives trust! 🌟"],
-                    brand: ["Brand identity creates lasting value! 🎨", "Strong branding = premium pricing! 💎", "Your brand is your business asset! 🏆"],
-                    automate: ["Automation saves 10+ hours per week! ⏰", "Smart automation = more profits! 🤖", "Work smarter, not harder! 💡"],
-                    website: ["Your 24/7 digital storefront! 🏪", "Websites that work while you sleep! 💤", "Your digital headquarters! 🏢"]
+                    get_customers: ["More customers = more revenue! 💰", "Customer acquisition is key to growth! 🎯", "Let's build that customer pipeline! 🚀"],
+                    showcase_products: ["Visual storytelling sells! 📸", "Show off your amazing work! ✨", "Professional showcase drives trust! 🌟"],
+                    build_brand: ["Brand identity creates lasting value! 🎨", "Strong branding = premium pricing! 💎", "Your brand is your business asset! 🏆"],
+                    create_website: ["Your 24/7 digital storefront! 🏪", "Websites that work while you sleep! 💤", "Your digital headquarters! 🏢"],
+                    custom_solution: ["Custom solutions drive real results! 🎯", "Tailored approach for unique needs! ⚡", "Bespoke systems that scale! 🚀"]
                 };
                 
                 if (checkbox.checked && goalMessages[value]) {
@@ -943,17 +964,11 @@
 
         function updateChatMessage(questionId, value) {
             const messages = {
-                businessType: {
-                    retail: "E-commerce is booming! Perfect timing for digital growth.",
-                    services: "Service businesses see amazing results with digital tools!",
-                    manufacturing: "B2B digitalization is the future!",
-                    food: "Food delivery and online ordering changed everything!"
-                },
                 digitalStatus: {
                     none: "Perfect blank canvas! We'll build something amazing.",
-                    whatsapp: "Smart start! Let's expand your reach.",
-                    website: "Good foundation! Time to optimize it.",
-                    digital_no_results: "Let's diagnose and fix that!"
+                    whatsapp_only: "Smart start! Let's expand your reach.",
+                    basic_website: "Good foundation! Time to optimize it.",
+                    active_no_results: "Let's diagnose and fix that!"
                 },
                 budget: {
                     below_2k: "Smart budgeting! We'll maximize every rupee.",
@@ -962,10 +977,21 @@
                     '25k_plus': "Enterprise level! Custom solutions await."
                 },
                 challenge: {
-                    no_leads: "We'll fix your lead pipeline!",
-                    dont_know: "That's why I'm here! We'll guide you.",
-                    no_time: "We'll handle everything for you!",
-                    low_sales: "Time to convert that traffic!"
+                    not_getting_leads: "We'll fix your lead pipeline!",
+                    low_sales: "Time to convert that traffic and boost sales!",
+                    dont_know_start: "That's why I'm here! We'll guide you step-by-step.",
+                    no_time: "We'll handle everything for you!"
+                },
+                timeline: {
+                    immediate: "Urgent needs require smart solutions! ⚡",
+                    '1_3_months': "Perfect timeline for solid growth! 📈",
+                    '3_6_months': "Strategic planning pays off! 🎯",
+                    exploring: "Smart to explore options first! 🔍"
+                },
+                brandHelp: {
+                    yes: "Great branding is a game-changer! 🎨",
+                    improve: "Brand evolution keeps you competitive! ✨",
+                    no: "Strong existing brand is an asset! ✅"
                 }
             };
             
@@ -1046,95 +1072,342 @@
             }
         }
 
-        // Results generation
+        // Topiko Recommendation Engine
         function generateResults() {
-            // Calculate score based on answers
-            let score = 60; // Base score
-            
-            if (formData.digitalStatus === 'website') score += 15;
-            else if (formData.digitalStatus === 'whatsapp') score += 10;
-            else if (formData.digitalStatus === 'none') score += 5;
-            
-            if (formData.budget === '25k_plus') score += 20;
-            else if (formData.budget === '10k_25k') score += 15;
-            else if (formData.budget === '2k_10k') score += 10;
-            
-            if (formData.goals.length > 3) score += 10;
-            else if (formData.goals.length > 1) score += 5;
-            
-            score = Math.min(score, 95); // Cap at 95
+            const recommendation = getTopikkoRecommendation(formData);
             
             // Update score display
-            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalScore').textContent = recommendation.confidence;
             
-            // Update score description
+            // Update score description based on confidence
             let title, description;
-            if (score >= 85) {
-                title = "Excellent Digital Potential!";
-                description = "You're ready for serious digital transformation.";
-            } else if (score >= 70) {
-                title = "Good Digital Foundation!";
-                description = "With the right strategy, you'll see great results.";
+            if (recommendation.confidence >= 85) {
+                title = "Perfect Match Found!";
+                description = "High confidence recommendation based on your needs.";
+            } else if (recommendation.confidence >= 70) {
+                title = "Great Solution Identified!";
+                description = "Strong match for your business requirements.";
             } else {
-                title = "Great Starting Point!";
-                description = "Lots of opportunity for digital growth ahead.";
+                title = "Good Starting Point!";
+                description = "Solid foundation for your digital journey.";
             }
             
             document.getElementById('scoreTitle').textContent = title;
             document.getElementById('scoreDescription').textContent = description;
             
-            // Generate personalized recommendations
-            generateRecommendations();
+            // Generate recommendations based on engine results
+            generateRecommendations(recommendation);
         }
-
-        function generateRecommendations() {
-            const firstName = formData.fullName.split(' ')[0];
-            let recommendations = `
-                <div style="text-align: left; margin-bottom: 20px;">
-                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Perfect for ${formData.businessName}:</div>
-            `;
+        
+        function getTopikkoRecommendation(data) {
+            // Products available
+            const products = {
+                disblay: { name: "Disblay", price: 1499, description: "Starter showcase website" },
+                topiko_basic: { name: "Topiko Basic", price: 4999, description: "Professional website + domain" },
+                topiko_pro: { name: "Topiko Pro", price: 9999, description: "Full digital presence + CRM" },
+                marketing: { name: "Digital Marketing", price: 4999, description: "Lead generation + campaigns" },
+                brandpreneuring: { name: "Brandpreneuring", price: 999, description: "Logo + brand identity" },
+                hebt: { name: "HEBT Custom", price: 300000, description: "Custom enterprise solution" }
+            };
             
-            // Business type specific recommendations
-            if (formData.businessType === 'retail') {
-                recommendations += '<div style="margin-bottom: 8px;">✓ E-commerce website with payment gateway</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Social media marketing automation</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Inventory management system</div>';
-            } else if (formData.businessType === 'restaurant') {
-                recommendations += '<div style="margin-bottom: 8px;">✓ Online ordering system</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Delivery integration</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Menu management</div>';
-            } else if (formData.businessType === 'salon') {
-                recommendations += '<div style="margin-bottom: 8px;">✓ Online appointment booking</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Service showcase gallery</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Customer management system</div>';
-            } else if (formData.businessType === 'boutique') {
-                recommendations += '<div style="margin-bottom: 8px;">✓ Fashion e-commerce platform</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Visual catalog with styling</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Social media integration</div>';
-            } else if (formData.businessType === 'services' || formData.businessType === 'consulting') {
-                recommendations += '<div style="margin-bottom: 8px;">✓ Professional service website</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Online booking system</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Client management tools</div>';
-            } else if (formData.businessType === 'healthcare') {
-                recommendations += '<div style="margin-bottom: 8px;">✓ Patient portal system</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Appointment scheduling</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Telehealth integration</div>';
-            } else if (formData.businessType === 'fitness') {
-                recommendations += '<div style="margin-bottom: 8px;">✓ Class booking system</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Member management portal</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Workout tracking app</div>';
-            } else {
-                recommendations += '<div style="margin-bottom: 8px;">✓ Professional business website</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Lead generation system</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Customer management tools</div>';
+            // Hard overrides first
+            const overrides = checkHardOverrides(data);
+            if (overrides) {
+                return {
+                    primary_recommendation: {
+                        product_id: overrides.product,
+                        product_name: products[overrides.product].name,
+                        price: products[overrides.product].price,
+                        description: products[overrides.product].description,
+                        confidence: overrides.confidence,
+                        reason: overrides.reason
+                    },
+                    secondary_recommendations: overrides.secondary || [],
+                    route_to: overrides.route,
+                    crm_tags: generateCRMTags(data, overrides.product)
+                };
             }
             
-            recommendations += '</div>';
+            // Scoring rules
+            const scores = calculateProductScores(data);
+            const topProduct = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            const confidence = Math.min(95, Math.max(60, scores[topProduct]));
+            
+            // Generate secondary recommendations
+            const sortedProducts = Object.entries(scores)
+                .sort(([,a], [,b]) => b - a)
+                .slice(1, 3)
+                .filter(([product, score]) => score > 30)
+                .map(([product, score]) => ({
+                    product_id: product,
+                    product_name: products[product].name,
+                    price: products[product].price,
+                    note: getSecondaryNote(product, topProduct)
+                }));
+            
+            return {
+                primary_recommendation: {
+                    product_id: topProduct,
+                    product_name: products[topProduct].name,
+                    price: products[topProduct].price,
+                    description: products[topProduct].description,
+                    confidence: confidence,
+                    reason: generateReason(data, topProduct, scores)
+                },
+                secondary_recommendations: sortedProducts,
+                route_to: getRoutingPath(topProduct, data.budget),
+                crm_tags: generateCRMTags(data, topProduct)
+            };
+        }
+        
+        function checkHardOverrides(data) {
+            // Custom solution override
+            if (data.goals && data.goals.includes('custom_solution')) {
+                return {
+                    product: 'hebt',
+                    confidence: 95,
+                    reason: 'Custom solution requirement detected',
+                    route: 'hebt_pipeline'
+                };
+            }
+            
+            // No digital + low budget
+            if (data.digitalStatus === 'none' && data.budget === 'below_2k') {
+                return {
+                    product: 'disblay',
+                    confidence: 90,
+                    reason: 'Perfect starter solution for new businesses',
+                    route: 'self_serve'
+                };
+            }
+            
+            // Active but no results + marketing interest
+            if (data.digitalStatus === 'active_no_results' && data.goals && data.goals.includes('get_customers')) {
+                return {
+                    product: 'marketing',
+                    confidence: 88,
+                    reason: 'Need marketing to drive results from existing presence',
+                    route: 'consultative_sales',
+                    secondary: [{ product_id: 'topiko_basic', note: 'Foundation upgrade' }]
+                };
+            }
+            
+            // Brand help + good budget
+            if ((data.brandHelp === 'yes' || data.brandHelp === 'improve') && 
+                (data.budget === '10k_25k' || data.budget === '25k_plus')) {
+                return {
+                    product: 'brandpreneuring',
+                    confidence: 85,
+                    reason: 'Branding essential for business growth',
+                    route: 'consultative_sales',
+                    secondary: [{ product_id: 'topiko_pro', note: 'Complete digital presence' }]
+                };
+            }
+            
+            // Create website + mid budget
+            if (data.goals && data.goals.includes('create_website') && data.budget === '2k_10k') {
+                return {
+                    product: 'topiko_basic',
+                    confidence: 87,
+                    reason: 'Perfect budget for professional website',
+                    route: 'consultative_sales'
+                };
+            }
+            
+            return null;
+        }
+        
+        function calculateProductScores(data) {
+            const scores = {
+                disblay: 0,
+                topiko_basic: 0,
+                topiko_pro: 0,
+                marketing: 0,
+                brandpreneuring: 0,
+                hebt: 0
+            };
+            
+            // Goal-based scoring
+            if (data.goals) {
+                data.goals.forEach(goal => {
+                    switch(goal) {
+                        case 'showcase_products':
+                            scores.disblay += 40;
+                            scores.topiko_basic += 20;
+                            break;
+                        case 'get_customers':
+                            scores.marketing += 30;
+                            scores.topiko_pro += 25;
+                            break;
+                        case 'build_brand':
+                            scores.brandpreneuring += 40;
+                            scores.topiko_basic += 20;
+                            break;
+                        case 'create_website':
+                            scores.topiko_basic += 35;
+                            scores.disblay += 15;
+                            break;
+                        case 'custom_solution':
+                            scores.hebt += 100;
+                            break;
+                    }
+                });
+            }
+            
+            // Digital status scoring
+            switch(data.digitalStatus) {
+                case 'none':
+                    if (data.budget === 'below_2k') scores.disblay += 60;
+                    else if (data.budget === '2k_10k') scores.topiko_basic += 60;
+                    break;
+                case 'whatsapp_only':
+                    scores.disblay += 50;
+                    scores.topiko_basic += 20;
+                    break;
+                case 'active_no_results':
+                    scores.marketing += 50;
+                    scores.topiko_pro += 30;
+                    break;
+            }
+            
+            // Challenge-based scoring
+            switch(data.challenge) {
+                case 'not_getting_leads':
+                    scores.marketing += 40;
+                    scores.topiko_pro += 20;
+                    break;
+                case 'low_sales':
+                    scores.brandpreneuring += 40;
+                    scores.marketing += 30;
+                    break;
+            }
+            
+            // Brand help scoring
+            if (data.brandHelp === 'yes' || data.brandHelp === 'improve') {
+                scores.brandpreneuring += 40;
+                scores.topiko_basic += 20;
+            }
+            
+            // Budget modifiers
+            if (data.budget === '25k_plus') {
+                scores.hebt += 50;
+            }
+            
+            // Timeline modifiers
+            if (data.timeline === 'immediate' && data.budget === '2k_10k') {
+                scores.topiko_basic += 30;
+                scores.marketing += 20;
+            }
+            
+            return scores;
+        }
+        
+        function generateReason(data, topProduct, scores) {
+            const reasons = {
+                disblay: `Perfect starter solution for showcasing ${data.businessType} business`,
+                topiko_basic: `Professional website ideal for ${data.businessType} with your budget`,
+                topiko_pro: `Complete digital presence to grow your ${data.businessType} business`,
+                marketing: `Lead generation essential for customer acquisition goals`,
+                brandpreneuring: `Strong branding foundation for business growth`,
+                hebt: `Custom solution for unique business requirements`
+            };
+            
+            return reasons[topProduct] || `Best match based on your requirements`;
+        }
+        
+        function getSecondaryNote(product, primary) {
+            const notes = {
+                disblay: "Great starting point",
+                topiko_basic: "Professional foundation",
+                topiko_pro: "Complete solution",
+                marketing: "Drive more leads", 
+                brandpreneuring: "Build strong brand",
+                hebt: "Custom development"
+            };
+            return notes[product] || "Recommended addition";
+        }
+        
+        function getRoutingPath(product, budget) {
+            if (product === 'hebt') return 'hebt_pipeline';
+            if (product === 'disblay' && budget === 'below_2k') return 'self_serve';
+            return 'consultative_sales';
+        }
+        
+        function generateCRMTags(data, product) {
+            const tags = [
+                `${product}_lead`,
+                `budget_${data.budget}`,
+                `digital_${data.digitalStatus}`,
+                `${data.businessType}_business`
+            ];
+            
+            if (data.timeline === 'immediate') tags.push('urgent_timeline');
+            if (data.goals && data.goals.includes('get_customers')) tags.push('wants_customers');
+            if (data.brandHelp === 'yes') tags.push('needs_branding');
+            
+            return tags;
+        }
+
+        function generateRecommendations(recommendation) {
+            const firstName = formData.fullName.split(' ')[0];
+            const primary = recommendation.primary_recommendation;
+            
+            let recommendations = `
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #667eea;">
+                        💎 ${primary.product_name}
+                    </div>
+                    <div style="font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 12px;">
+                        ${primary.description}
+                    </div>
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">
+                        ₹${primary.price.toLocaleString()}${primary.price < 10000 ? '/year' : primary.price > 100000 ? ' starting' : '/year'}
+                    </div>
+                    <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 16px; font-style: italic;">
+                        "${primary.reason}"
+                    </div>
+            `;
+            
+            // Add secondary recommendations if available
+            if (recommendation.secondary_recommendations && recommendation.secondary_recommendations.length > 0) {
+                recommendations += '<div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Also Consider:</div>';
+                recommendation.secondary_recommendations.forEach(sec => {
+                    recommendations += `
+                        <div style="background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px;">
+                            <div style="font-weight: 600; font-size: 14px;">${sec.product_name}</div>
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.7);">${sec.note} - ₹${sec.price.toLocaleString()}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Add routing information for internal use (hidden)
+            recommendations += `
+                </div>
+                <div style="display: none;" id="recommendationData">
+                    ${JSON.stringify({
+                        primary: primary,
+                        secondary: recommendation.secondary_recommendations,
+                        route: recommendation.route_to,
+                        tags: recommendation.crm_tags,
+                        confidence: primary.confidence
+                    })}
+                </div>
+            `;
             
             document.getElementById('recommendationContent').innerHTML = recommendations;
             
-            // Update final chat message
-            document.getElementById('chatMessage4').textContent = `🎉 ${firstName}, your personalized digital strategy is ready! Based on ${formData.businessName}'s needs, we've identified the perfect solutions for you.`;
+            // Update final chat message with confidence-based messaging
+            let chatMessage;
+            if (primary.confidence >= 85) {
+                chatMessage = `🎯 ${firstName}, I'm highly confident this is perfect for ${formData.businessName}! ${primary.product_name} matches your needs exactly.`;
+            } else if (primary.confidence >= 70) {
+                chatMessage = `🎉 ${firstName}, great news! ${primary.product_name} is an excellent fit for ${formData.businessName}'s goals.`;
+            } else {
+                chatMessage = `🚀 ${firstName}, ${primary.product_name} is a solid starting point for ${formData.businessName}'s digital journey!`;
+            }
+            
+            document.getElementById('chatMessage4').textContent = chatMessage;
         }
     </script>
 </body>
