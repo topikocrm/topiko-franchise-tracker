@@ -939,12 +939,17 @@
             // Show/hide other text box for challenge question
             if (questionId === 'challenge') {
                 const otherTextDiv = document.getElementById('otherChallengeText');
-                if (value === 'other') {
-                    otherTextDiv.style.display = 'block';
-                    setTimeout(() => document.getElementById('challengeOtherInput').focus(), 100);
-                } else {
-                    otherTextDiv.style.display = 'none';
-                    formData.challengeOther = '';
+                if (otherTextDiv) {
+                    if (value === 'other') {
+                        otherTextDiv.style.display = 'block';
+                        const otherInput = document.getElementById('challengeOtherInput');
+                        if (otherInput) {
+                            setTimeout(() => otherInput.focus(), 100);
+                        }
+                    } else {
+                        otherTextDiv.style.display = 'none';
+                        formData.challengeOther = '';
+                    }
                 }
             }
             
