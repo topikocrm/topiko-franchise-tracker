@@ -469,15 +469,32 @@
             <div class="chat-message" id="chatMessage4">🎉 Congratulations! Your personalized digital strategy is ready.</div>
             
             <div class="question-card">
-                <div class="question-title" style="text-align: center;">Your Digital Readiness Score</div>
+                <div class="question-title" style="text-align: center; margin-bottom: 24px;">Your Assessment Results</div>
                 
-                <div class="score-circle">
-                    <div class="score-number" id="finalScore">75</div>
+                <!-- Two Score Display -->
+                <div style="display: flex; justify-content: space-between; margin-bottom: 24px; gap: 16px;">
+                    <!-- Digital Readiness Score -->
+                    <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 8px;">Digital Readiness</div>
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);">
+                            <div style="font-size: 24px; font-weight: 800; color: white;" id="digitalReadinessScore">35</div>
+                        </div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.7);" id="readinessLabel">Digital Opportunity</div>
+                    </div>
+                    
+                    <!-- Solution Match Score -->
+                    <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 8px;">Solution Match</div>
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; box-shadow: 0 4px 16px rgba(245, 87, 108, 0.3);">
+                            <div style="font-size: 24px; font-weight: 800; color: white;" id="solutionMatchScore">85</div>
+                        </div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.7);" id="matchLabel">Perfect Match</div>
+                    </div>
                 </div>
                 
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;" id="scoreTitle">Excellent Digital Potential!</div>
-                    <div style="font-size: 14px; color: rgba(255, 255, 255, 0.7);" id="scoreDescription">You're ready for serious digital transformation.</div>
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;" id="scoreTitle">Great Growth Potential!</div>
+                    <div style="font-size: 14px; color: rgba(255, 255, 255, 0.7);" id="scoreDescription">Perfect starting point for digital transformation.</div>
                 </div>
                 
                 <div id="recommendationContent">
@@ -1152,31 +1169,48 @@
         function generateResults() {
             const recommendation = getTopikkoRecommendation(formData);
             const digitalReadiness = calculateDigitalReadiness(formData);
+            const solutionMatch = recommendation?.primary_recommendation?.confidence || recommendation?.confidence || 75;
             
-            // Update score display with actual digital readiness
-            document.getElementById('finalScore').textContent = digitalReadiness;
+            // Update Digital Readiness Score
+            document.getElementById('digitalReadinessScore').textContent = digitalReadiness;
             
-            // Update score description based on digital readiness level
+            // Update Solution Match Score  
+            document.getElementById('solutionMatchScore').textContent = solutionMatch;
+            
+            // Update readiness label
+            let readinessLabel;
+            if (digitalReadiness >= 80) readinessLabel = "Digital Leader";
+            else if (digitalReadiness >= 60) readinessLabel = "Growth Mode";
+            else if (digitalReadiness >= 40) readinessLabel = "Digital Potential";
+            else readinessLabel = "Digital Opportunity";
+            document.getElementById('readinessLabel').textContent = readinessLabel;
+            
+            // Update solution match label
+            let matchLabel;
+            if (solutionMatch >= 90) matchLabel = "Perfect Match";
+            else if (solutionMatch >= 80) matchLabel = "Great Match";
+            else if (solutionMatch >= 70) matchLabel = "Good Match";
+            else matchLabel = "Suitable Match";
+            document.getElementById('matchLabel').textContent = matchLabel;
+            
+            // Update main title and description based on combination
             let title, description;
-            if (digitalReadiness >= 80) {
-                title = "Digital Leader!";
-                description = "You're ahead of the curve with strong digital presence.";
-            } else if (digitalReadiness >= 60) {
-                title = "Digital Growth Mode!";
-                description = "Good foundation, ready for the next level.";
+            if (digitalReadiness >= 60) {
+                title = "Digital Growth Ready!";
+                description = "Strong foundation with excellent solution match.";
             } else if (digitalReadiness >= 40) {
-                title = "Digital Potential!";
-                description = "Great starting point with room to grow.";
+                title = "Great Growth Potential!";
+                description = "Perfect starting point for digital transformation.";
             } else {
-                title = "Digital Opportunity!";
-                description = "Perfect time to start your digital transformation.";
+                title = "Digital Transformation Opportunity!";
+                description = "Ideal time to build your digital presence.";
             }
             
             document.getElementById('scoreTitle').textContent = title;
             document.getElementById('scoreDescription').textContent = description;
             
             // Generate recommendations based on engine results
-            generateRecommendations(recommendation, digitalReadiness);
+            generateRecommendations(recommendation, digitalReadiness, solutionMatch);
         }
         
         function getTopikkoRecommendation(data) {
@@ -1350,22 +1384,29 @@
                     break;
             }
             
-            // Challenge-based scoring
+            // Challenge-based scoring - main products with addon services
             switch(data.challenge) {
                 case 'not_getting_leads':
-                    scores.marketing += 40;
-                    scores.topiko_pro += 20;
+                    scores.topiko_pro += 50; // Main product for lead generation
+                    scores.topiko_basic += 30;
                     break;
                 case 'low_sales':
-                    scores.brandpreneuring += 40;
-                    scores.marketing += 30;
+                    scores.topiko_pro += 45; // Main product with branding addon
+                    scores.topiko_basic += 35;
+                    break;
+                case 'dont_know_start':
+                    scores.topiko_basic += 50; // Perfect starting product
+                    scores.disblay += 25;
+                    break;
+                case 'no_time':
+                    scores.topiko_pro += 60; // Managed solution
                     break;
             }
             
-            // Brand help scoring
+            // Brand help scoring - integrate with main products
             if (data.brandHelp === 'yes' || data.brandHelp === 'improve') {
-                scores.brandpreneuring += 40;
-                scores.topiko_basic += 20;
+                scores.topiko_basic += 40; // Main product includes branding
+                scores.topiko_pro += 30;
             }
             
             // Budget modifiers
@@ -1552,10 +1593,10 @@
             return Math.min(100, Math.max(0, Math.round(readinessScore)));
         }
         
-        function generateRecommendations(recommendation, digitalReadiness) {
+        function generateRecommendations(recommendation, digitalReadiness, solutionMatch) {
             const firstName = formData.fullName.split(' ')[0];
             const primary = recommendation.primary_recommendation;
-            const solutionMatch = recommendation?.primary_recommendation?.confidence || recommendation?.confidence || 75;
+            // solutionMatch is now passed as parameter
             
             // Get product details for pricing
             const products = {
