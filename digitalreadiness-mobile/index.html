@@ -8,6 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.38.0/dist/umd/supabase.js"></script>
     <style>
         /* MOBILE-FIRST RESET - NO SPACING ISSUES */
         * {
@@ -1019,6 +1022,30 @@
     </div>
 
     <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://uyaubwfmxmxelcshuyaf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5YXVid2ZteG14ZWxjc2h1eWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NDA0MTksImV4cCI6MjA2OTUxNjQxOX0.Sc9qUUXr73x8yw5-2rs-pcI03lFpMTSyuhW9RDLcOLI';
+        
+        // Initialize Supabase
+        let supabase;
+        let sessionId = generateSessionId();
+        let assessmentId = null;
+        
+        try {
+            if (typeof window.supabase !== 'undefined') {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase initialized successfully');
+            } else {
+                console.warn('⚠️ Supabase not available');
+            }
+        } catch (error) {
+            console.error('❌ Error initializing Supabase:', error);
+        }
+        
+        function generateSessionId() {
+            return 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
         // Auto-redirect desktop users to main version
         function checkDevice() {
             if (window.innerWidth > 768) {
@@ -1139,7 +1166,13 @@
             document.getElementById('businessName').addEventListener('input', handleBusinessNameInput);
             document.getElementById('businessType').addEventListener('change', handleBusinessTypeChange);
             document.getElementById('cityLocation').addEventListener('input', handleCityInput);
-            document.getElementById('continueBtn').addEventListener('click', () => showScreen(2));
+            document.getElementById('continueBtn').addEventListener('click', async () => {
+                // Create assessment in database when user has provided basic info
+                if (!assessmentId && formData.fullName && formData.businessName) {
+                    await createAssessment();
+                }
+                showScreen(2);
+            });
             
             // Screen 3 inputs
             document.getElementById('mobileNumber').addEventListener('input', handleContactInput);
@@ -1368,7 +1401,7 @@
             }
         }
 
-        function showScreen(screenNumber) {
+        async function showScreen(screenNumber) {
             // Hide current screen
             document.getElementById(`screen${currentScreen}`).classList.remove('active');
             
@@ -1379,6 +1412,9 @@
             // Update progress and profile
             updateProgress();
             updateProfile();
+            
+            // Save progress to database
+            await saveAssessmentProgress();
             
             // Screen-specific initialization
             if (screenNumber === 2) {
@@ -1698,10 +1734,18 @@
         }
 
         // Digital Readiness & Recommendation Engine
-        function generateResults() {
+        async function generateResults() {
             const recommendation = getTopikkoRecommendation(formData);
             const digitalReadiness = calculateDigitalReadiness(formData);
             const solutionMatch = recommendation?.primary_recommendation?.confidence || recommendation?.confidence || 75;
+            
+            // Create assessment in database if not already created
+            if (!assessmentId) {
+                await createAssessment();
+            }
+            
+            // Update assessment with results
+            await updateAssessmentResults();
             
             // Update Digital Readiness Score
             document.getElementById('digitalReadinessScore').textContent = digitalReadiness;
@@ -2629,7 +2673,10 @@
             }
         }
         
-        function completeAudit() {
+        async function completeAudit() {
+            // Save audit data to database
+            await saveAuditData();
+            
             // Generate detailed plan based on audit responses
             generateDetailedPlan();
             
@@ -3210,6 +3257,150 @@ We have all the information needed to help you get started!`);
                         product.textContent = '?';
                     }
                 });
+            }
+        }
+
+        // Supabase Database Functions
+        async function saveAssessmentProgress() {
+            if (!supabase) return;
+            
+            try {
+                const progressData = {
+                    session_id: sessionId,
+                    assessment_id: assessmentId,
+                    current_screen: currentScreen,
+                    total_screens: 4,
+                    completion_percentage: Math.round((currentScreen / 4) * 100),
+                    form_data: formData,
+                    last_activity: new Date().toISOString()
+                };
+                
+                const { data, error } = await supabase
+                    .from('assessment_progress')
+                    .upsert(progressData, { 
+                        onConflict: 'session_id',
+                        ignoreDuplicates: false 
+                    });
+                
+                if (error) {
+                    console.error('Error saving progress:', error);
+                } else {
+                    console.log('✅ Progress saved successfully');
+                }
+            } catch (error) {
+                console.error('❌ Error in saveAssessmentProgress:', error);
+            }
+        }
+        
+        async function createAssessment() {
+            if (!supabase || !formData.fullName || !formData.businessName) return null;
+            
+            try {
+                // Get UTM parameters from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const referrer = document.referrer || '';
+                const userAgent = navigator.userAgent || '';
+                
+                const assessmentData = {
+                    full_name: formData.fullName,
+                    business_name: formData.businessName,
+                    business_type: formData.businessType,
+                    city_location: formData.cityLocation,
+                    mobile_number: formData.mobileNumber,
+                    email: formData.email || null,
+                    goals: formData.goals,
+                    digital_status: formData.digitalStatus,
+                    budget: formData.budget,
+                    challenge: formData.challenge,
+                    timeline: formData.timeline,
+                    brand_help: formData.brandHelp,
+                    team_size: formData.teamSize,
+                    product_count: formData.productCount,
+                    domain_status: formData.domainStatus,
+                    utm_source: urlParams.get('utm_source'),
+                    utm_medium: urlParams.get('utm_medium'),
+                    utm_campaign: urlParams.get('utm_campaign'),
+                    utm_term: urlParams.get('utm_term'),
+                    utm_content: urlParams.get('utm_content'),
+                    referrer: referrer,
+                    user_agent: userAgent,
+                    session_id: sessionId,
+                    status: 'new'
+                };
+                
+                const { data, error } = await supabase
+                    .from('digital_readiness_assessments')
+                    .insert(assessmentData)
+                    .select()
+                    .single();
+                
+                if (error) {
+                    console.error('Error creating assessment:', error);
+                    return null;
+                } else {
+                    assessmentId = data.id;
+                    console.log('✅ Assessment created with ID:', assessmentId);
+                    return data;
+                }
+            } catch (error) {
+                console.error('❌ Error in createAssessment:', error);
+                return null;
+            }
+        }
+        
+        async function updateAssessmentResults() {
+            if (!supabase || !assessmentId) return;
+            
+            try {
+                const recommendation = getTopikkoRecommendation(formData);
+                const digitalReadiness = calculateDigitalReadiness(formData);
+                const solutionMatch = recommendation?.primary_recommendation?.confidence || recommendation?.confidence || 75;
+                
+                const updateData = {
+                    digital_readiness_score: digitalReadiness,
+                    solution_match_score: solutionMatch,
+                    recommended_product: recommendation.primary_recommendation?.product_id,
+                    recommendation_data: recommendation,
+                    last_activity: new Date().toISOString()
+                };
+                
+                const { data, error } = await supabase
+                    .from('digital_readiness_assessments')
+                    .update(updateData)
+                    .eq('id', assessmentId);
+                
+                if (error) {
+                    console.error('Error updating assessment results:', error);
+                } else {
+                    console.log('✅ Assessment results updated successfully');
+                }
+            } catch (error) {
+                console.error('❌ Error in updateAssessmentResults:', error);
+            }
+        }
+        
+        async function saveAuditData() {
+            if (!supabase || !assessmentId) return;
+            
+            try {
+                const updateData = {
+                    audit_completed: true,
+                    audit_data: auditData,
+                    last_activity: new Date().toISOString()
+                };
+                
+                const { data, error } = await supabase
+                    .from('digital_readiness_assessments')
+                    .update(updateData)
+                    .eq('id', assessmentId);
+                
+                if (error) {
+                    console.error('Error saving audit data:', error);
+                } else {
+                    console.log('✅ Audit data saved successfully');
+                }
+            } catch (error) {
+                console.error('❌ Error in saveAuditData:', error);
             }
         }
 
