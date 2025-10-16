@@ -337,8 +337,9 @@
         }
         
         // Check on load and resize
-        if (!checkDevice()) return;
-        window.addEventListener('resize', checkDevice);
+        if (checkDevice()) {
+            window.addEventListener('resize', checkDevice);
+        }
         
         let currentScreen = 1;
         let formData = {};
