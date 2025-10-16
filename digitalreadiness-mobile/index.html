@@ -378,21 +378,9 @@
                 <div class="question-title" style="margin-top: 20px;">What's your full name?</div>
                 <input type="text" class="form-input" id="fullName" placeholder="Enter your full name">
                 
-                <div class="next-indicator" id="nameIndicator" onclick="focusNext('businessName')">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-                    </svg>
-                </div>
-                
                 <div id="businessNameSection" style="display: none;">
                     <div class="question-title">What's your business name?</div>
                     <input type="text" class="form-input" id="businessName" placeholder="Enter your business name">
-                    
-                    <div class="next-indicator" id="businessIndicator" onclick="focusNext('businessType')">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-                        </svg>
-                    </div>
                 </div>
                 
                 <div id="businessTypeSection" style="display: none;">
@@ -415,23 +403,18 @@
                         <option value="electronics">Electronics/Tech</option>
                         <option value="other">Other</option>
                     </select>
-                    
-                    <div class="next-indicator" id="typeIndicator" onclick="focusNext('cityLocation')">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-                        </svg>
-                    </div>
                 </div>
                 
                 <div id="cityLocationSection" style="display: none;">
                     <div class="question-title">City/Location</div>
                     <input type="text" class="form-input" id="cityLocation" placeholder="Enter your city">
-                    
-                    <div class="next-indicator" id="cityIndicator" onclick="showStartButton()">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-                        </svg>
-                    </div>
+                </div>
+                
+                <!-- Single arrow that moves to bottom of current section -->
+                <div class="next-indicator" id="nextIndicator" onclick="handleNextClick()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                    </svg>
                 </div>
                 
                 <button class="btn" id="continueBtn" style="display: none;">Start Assessment</button>
@@ -524,6 +507,7 @@
         }
         
         let currentScreen = 1;
+        let currentStep = 0; // 0=name only, 1=+business name, 2=+type, 3=+city, 4=complete
         let currentQuestionIndex = 0;
         let inputTimeout;
         let formData = {
@@ -635,11 +619,9 @@
             clearTimeout(inputTimeout);
             
             if (fullName.length > 2) {
-                // Show business name section first, then show indicator
-                document.getElementById('businessNameSection').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('nameIndicator').classList.add('show');
-                }, 100);
+                // Show next step indicator
+                document.getElementById('nextIndicator').classList.add('show');
+                currentStep = 1;
                 updateProfile();
                 
                 // Debounced chat message update
@@ -656,35 +638,30 @@
                 }, 1500);
             } else {
                 // Hide indicator and subsequent sections
-                document.getElementById('nameIndicator').classList.remove('show');
+                document.getElementById('nextIndicator').classList.remove('show');
                 hideAllSections();
             }
             
             validateScreen1();
         }
         
-        function focusNext(fieldId) {
-            const field = document.getElementById(fieldId);
-            const section = field.closest('div[id$="Section"]');
-            
-            if (section) {
-                section.style.display = 'block';
-                setTimeout(() => {
-                    field.focus();
-                    // Scroll to the new field to ensure it's visible
-                    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
+        function handleNextClick() {
+            if (currentStep === 1) {
+                // Show business name field and focus
+                document.getElementById('businessNameSection').style.display = 'block';
+                setTimeout(() => document.getElementById('businessName').focus(), 100);
+            } else if (currentStep === 2) {
+                // Show business type field and focus
+                document.getElementById('businessTypeSection').style.display = 'block';
+                setTimeout(() => document.getElementById('businessType').focus(), 100);
+            } else if (currentStep === 3) {
+                // Show city field and focus
+                document.getElementById('cityLocationSection').style.display = 'block';
+                setTimeout(() => document.getElementById('cityLocation').focus(), 100);
             }
         }
         
-        function showStartButton() {
-            // Hide the final arrow indicator when showing start button
-            document.getElementById('cityIndicator').classList.remove('show');
-            document.getElementById('continueBtn').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('continueBtn').style.opacity = '1';
-            }, 100);
-        }
+        // Removed old showStartButton function
         
         function hideAllSections() {
             document.getElementById('businessNameSection').style.display = 'none';
@@ -692,10 +669,9 @@
             document.getElementById('cityLocationSection').style.display = 'none';
             document.getElementById('continueBtn').style.display = 'none';
             
-            // Hide all indicators
-            document.querySelectorAll('.next-indicator').forEach(indicator => {
-                indicator.classList.remove('show');
-            });
+            // Hide indicator
+            document.getElementById('nextIndicator').classList.remove('show');
+            currentStep = 0;
         }
 
         function handleBusinessNameInput() {
@@ -706,12 +682,8 @@
             clearTimeout(inputTimeout);
             
             if (businessName.length > 1) {
-                // Hide previous indicator, show business type section, then show next indicator
-                document.getElementById('nameIndicator').classList.remove('show');
-                document.getElementById('businessTypeSection').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('businessIndicator').classList.add('show');
-                }, 100);
+                // Show next step indicator
+                currentStep = 2;
                 updateProfile();
                 
                 // Debounced chat message update
@@ -727,13 +699,11 @@
                     document.getElementById('chatMessage1').textContent = randomCompliment;
                 }, 1500);
             } else {
-                // Hide indicator and subsequent sections
-                document.getElementById('businessIndicator').classList.remove('show');
+                // Reset to previous step
+                currentStep = 1;
                 document.getElementById('businessTypeSection').style.display = 'none';
                 document.getElementById('cityLocationSection').style.display = 'none';
                 document.getElementById('continueBtn').style.display = 'none';
-                document.getElementById('typeIndicator').classList.remove('show');
-                document.getElementById('cityIndicator').classList.remove('show');
             }
             
             validateScreen1();
@@ -744,12 +714,8 @@
             formData.businessType = businessType;
             
             if (businessType) {
-                // Hide previous indicator, show city section, then show next indicator
-                document.getElementById('businessIndicator').classList.remove('show');
-                document.getElementById('cityLocationSection').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('typeIndicator').classList.add('show');
-                }, 100);
+                // Show next step
+                currentStep = 3;
                 
                 const typeMessages = {
                     retail: "Retail stores are perfect for digital transformation! Where are you located?",
@@ -775,11 +741,10 @@
                 
                 updateProfile();
             } else {
-                // Hide indicator and city section
-                document.getElementById('typeIndicator').classList.remove('show');
+                // Reset to previous step
+                currentStep = 2;
                 document.getElementById('cityLocationSection').style.display = 'none';
                 document.getElementById('continueBtn').style.display = 'none';
-                document.getElementById('cityIndicator').classList.remove('show');
             }
             
             validateScreen1();
@@ -793,11 +758,10 @@
             clearTimeout(inputTimeout);
             
             if (city.length > 2) {
-                // Hide previous indicator and show final indicator at bottom
-                document.getElementById('typeIndicator').classList.remove('show');
-                setTimeout(() => {
-                    document.getElementById('cityIndicator').classList.add('show');
-                }, 100);
+                // Show final step - replace arrow with button
+                currentStep = 4;
+                document.getElementById('nextIndicator').classList.remove('show');
+                document.getElementById('continueBtn').style.display = 'block';
                 updateProfile();
                 
                 // Debounced chat message update with completion message
@@ -812,8 +776,9 @@
                     document.getElementById('chatMessage1').textContent = randomCityMessage;
                 }, 1500);
             } else {
-                // Hide final indicator and button
-                document.getElementById('cityIndicator').classList.remove('show');
+                // Reset to previous step
+                currentStep = 3;
+                document.getElementById('nextIndicator').classList.add('show');
                 document.getElementById('continueBtn').style.display = 'none';
             }
             
