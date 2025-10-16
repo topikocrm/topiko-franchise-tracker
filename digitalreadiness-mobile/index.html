@@ -635,8 +635,11 @@
             clearTimeout(inputTimeout);
             
             if (fullName.length > 2) {
-                // Show next indicator
-                document.getElementById('nameIndicator').classList.add('show');
+                // Show business name section first, then show indicator
+                document.getElementById('businessNameSection').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('nameIndicator').classList.add('show');
+                }, 100);
                 updateProfile();
                 
                 // Debounced chat message update
@@ -668,6 +671,8 @@
                 section.style.display = 'block';
                 setTimeout(() => {
                     field.focus();
+                    // Scroll to the new field to ensure it's visible
+                    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 100);
             }
         }
@@ -701,9 +706,12 @@
             clearTimeout(inputTimeout);
             
             if (businessName.length > 1) {
-                // Hide previous indicator and show next indicator
+                // Hide previous indicator, show business type section, then show next indicator
                 document.getElementById('nameIndicator').classList.remove('show');
-                document.getElementById('businessIndicator').classList.add('show');
+                document.getElementById('businessTypeSection').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('businessIndicator').classList.add('show');
+                }, 100);
                 updateProfile();
                 
                 // Debounced chat message update
@@ -736,9 +744,12 @@
             formData.businessType = businessType;
             
             if (businessType) {
-                // Hide previous indicator and show next indicator
+                // Hide previous indicator, show city section, then show next indicator
                 document.getElementById('businessIndicator').classList.remove('show');
-                document.getElementById('typeIndicator').classList.add('show');
+                document.getElementById('cityLocationSection').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('typeIndicator').classList.add('show');
+                }, 100);
                 
                 const typeMessages = {
                     retail: "Retail stores are perfect for digital transformation! Where are you located?",
@@ -782,9 +793,11 @@
             clearTimeout(inputTimeout);
             
             if (city.length > 2) {
-                // Hide previous indicator and show final indicator
+                // Hide previous indicator and show final indicator at bottom
                 document.getElementById('typeIndicator').classList.remove('show');
-                document.getElementById('cityIndicator').classList.add('show');
+                setTimeout(() => {
+                    document.getElementById('cityIndicator').classList.add('show');
+                }, 100);
                 updateProfile();
                 
                 // Debounced chat message update with completion message
