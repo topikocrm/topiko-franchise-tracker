@@ -674,6 +674,8 @@
         }
         
         function showStartButton() {
+            // Hide the final arrow indicator when showing start button
+            document.getElementById('cityIndicator').classList.remove('show');
             document.getElementById('continueBtn').style.display = 'block';
             setTimeout(() => {
                 document.getElementById('continueBtn').style.opacity = '1';
@@ -700,7 +702,8 @@
             clearTimeout(inputTimeout);
             
             if (businessName.length > 1) {
-                // Show next indicator
+                // Hide previous indicator and show next indicator
+                document.getElementById('nameIndicator').classList.remove('show');
                 document.getElementById('businessIndicator').classList.add('show');
                 updateProfile();
                 
@@ -734,7 +737,8 @@
             formData.businessType = businessType;
             
             if (businessType) {
-                // Show next indicator
+                // Hide previous indicator and show next indicator
+                document.getElementById('businessIndicator').classList.remove('show');
                 document.getElementById('typeIndicator').classList.add('show');
                 
                 const typeMessages = {
@@ -779,7 +783,8 @@
             clearTimeout(inputTimeout);
             
             if (city.length > 2) {
-                // Show final indicator
+                // Hide previous indicator and show final indicator
+                document.getElementById('typeIndicator').classList.remove('show');
                 document.getElementById('cityIndicator').classList.add('show');
                 updateProfile();
                 
