@@ -359,6 +359,29 @@
                 <div id="businessNameSection" style="display: none;">
                     <div class="question-title" style="margin-top: 20px;">What's your business name?</div>
                     <input type="text" class="form-input" id="businessName" placeholder="Enter your business name">
+                    
+                    <div class="question-title" style="margin-top: 20px;">Type of business</div>
+                    <select class="form-input" id="businessType" style="height: 48px;">
+                        <option value="">Select your business type</option>
+                        <option value="retail">Retail Store</option>
+                        <option value="restaurant">Restaurant/Food</option>
+                        <option value="salon">Salon/Beauty</option>
+                        <option value="boutique">Boutique/Fashion</option>
+                        <option value="services">Professional Services</option>
+                        <option value="healthcare">Healthcare/Medical</option>
+                        <option value="education">Education/Training</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="consulting">Consulting</option>
+                        <option value="fitness">Fitness/Gym</option>
+                        <option value="travel">Travel/Tourism</option>
+                        <option value="real_estate">Real Estate</option>
+                        <option value="automotive">Automotive</option>
+                        <option value="electronics">Electronics/Tech</option>
+                        <option value="other">Other</option>
+                    </select>
+                    
+                    <div class="question-title" style="margin-top: 20px;">City/Location</div>
+                    <input type="text" class="form-input" id="cityLocation" placeholder="Enter your city">
                 </div>
                 
                 <button class="btn" id="continueBtn" disabled>Continue to Assessment</button>
@@ -384,16 +407,13 @@
 
         <!-- Screen 3: Contact & Verification -->
         <div id="screen3" class="screen">
-            <div class="chat-message" id="chatMessage3">Almost there! We need your contact details to share your personalized recommendations.</div>
+            <div class="chat-message" id="chatMessage3">Almost there! We need your mobile number to share your personalized recommendations.</div>
             
             <div class="question-card">
                 <div class="question-title">Contact Information</div>
                 
                 <div class="question-title" style="margin-top: 20px; font-size: 16px;">Mobile Number *</div>
                 <input type="tel" class="form-input" id="mobileNumber" placeholder="Enter 10-digit mobile number" maxlength="10">
-                
-                <div class="question-title" style="margin-top: 20px; font-size: 16px;">City/Location *</div>
-                <input type="text" class="form-input" id="cityLocation" placeholder="Enter your city">
                 
                 <div id="otpSection" style="display: none;">
                     <div class="question-title" style="margin-top: 20px; font-size: 16px;">Verification Code</div>
@@ -458,32 +478,22 @@
         
         let currentScreen = 1;
         let currentQuestionIndex = 0;
+        let inputTimeout;
         let formData = {
             fullName: '',
             businessName: '',
             businessType: '',
+            cityLocation: '',
             goals: [],
             digitalStatus: '',
             budget: '',
             challenge: '',
             mobileNumber: '',
-            cityLocation: '',
             otpVerified: false
         };
 
         // Assessment questions for Screen 2
         const questions = [
-            {
-                id: 'businessType',
-                question: 'What type of business do you run?',
-                type: 'radio',
-                options: [
-                    { value: 'retail', label: 'Retail / E-commerce', subtitle: 'Sell products online or offline', icon: '🛍️' },
-                    { value: 'services', label: 'Professional Services', subtitle: 'Consulting, legal, medical, etc.', icon: '💼' },
-                    { value: 'manufacturing', label: 'Manufacturing', subtitle: 'Produce goods or materials', icon: '🏭' },
-                    { value: 'food', label: 'Restaurant / Food', subtitle: 'Food service and hospitality', icon: '🍽️' }
-                ]
-            },
             {
                 id: 'goals',
                 question: 'What are your main goals? (Select all that apply)',
@@ -536,11 +546,12 @@
             // Screen 1 inputs
             document.getElementById('fullName').addEventListener('input', handleNameInput);
             document.getElementById('businessName').addEventListener('input', handleBusinessNameInput);
+            document.getElementById('businessType').addEventListener('change', handleBusinessTypeChange);
+            document.getElementById('cityLocation').addEventListener('input', handleCityInput);
             document.getElementById('continueBtn').addEventListener('click', () => showScreen(2));
             
             // Screen 3 inputs
             document.getElementById('mobileNumber').addEventListener('input', handleContactInput);
-            document.getElementById('cityLocation').addEventListener('input', handleContactInput);
             document.getElementById('otpInput').addEventListener('input', handleOTPInput);
             
             // Initialize first question
@@ -552,16 +563,26 @@
             const fullName = document.getElementById('fullName').value.trim();
             formData.fullName = fullName;
             
+            // Clear previous timeout
+            clearTimeout(inputTimeout);
+            
             if (fullName.length > 2) {
-                // Show business name section
+                // Show business name section immediately
                 document.getElementById('businessNameSection').style.display = 'block';
-                
-                // Update chat message
-                const firstName = fullName.split(' ')[0];
-                document.getElementById('chatMessage1').textContent = `Nice to meet you, ${firstName}! What's your business called?`;
-                
-                // Update profile
                 updateProfile();
+                
+                // Debounced chat message update
+                inputTimeout = setTimeout(() => {
+                    const firstName = fullName.split(' ')[0];
+                    const greetings = [
+                        `Nice to meet you, ${firstName}! What's your business called?`,
+                        `Welcome ${firstName}! Tell me about your business.`,
+                        `Hello ${firstName}! Let's learn about your venture.`,
+                        `Great to have you here, ${firstName}! What's your business name?`
+                    ];
+                    const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+                    document.getElementById('chatMessage1').textContent = randomGreeting;
+                }, 1500);
             }
             
             validateScreen1();
@@ -571,12 +592,83 @@
             const businessName = document.getElementById('businessName').value.trim();
             formData.businessName = businessName;
             
+            // Clear previous timeout
+            clearTimeout(inputTimeout);
+            
             if (businessName.length > 1) {
-                // Update chat message
-                document.getElementById('chatMessage1').textContent = `${businessName} - great name! Ready to assess your digital potential?`;
-                
-                // Update profile
                 updateProfile();
+                
+                // Debounced chat message update
+                inputTimeout = setTimeout(() => {
+                    const compliments = [
+                        `${businessName} - sounds promising!`,
+                        `${businessName} - I like it!`,
+                        `${businessName} - excellent choice!`,
+                        `${businessName} - that's a solid name!`,
+                        `${businessName} - love the branding potential!`
+                    ];
+                    const randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
+                    document.getElementById('chatMessage1').textContent = randomCompliment;
+                }, 1500);
+            }
+            
+            validateScreen1();
+        }
+
+        function handleBusinessTypeChange() {
+            const businessType = document.getElementById('businessType').value;
+            formData.businessType = businessType;
+            
+            if (businessType) {
+                const typeMessages = {
+                    retail: "Retail stores are perfect for digital transformation!",
+                    restaurant: "Food businesses are booming online! 🍕",
+                    salon: "Beauty services see amazing digital growth! ✨",
+                    boutique: "Fashion brands love digital marketing! 👗",
+                    services: "Professional services thrive online! 💼",
+                    healthcare: "Healthcare digitalization is the future! 🏥",
+                    education: "EdTech is revolutionizing learning! 📚",
+                    manufacturing: "Industry 4.0 is here! 🏭",
+                    consulting: "Consultants scale beautifully online! 📈",
+                    fitness: "Fitness apps and online coaching are huge! 💪",
+                    travel: "Travel booking systems drive great revenue! ✈️",
+                    real_estate: "PropTech is transforming real estate! 🏠",
+                    automotive: "Auto services need strong digital presence! 🚗",
+                    electronics: "Tech businesses must stay cutting-edge! 💻",
+                    other: "Every business has digital potential! 🚀"
+                };
+                
+                setTimeout(() => {
+                    document.getElementById('chatMessage1').textContent = typeMessages[businessType] || "Great choice! Let's build your digital strategy.";
+                }, 500);
+                
+                updateProfile();
+            }
+            
+            validateScreen1();
+        }
+
+        function handleCityInput() {
+            const city = document.getElementById('cityLocation').value.trim();
+            formData.cityLocation = city;
+            
+            // Clear previous timeout
+            clearTimeout(inputTimeout);
+            
+            if (city.length > 2) {
+                updateProfile();
+                
+                // Debounced chat message update
+                inputTimeout = setTimeout(() => {
+                    const cityMessages = [
+                        `${city} has great business potential! 🌟`,
+                        `${city} is perfect for digital growth! 📍`,
+                        `Love ${city}! Great market for your business! 🎯`,
+                        `${city} - excellent location for expansion! 🚀`
+                    ];
+                    const randomCityMessage = cityMessages[Math.floor(Math.random() * cityMessages.length)];
+                    document.getElementById('chatMessage1').textContent = randomCityMessage;
+                }, 1500);
             }
             
             validateScreen1();
@@ -584,7 +676,10 @@
 
         function validateScreen1() {
             const continueBtn = document.getElementById('continueBtn');
-            const isValid = formData.fullName.length > 2 && formData.businessName.length > 1;
+            const isValid = formData.fullName.length > 2 && 
+                           formData.businessName.length > 1 && 
+                           formData.businessType && 
+                           formData.cityLocation.length > 2;
             continueBtn.disabled = !isValid;
         }
 
@@ -733,6 +828,39 @@
                 formData[questionId] = formData[questionId].filter(v => v !== value);
             }
             
+            // Add engaging messages for goals selection
+            if (questionId === 'goals') {
+                const goalMessages = {
+                    customers: ["More customers = more revenue! 💰", "Customer acquisition is key to growth! 🎯", "Let's build that customer pipeline! 🚀"],
+                    showcase: ["Visual storytelling sells! 📸", "Show off your amazing work! ✨", "Professional showcase drives trust! 🌟"],
+                    brand: ["Brand identity creates lasting value! 🎨", "Strong branding = premium pricing! 💎", "Your brand is your business asset! 🏆"],
+                    automate: ["Automation saves 10+ hours per week! ⏰", "Smart automation = more profits! 🤖", "Work smarter, not harder! 💡"],
+                    website: ["Your 24/7 digital storefront! 🏪", "Websites that work while you sleep! 💤", "Your digital headquarters! 🏢"]
+                };
+                
+                if (checkbox.checked && goalMessages[value]) {
+                    const messages = goalMessages[value];
+                    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                    document.getElementById('chatMessage2').textContent = randomMessage;
+                }
+                
+                // Update based on total selected goals
+                const totalGoals = formData.goals.length;
+                if (totalGoals === 1) {
+                    setTimeout(() => {
+                        document.getElementById('chatMessage2').textContent = "Great start! Any other goals? The more I know, the better I can help! 😊";
+                    }, 2000);
+                } else if (totalGoals === 2) {
+                    setTimeout(() => {
+                        document.getElementById('chatMessage2').textContent = "Perfect! I'm getting a clear picture of your needs. Keep going! 📈";
+                    }, 2000);
+                } else if (totalGoals >= 3) {
+                    setTimeout(() => {
+                        document.getElementById('chatMessage2').textContent = "Wow! You're thinking big! I love ambitious entrepreneurs! 🚀⭐";
+                    }, 2000);
+                }
+            }
+            
             validateCurrentQuestion();
         }
 
@@ -798,13 +926,11 @@
         // Screen 3 Contact handling
         function handleContactInput() {
             const mobile = document.getElementById('mobileNumber').value.trim();
-            const city = document.getElementById('cityLocation').value.trim();
             
             formData.mobileNumber = mobile;
-            formData.cityLocation = city;
             
             const otpBtn = document.getElementById('otpBtn');
-            const isValid = mobile.length === 10 && /^\d+$/.test(mobile) && city.length > 2;
+            const isValid = mobile.length === 10 && /^\d+$/.test(mobile);
             
             otpBtn.disabled = !isValid;
             
@@ -896,14 +1022,30 @@
                 recommendations += '<div style="margin-bottom: 8px;">✓ E-commerce website with payment gateway</div>';
                 recommendations += '<div style="margin-bottom: 8px;">✓ Social media marketing automation</div>';
                 recommendations += '<div style="margin-bottom: 8px;">✓ Inventory management system</div>';
-            } else if (formData.businessType === 'services') {
-                recommendations += '<div style="margin-bottom: 8px;">✓ Professional service website</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Online booking system</div>';
-                recommendations += '<div style="margin-bottom: 8px;">✓ Client management tools</div>';
-            } else if (formData.businessType === 'food') {
+            } else if (formData.businessType === 'restaurant') {
                 recommendations += '<div style="margin-bottom: 8px;">✓ Online ordering system</div>';
                 recommendations += '<div style="margin-bottom: 8px;">✓ Delivery integration</div>';
                 recommendations += '<div style="margin-bottom: 8px;">✓ Menu management</div>';
+            } else if (formData.businessType === 'salon') {
+                recommendations += '<div style="margin-bottom: 8px;">✓ Online appointment booking</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Service showcase gallery</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Customer management system</div>';
+            } else if (formData.businessType === 'boutique') {
+                recommendations += '<div style="margin-bottom: 8px;">✓ Fashion e-commerce platform</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Visual catalog with styling</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Social media integration</div>';
+            } else if (formData.businessType === 'services' || formData.businessType === 'consulting') {
+                recommendations += '<div style="margin-bottom: 8px;">✓ Professional service website</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Online booking system</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Client management tools</div>';
+            } else if (formData.businessType === 'healthcare') {
+                recommendations += '<div style="margin-bottom: 8px;">✓ Patient portal system</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Appointment scheduling</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Telehealth integration</div>';
+            } else if (formData.businessType === 'fitness') {
+                recommendations += '<div style="margin-bottom: 8px;">✓ Class booking system</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Member management portal</div>';
+                recommendations += '<div style="margin-bottom: 8px;">✓ Workout tracking app</div>';
             } else {
                 recommendations += '<div style="margin-bottom: 8px;">✓ Professional business website</div>';
                 recommendations += '<div style="margin-bottom: 8px;">✓ Lead generation system</div>';
