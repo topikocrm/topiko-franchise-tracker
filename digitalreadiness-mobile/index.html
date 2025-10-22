@@ -679,6 +679,69 @@
             25%, 75% { opacity: 1; transform: translateY(0); }
         }
 
+        /* LANDING PAGE STYLES */
+        .landing-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .landing-logo {
+            margin-bottom: 40px;
+        }
+
+        .landing-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .landing-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 32px;
+            line-height: 1.4;
+        }
+
+        .landing-benefits {
+            margin-bottom: 40px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .landing-start-btn {
+            width: 100%;
+            max-width: 280px;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .landing-start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
         /* RECOMMENDATION PREVIEW STYLES */
         .recommendation-preview {
             position: fixed;
@@ -800,16 +863,34 @@
             </div>
         </div>
 
-        <!-- Screen 1: Welcome & Basic Info -->
-        <div id="screen1" class="screen active">
-            <!-- Topiko Logo Section -->
-            <div style="text-align: center; margin-bottom: 24px;">
-                <img src="../logo.png" alt="Topiko" style="height: 40px; margin-bottom: 16px;">
-                <div style="font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 500;">Powered by Topiko AI</div>
+        <!-- Landing Screen -->
+        <div id="landingScreen" class="screen active">
+            <div class="landing-container">
+                <!-- Topiko Logo -->
+                <div class="landing-logo">
+                    <img src="../logo.png" alt="Topiko" style="height: 60px; margin-bottom: 32px;">
+                </div>
+                
+                <!-- Welcome Message -->
+                <div class="landing-content">
+                    <h1 class="landing-title">Digital Readiness Assessment</h1>
+                    <p class="landing-subtitle">Discover the perfect digital solution for your business in less than 2 minutes</p>
+                    <div class="landing-benefits">
+                        <div class="benefit-item">✓ Personalized recommendations</div>
+                        <div class="benefit-item">✓ Instant business analysis</div>
+                        <div class="benefit-item">✓ Free consultation included</div>
+                    </div>
+                </div>
+                
+                <!-- Start Button -->
+                <button class="btn btn-large landing-start-btn" id="startAssessmentBtn">Start Assessment</button>
             </div>
-            
+        </div>
+
+        <!-- Screen 1: Basic Info -->
+        <div id="screen1" class="screen">
             <div class="question-card">
-                <div class="question-title">Welcome! Let's discover your <span class="topiko-text">Digital Readiness</span></div>
+                <div class="question-title">Let's get started! Tell us about yourself</div>
                 <div class="chat-message" id="chatMessage1">👋 Hi! I'm your digital consultant. Let's find the perfect solution for your business.</div>
                 
                 <div class="question-title" style="margin-top: 20px;">What's your full name?</div>
@@ -854,7 +935,7 @@
                     </svg>
                 </div>
                 
-                <button class="btn" id="continueBtn" style="display: none;">Start Assessment</button>
+                <button class="btn" id="continueBtn" style="display: none;">Continue to Assessment</button>
                 
                 <!-- Progressive Insight Container -->
                 <div id="insightContainer1" class="insight-container" style="display: none;">
@@ -1067,7 +1148,7 @@
             window.addEventListener('resize', checkDevice);
         }
         
-        let currentScreen = 1;
+        let currentScreen = 0; // 0 = landing, 1 = basic info, 2 = assessment, etc.
         let currentStep = 0; // 0=name only, 1=+business name, 2=+type, 3=+city, 4=complete
         let currentQuestionIndex = 0;
         let inputTimeout;
@@ -1165,8 +1246,16 @@
 
         // Initialize event listeners when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize social proof
-            setTimeout(() => showSocialProof(), 3000);
+            // Landing page start button
+            document.getElementById('startAssessmentBtn').addEventListener('click', function() {
+                document.getElementById('landingScreen').classList.remove('active');
+                document.getElementById('screen1').classList.add('active');
+                currentScreen = 1;
+                updateProgress();
+                
+                // Initialize social proof after starting assessment
+                setTimeout(() => showSocialProof(), 3000);
+            });
             
             // Screen 1 inputs
             document.getElementById('fullName').addEventListener('input', handleNameInput);
@@ -1416,11 +1505,19 @@
 
         async function showScreen(screenNumber) {
             // Hide current screen
-            document.getElementById(`screen${currentScreen}`).classList.remove('active');
+            if (currentScreen === 0) {
+                document.getElementById('landingScreen').classList.remove('active');
+            } else {
+                document.getElementById(`screen${currentScreen}`).classList.remove('active');
+            }
             
             // Show new screen
             currentScreen = screenNumber;
-            document.getElementById(`screen${currentScreen}`).classList.add('active');
+            if (currentScreen === 0) {
+                document.getElementById('landingScreen').classList.add('active');
+            } else {
+                document.getElementById(`screen${currentScreen}`).classList.add('active');
+            }
             
             // Update progress and profile
             updateProgress();
@@ -1451,7 +1548,10 @@
 
         function updateProgress() {
             let progress;
-            if (currentScreen === 1) {
+            if (currentScreen === 0) {
+                // Landing screen - no progress yet
+                progress = 0;
+            } else if (currentScreen === 1) {
                 // Screen 1 progress based on currentStep (0-4)
                 progress = (currentStep / 4) * 25; // 25% for screen 1
             } else if (currentScreen === 2) {
@@ -1468,7 +1568,18 @@
                 // Fallback
                 progress = 25 + ((currentScreen - 2) / 2) * 75;
             }
-            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            // Hide progress bar and profile on landing screen
+            const progressContainer = document.querySelector('.progress-container');
+            const profileContainer = document.querySelector('.mobile-profile');
+            if (currentScreen === 0) {
+                progressContainer.style.display = 'none';
+                profileContainer.style.display = 'none';
+            } else {
+                progressContainer.style.display = 'block';
+                profileContainer.style.display = 'flex';
+                document.getElementById('progressBar').style.width = `${progress}%`;
+            }
         }
 
         // Question management for Screen 2
