@@ -662,16 +662,40 @@
 
         /* SOCIAL PROOF STYLES */
         .social-proof {
-            position: absolute;
-            top: 120px;
+            position: fixed;
+            bottom: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 16px;
             border-radius: 20px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
             animation: fadeInOut 4s ease-in-out infinite;
             z-index: 1000;
+            max-width: 280px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsive social proof */
+        @media (max-width: 480px) {
+            .social-proof {
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                max-width: none;
+                font-size: 11px;
+                padding: 8px 12px;
+                text-align: center;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .social-proof {
+                bottom: 20px;
+                right: 20px;
+                max-width: 250px;
+                font-size: 11px;
+            }
         }
 
         @keyframes fadeInOut {
@@ -887,7 +911,7 @@
             <div class="landing-container">
                 <!-- Topiko Logo -->
                 <div class="landing-logo">
-                    <img src="../logo.png" alt="Topiko" style="height: 60px; margin-bottom: 32px;">
+                    <img src="../logo.png" alt="Topiko" style="height: 80px; margin-bottom: 32px;">
                 </div>
                 
                 <!-- Welcome Message -->
