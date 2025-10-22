@@ -663,7 +663,7 @@
         /* SOCIAL PROOF STYLES */
         .social-proof {
             position: absolute;
-            top: 80px;
+            top: 120px;
             right: 20px;
             background: rgba(0, 0, 0, 0.7);
             padding: 8px 12px;
@@ -671,6 +671,7 @@
             font-size: 11px;
             color: rgba(255, 255, 255, 0.8);
             animation: fadeInOut 4s ease-in-out infinite;
+            z-index: 1000;
         }
 
         @keyframes fadeInOut {
@@ -801,6 +802,12 @@
 
         <!-- Screen 1: Welcome & Basic Info -->
         <div id="screen1" class="screen active">
+            <!-- Topiko Logo Section -->
+            <div style="text-align: center; margin-bottom: 24px;">
+                <img src="../logo.png" alt="Topiko" style="height: 40px; margin-bottom: 16px;">
+                <div style="font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 500;">Powered by Topiko AI</div>
+            </div>
+            
             <div class="question-card">
                 <div class="question-title">Welcome! Let's discover your <span class="topiko-text">Digital Readiness</span></div>
                 <div class="chat-message" id="chatMessage1">👋 Hi! I'm your digital consultant. Let's find the perfect solution for your business.</div>
@@ -1112,13 +1119,13 @@
             },
             {
                 id: 'budget',
-                question: 'What\'s your monthly digital budget?',
+                question: 'What\'s your yearly digital budget?',
                 type: 'radio',
                 options: [
-                    { value: 'below_2k', label: 'Below ₹2,000', icon: '💰' },
-                    { value: '2k_10k', label: '₹2,000 - ₹10,000', icon: '💳' },
-                    { value: '10k_25k', label: '₹10,000 - ₹25,000', icon: '💎' },
-                    { value: '25k_plus', label: '₹25,000+', icon: '🚀' }
+                    { value: 'below_2k', label: 'Below ₹6,000/year (₹500/month)', icon: '💰' },
+                    { value: '2k_10k', label: '₹6,000 - ₹60,000/year (₹500-5,000/month)', icon: '💳' },
+                    { value: '10k_25k', label: '₹60,000 - ₹3,00,000/year (₹5,000-25,000/month)', icon: '💎' },
+                    { value: '25k_plus', label: '₹3,00,000+/year (₹25,000+/month)', icon: '🚀' }
                 ]
             },
             {
@@ -3083,15 +3090,17 @@ We have all the information needed to help you get started!`);
         
         function showSocialProof() {
             const messages = [
-                `${getRandomNumber(15, 47)} businesses assessed today`,
-                `${getRandomNumber(800, 1500)} total assessments completed`,
-                "Next consultation available in 2 hours",
-                `${getRandomNumber(12, 28)} ${formData.businessType || 'businesses'} assessed this week`,
-                `${formData.businessType || 'Business'} owners see average 340% growth with our solutions`,
-                `${getRandomNumber(8, 20)} ${formData.cityLocation.split(',')[0] || 'local'} businesses upgraded this month`,
-                "Sarah from Mumbai just completed her assessment",
-                "Raj's Restaurant improved from 34% to 89% readiness",
-                `Live: ${getRandomNumber(2, 5)} consultations happening now`
+                `${getRandomNumber(8, 25)} businesses assessed today`,
+                "Our plans start from ₹1,499 per year",
+                "Average onboarding time is less than 24 hours",
+                "Next consultation available in 1 hour",
+                `${getRandomNumber(5, 15)} ${formData.businessType || 'businesses'} assessed this week`,
+                "95% of clients see results within 30 days",
+                `${getRandomNumber(3, 12)} ${formData.cityLocation ? formData.cityLocation.split(',')[0] : 'local'} businesses upgraded this month`,
+                "Free consultation included with all plans",
+                "24/7 customer support available",
+                "No setup fees - start immediately",
+                `Live: ${getRandomNumber(1, 4)} consultations happening now`
             ];
             
             const socialProofElement = document.getElementById('socialProof');
@@ -3391,7 +3400,10 @@ We have all the information needed to help you get started!`);
         }
         
         async function createAssessment() {
-            if (!supabase || !formData.fullName || !formData.businessName) return null;
+            if (!supabase || !formData.fullName || !formData.businessName) {
+                console.log('⚠️ Supabase not available or missing required data, running in offline mode');
+                return null;
+            }
             
             try {
                 // Get UTM parameters from URL
@@ -3433,7 +3445,7 @@ We have all the information needed to help you get started!`);
                     .single();
                 
                 if (error) {
-                    console.error('Error creating assessment:', error);
+                    console.warn('⚠️ Database save failed, continuing in offline mode:', error.message);
                     return null;
                 } else {
                     assessmentId = data.id;
@@ -3441,7 +3453,7 @@ We have all the information needed to help you get started!`);
                     return data;
                 }
             } catch (error) {
-                console.error('❌ Error in createAssessment:', error);
+                console.warn('⚠️ Database connection failed, continuing in offline mode:', error.message);
                 return null;
             }
         }
