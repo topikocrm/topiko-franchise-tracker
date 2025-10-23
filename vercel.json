@@ -13,6 +13,10 @@
       "dest": "/digitalvalidation/index.html"
     },
     {
+      "src": "/desktop",
+      "dest": "/desktop-readiness.html"
+    },
+    {
       "src": "/api/send-otp",
       "dest": "/api/send-otp.js"
     },
