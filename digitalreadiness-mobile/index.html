@@ -914,20 +914,20 @@
             <div class="landing-container">
                 <!-- Topiko Logo -->
                 <div class="landing-logo">
-                    <img src="../logo.png" alt="Topiko" style="height: 80px; margin-bottom: 32px;">
+                    <img src="../logo.png" alt="Topiko" style="height: 100px; margin-bottom: 32px;">
                 </div>
                 
                 <!-- Welcome Message -->
                 <div class="landing-content">
                     <h1 class="landing-title">Accelerate Your Growth Potential</h1>
-                    <p class="landing-subtitle">Discover untapped growth opportunities and join 10,000+ businesses already scaling digitally</p>
+                    <p class="landing-subtitle">Discover untapped growth opportunities<br>Join 10,000+ businesses scaling digitally</p>
                     <div class="landing-benefits">
-                        <div class="benefit-item">✓ Get personalized strategy to grow your business faster</div>
-                        <div class="benefit-item">✓ See where you can outpace local competition</div>
-                        <div class="benefit-item">✓ Find hidden revenue opportunities worth lakhs</div>
-                        <div class="benefit-item">✓ Professional consultation included</div>
+                        <div class="benefit-item">✓ Get personalized growth strategy</div>
+                        <div class="benefit-item">✓ Outpace local competition</div>
+                        <div class="benefit-item">✓ Find hidden revenue opportunities</div>
+                        <div class="benefit-item">✓ Free consultation included</div>
                     </div>
-                    <div class="landing-urgency">🚀 Join successful businesses who took action early</div>
+                    <div class="landing-urgency">🎯 Get Free Consultation and Guaranteed discounts worth rupees 15000*</div>
                 </div>
                 
                 <!-- Start Button -->
@@ -2373,9 +2373,16 @@
             };
             
             const productInfo = products[primary.product_id] || products['topiko_basic'];
-            const priceText = productInfo.period === 'project' ? 
-                `Starts from ₹${productInfo.price.toLocaleString()}` :
-                `Starts from ₹${productInfo.price.toLocaleString()}/${productInfo.period}`;
+            let priceText;
+            
+            // Special handling for HEBT - show custom message instead of price
+            if (primary.product_id === 'hebt') {
+                priceText = 'Our team will reach out for personalized solution preparation';
+            } else {
+                priceText = productInfo.period === 'project' ? 
+                    `Starts from ₹${productInfo.price.toLocaleString()}` :
+                    `Starts from ₹${productInfo.price.toLocaleString()}/${productInfo.period}`;
+            }
             
             // Create contextual recommendation message based on digital readiness
             let recommendationContext = "";
@@ -2918,15 +2925,19 @@
                     ${costBreakdown}
                 </div>
                 
+                <!-- Implementation Timeline section commented out
                 <div style="margin-bottom: 24px;">
                     <h3 style="color: #667eea; margin-bottom: 12px;">📅 Implementation Timeline</h3>
                     ${timeline}
                 </div>
+                -->
                 
+                <!-- Success Metrics section commented out
                 <div style="margin-bottom: 24px;">
                     <h3 style="color: #667eea; margin-bottom: 12px;">🎯 Success Metrics</h3>
                     ${successMetrics}
                 </div>
+                -->
                 
                 ${riskFactors ? `
                 <div style="margin-bottom: 24px;">
