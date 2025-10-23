@@ -875,6 +875,16 @@
             }
         }
 
+        /* Hide desktop elements on mobile/tablet */
+        @media (max-width: 767px) {
+            .desktop-progress,
+            .desktop-ambient-left,
+            .desktop-ambient-right,
+            .desktop-trust-badges {
+                display: none !important;
+            }
+        }
+
         /* DESKTOP RESPONSIVE DESIGN */
         @media (min-width: 768px) {
             body {
@@ -919,7 +929,7 @@
                 z-index: 2;
             }
 
-            /* Desktop progress indicator */
+            /* Desktop progress indicator - Auto show on desktop */
             .desktop-progress {
                 position: fixed;
                 top: 30px;
@@ -993,7 +1003,7 @@
                 right: 30px;
             }
 
-            /* Trust badges */
+            /* Trust badges - Auto show on desktop */
             .desktop-trust-badges {
                 position: fixed;
                 bottom: 30px;
@@ -1119,7 +1129,7 @@
 </head>
 <body>
     <!-- Desktop Progress Header -->
-    <div class="desktop-progress" style="display: none;">
+    <div class="desktop-progress">
         <div class="desktop-logo">
             <img src="../logo.png" alt="Topiko">
             Digital Readiness Assessment
@@ -1131,7 +1141,7 @@
     </div>
 
     <!-- Desktop Ambient Left -->
-    <div class="desktop-ambient-left" style="display: none;">
+    <div class="desktop-ambient-left">
         <div class="desktop-social-proof">
             <div class="social-proof-title">🎯 Live Assessment Data</div>
             <div class="social-stat">
@@ -1173,7 +1183,7 @@
     </div>
 
     <!-- Desktop Ambient Right -->
-    <div class="desktop-ambient-right" style="display: none;">
+    <div class="desktop-ambient-right">
         <div class="desktop-social-proof">
             <div class="social-proof-title">📈 Success Stories</div>
             <div class="social-stat">
@@ -1215,7 +1225,7 @@
     </div>
 
     <!-- Desktop Trust Badges -->
-    <div class="desktop-trust-badges" style="display: none;">
+    <div class="desktop-trust-badges">
         <div class="trust-badge">
             <span class="trust-badge-icon">🔒</span>
             <span>100% Secure</span>
