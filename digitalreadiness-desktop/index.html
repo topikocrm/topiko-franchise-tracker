@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Readiness Assessment - Desktop & Mobile</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .feature-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #667eea;
+        }
+        .feature-desc {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 30px 20px;
+            }
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎯 Topiko</div>
+        <h1 class="title">Desktop Version Test</h1>
+        <p class="subtitle">
+            This is a test page to verify our desktop implementation is working. 
+            If you can see this, our deployment is successful!
+        </p>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">💻</div>
+                <div class="feature-title">Desktop Ready</div>
+                <div class="feature-desc">Optimized for large screens</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">Mobile Friendly</div>
+                <div class="feature-desc">Works on all devices</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Fast Loading</div>
+                <div class="feature-desc">Instant results</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <div class="feature-title">Secure</div>
+                <div class="feature-desc">Your data is safe</div>
+            </div>
+        </div>
+        
+        <a href="../digitalreadiness-mobile/" class="btn">
+            Go to Assessment →
+        </a>
+        
+        <p style="margin-top: 20px; font-size: 12px; color: rgba(255, 255, 255, 0.5);">
+            Deployment Test • Version 1.0 • $(date)
+        </p>
+    </div>
+</body>
+</html>
