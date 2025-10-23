@@ -11,6 +11,7 @@
     
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2.38.0/dist/umd/supabase.js"></script>
+    <script src="../digitalreadiness/components/scoring-system.js"></script>
     <style>
         /* MOBILE-FIRST RESET - NO SPACING ISSUES */
         * {
@@ -1736,6 +1737,11 @@
             // Update chat message based on selection
             updateChatMessage(questionId, value);
             
+            // Update AI recommendation preview in real-time for key questions
+            if (['digitalStatus', 'budget', 'challenge'].includes(questionId)) {
+                updateRecommendationPreview();
+            }
+            
             validateCurrentQuestion();
         }
 
@@ -1914,7 +1920,12 @@
         async function generateResults() {
             const recommendation = getTopikkoRecommendation(formData);
             const digitalReadiness = calculateDigitalReadiness(formData);
-            const solutionMatch = recommendation?.primary_recommendation?.confidence || recommendation?.confidence || 75;
+            
+            // Calculate realistic solution match using the scoring system
+            const recommendedProduct = recommendation?.primary_recommendation?.product || recommendation?.product || 'Topiko';
+            const solutionMatch = window.digitalReadinessScorer ? 
+                window.digitalReadinessScorer.calculateSolutionMatchScore(formData, recommendedProduct) : 
+                75; // Fallback to 75 if scorer not available
             
             // Create assessment in database if not already created
             if (!assessmentId) {
@@ -3240,11 +3251,56 @@ We have all the information needed to help you get started!`);
         }
         
         function calculatePreliminaryScore() {
-            let score = 25;
-            if (formData.goals.length > 2) score += 15;
-            if (formData.digitalStatus !== 'none') score += 20;
-            if (formData.budget !== 'below_2k') score += 10;
-            return Math.min(score, 85); // Cap at 85 for preliminary
+            // Use realistic scoring system if available, otherwise fallback to simple calculation
+            if (window.digitalReadinessScorer && formData.goals && formData.digitalStatus && formData.budget && formData.challenge) {
+                const scoreData = window.digitalReadinessScorer.calculateOverallScore(formData);
+                return Math.min(scoreData.totalScore, 85); // Cap at 85 for preliminary assessment
+            }
+            
+            // Fallback realistic calculation based on answer quality
+            let score = 20; // Lower base score for realism
+            
+            // Goals scoring - quality over quantity
+            if (formData.goals && formData.goals.length > 0) {
+                const advancedGoals = formData.goals.filter(g => ['app', 'automate', 'brand'].includes(g)).length;
+                const basicGoals = formData.goals.length - advancedGoals;
+                
+                score += (advancedGoals * 12) + (basicGoals * 8);
+                
+                // Penalty for too many goals (lack of focus)
+                if (formData.goals.length > 3) {
+                    score -= 5;
+                }
+            }
+            
+            // Digital status - realistic assessment
+            const statusScores = {
+                'no_presence': 8,
+                'basic_social': 15,
+                'basic_website': 25,
+                'no_results': 30
+            };
+            score += statusScores[formData.digitalStatus] || 0;
+            
+            // Budget - viability scoring
+            const budgetScores = {
+                'below_2k': 8,
+                '2k_10k': 15,
+                '10k_25k': 20,
+                '25k_plus': 25
+            };
+            score += budgetScores[formData.budget] || 0;
+            
+            // Challenge awareness bonus
+            const challengeScores = {
+                'no_leads': 15,
+                'low_sales': 18,
+                'no_time': 12,
+                'dont_know': 5
+            };
+            score += challengeScores[formData.challenge] || 0;
+            
+            return Math.min(score, 85); // Cap at 85 for preliminary assessment
         }
         
         function showSocialProof() {
@@ -3511,11 +3567,34 @@ We have all the information needed to help you get started!`);
                     recommendationBoxes.push('?');
                 }
                 
+                // Calculate 3-category match percentages using the scoring system
+                const categoryPercentages = window.digitalReadinessScorer ? 
+                    window.digitalReadinessScorer.calculateThreeCategoryMatch(formData) : 
+                    { Marketing: 55, Website: 70, Branding: 45 }; // Fallback values
+
                 products.forEach((product, index) => {
                     if (index < numRevealed && recommendationBoxes[index] !== '?') {
                         product.classList.remove('mystery');
                         product.classList.add('revealed');
-                        product.textContent = recommendationBoxes[index];
+                        
+                        // Show category name with realistic percentage
+                        const categoryName = recommendationBoxes[index];
+                        let percentage = 55; // Default fallback
+                        
+                        // Map recommendation names to category percentages
+                        if (categoryName === 'Marketing' || categoryName.includes('Marketing')) {
+                            percentage = categoryPercentages.Marketing;
+                        } else if (categoryName === 'Website' || categoryName.includes('Website') || categoryName === 'Showcase') {
+                            percentage = categoryPercentages.Website;
+                        } else if (categoryName === 'Branding' || categoryName.includes('Brand')) {
+                            percentage = categoryPercentages.Branding;
+                        } else {
+                            // For other categories, calculate a weighted average
+                            percentage = Math.round((categoryPercentages.Marketing + categoryPercentages.Website + categoryPercentages.Branding) / 3);
+                        }
+                        
+                        product.textContent = categoryName;
+                        // You could also show percentage by adding: `${percentage}%` if desired
                     } else {
                         // Keep as mystery box
                         product.classList.add('mystery');
@@ -3623,7 +3702,12 @@ We have all the information needed to help you get started!`);
             try {
                 const recommendation = getTopikkoRecommendation(formData);
                 const digitalReadiness = calculateDigitalReadiness(formData);
-                const solutionMatch = recommendation?.primary_recommendation?.confidence || recommendation?.confidence || 75;
+                
+                // Calculate realistic solution match using the scoring system
+                const recommendedProduct = recommendation?.primary_recommendation?.product || recommendation?.product || 'Topiko';
+                const solutionMatch = window.digitalReadinessScorer ? 
+                    window.digitalReadinessScorer.calculateSolutionMatchScore(formData, recommendedProduct) : 
+                    75; // Fallback to 75 if scorer not available
                 
                 const updateData = {
                     digital_readiness_score: digitalReadiness,

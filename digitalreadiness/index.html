@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2.38.0/dist/umd/supabase.js"></script>
+    <script src="components/scoring-system.js"></script>
     
     <style>
         * {
@@ -2478,36 +2479,50 @@
         }
 
         function calculateDigitalReadinessScore() {
+            // Use realistic scoring system if available
+            if (window.digitalReadinessScorer && answers.goals && answers.digitalStatus && answers.budget && answers.challenge) {
+                const scoreData = window.digitalReadinessScorer.calculateOverallScore(answers);
+                return scoreData.totalScore;
+            }
+            
+            // Fallback to original scoring logic with slight improvements
             let score = 0;
             
+            // Goals scoring with diminishing returns
             const goals = answers.goals || [];
-            score += Math.min(Array.isArray(goals) ? goals.length * 5 : 5, 25);
+            if (Array.isArray(goals)) {
+                score += Math.min(goals.length * 6, 30); // Slightly higher base
+                // Penalty for too many goals (lack of focus)
+                if (goals.length > 3) {
+                    score -= 3;
+                }
+            }
             
             const statusScores = {
-                no_presence: 10,
-                basic_social: 20,
-                basic_website: 25,
-                no_results: 30
+                no_presence: 8,
+                basic_social: 18,
+                basic_website: 28,
+                no_results: 35
             };
             score += statusScores[answers.digitalStatus] || 0;
             
             const budgetScores = {
-                below_2k: 10,
+                below_2k: 8,
                 '2k_10k': 15,
-                '10k_25k': 20,
-                '25k_plus': 25
+                '10k_25k': 22,
+                '25k_plus': 30
             };
             score += budgetScores[answers.budget] || 0;
             
             const challengeScores = {
-                no_leads: 20,
-                dont_know: 10,
-                no_time: 15,
-                low_sales: 18
+                no_leads: 22,
+                dont_know: 8,
+                no_time: 16,
+                low_sales: 25
             };
             score += challengeScores[answers.challenge] || 0;
             
-            return Math.min(Math.max(score, 25), 100);
+            return Math.min(Math.max(score, 20), 100);
         }
 
         function animateScore(finalScore) {
