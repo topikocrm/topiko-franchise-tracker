@@ -1168,6 +1168,19 @@
         </div>
     </div>
 
+    <!-- Assessment Detail Modal -->
+    <div id="assessment-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2 id="assessment-modal-title">Digital Assessment Details</h2>
+                <button class="close-btn" onclick="closeAssessmentModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="assessment-modal-body" style="max-height: 80vh; overflow-y: auto;">
+                <!-- Assessment details will be populated here -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // Configuration
         const SUPABASE_URL = 'https://uyaubwfmxmxelcshuyaf.supabase.co';
@@ -1618,9 +1631,9 @@
                 detailText += `\n\n🔗 ALSO A FRANCHISE LEAD!\nFranchise Interest: ${matchingLead.interested_in_business || 'General'}\nLead Score: ${matchingLead.lead_score || 0}%`;
             }
             
-            // TODO: Show detailed assessment modal
+            // Show comprehensive assessment modal
             console.log('📱 Assessment detail:', assessment);
-            alert(detailText);
+            showAssessmentModal(assessment, matchingLead);
         }
 
         // Cross-reference logic between assessments and franchise leads
@@ -2751,6 +2764,231 @@
             document.getElementById('lead-modal').classList.remove('active');
         }
 
+        function showAssessmentModal(assessment, matchingLead = null) {
+            const modal = document.getElementById('assessment-modal');
+            const modalTitle = document.getElementById('assessment-modal-title');
+            const modalBody = document.getElementById('assessment-modal-body');
+
+            // Set modal title
+            modalTitle.textContent = `Digital Assessment - ${assessment.full_name}`;
+
+            // Generate comprehensive modal content
+            const content = generateAssessmentModalContent(assessment, matchingLead);
+            modalBody.innerHTML = content;
+
+            // Show modal
+            modal.classList.add('active');
+        }
+
+        function closeAssessmentModal() {
+            document.getElementById('assessment-modal').classList.remove('active');
+        }
+
+        function generateAssessmentModalContent(assessment, matchingLead) {
+            const recommendationData = assessment.recommendation_data || {};
+            const primaryRec = recommendationData.primary_recommendation || {};
+            const secondaryRecs = recommendationData.secondary_recommendations || [];
+
+            return `
+                <div style="display: grid; gap: 24px;">
+                    <!-- Contact & Business Info -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="neu-card" style="padding: 20px;">
+                            <h3 style="color: var(--accent-primary); margin-bottom: 16px;">👤 Contact Information</h3>
+                            <div style="display: grid; gap: 8px;">
+                                <div><strong>Name:</strong> ${assessment.full_name}</div>
+                                <div><strong>Mobile:</strong> ${assessment.mobile_number}</div>
+                                <div><strong>Email:</strong> ${assessment.email || 'Not provided'}</div>
+                                <div><strong>Location:</strong> ${assessment.city_location || 'Not provided'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="neu-card" style="padding: 20px;">
+                            <h3 style="color: var(--accent-primary); margin-bottom: 16px;">🏢 Business Details</h3>
+                            <div style="display: grid; gap: 8px;">
+                                <div><strong>Business:</strong> ${assessment.business_name}</div>
+                                <div><strong>Type:</strong> ${assessment.business_type || 'Not specified'}</div>
+                                <div><strong>Team Size:</strong> ${assessment.team_size || 'Not specified'}</div>
+                                <div><strong>Products:</strong> ${assessment.product_count || 'Not specified'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scores Section -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div class="neu-card" style="padding: 20px; text-align: center;">
+                            <h4 style="color: var(--text-secondary); margin-bottom: 8px;">Digital Readiness</h4>
+                            <div style="font-size: 32px; font-weight: 700; color: ${getScoreColor(assessment.digital_readiness_score)};">
+                                ${assessment.digital_readiness_score || 0}%
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Current digital maturity</div>
+                        </div>
+                        
+                        <div class="neu-card" style="padding: 20px; text-align: center;">
+                            <h4 style="color: var(--text-secondary); margin-bottom: 8px;">Solution Match</h4>
+                            <div style="font-size: 32px; font-weight: 700; color: ${getScoreColor(assessment.solution_match_score)};">
+                                ${assessment.solution_match_score || 0}%
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Product-need alignment</div>
+                        </div>
+                        
+                        <div class="neu-card" style="padding: 20px; text-align: center;">
+                            <h4 style="color: var(--text-secondary); margin-bottom: 8px;">Lead Priority</h4>
+                            <div style="font-size: 24px; font-weight: 700; color: var(--accent-primary);">
+                                ${assessment.priority || 'Medium'}
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Follow-up priority</div>
+                        </div>
+                    </div>
+
+                    <!-- Primary Recommendation -->
+                    ${primaryRec.product_id ? `
+                    <div class="neu-card" style="padding: 24px;">
+                        <h3 style="color: var(--accent-primary); margin-bottom: 16px;">🎯 Primary Recommendation</h3>
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;">
+                            <div>
+                                <h4 style="color: var(--text-primary); margin-bottom: 8px;">${getProductDisplayName(primaryRec.product_id)}</h4>
+                                <p style="color: var(--text-secondary); margin-bottom: 12px;">${primaryRec.description || 'Complete solution tailored for your business'}</p>
+                                <div style="background: rgba(102, 126, 234, 0.1); padding: 12px; border-radius: 8px; border-left: 4px solid var(--accent-primary);">
+                                    <strong>Why recommended:</strong> ${primaryRec.reason || 'Best fit based on assessment'}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 18px; font-weight: 600; color: var(--success); margin-bottom: 4px;">
+                                    ${primaryRec.confidence || 75}% Match
+                                </div>
+                                <div style="font-size: 16px; font-weight: 600; color: var(--text-primary);">
+                                    ${primaryRec.price ? `₹${primaryRec.price.toLocaleString()}` : 'Custom Pricing'}
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-muted);">
+                                    ${primaryRec.product_id === 'hebt' ? 'per project' : '/year'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- Secondary Recommendations -->
+                    ${secondaryRecs.length > 0 ? `
+                    <div class="neu-card" style="padding: 24px;">
+                        <h3 style="color: var(--accent-primary); margin-bottom: 16px;">💡 Alternative Options</h3>
+                        <div style="display: grid; gap: 16px;">
+                            ${secondaryRecs.slice(0, 3).map((rec, index) => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--card-bg); border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.1);">
+                                    <div>
+                                        <h5 style="color: var(--text-primary); margin-bottom: 4px;">${getProductDisplayName(rec.product_id)}</h5>
+                                        <p style="color: var(--text-secondary); font-size: 14px;">${rec.description || 'Alternative solution option'}</p>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: 600; color: var(--accent-secondary);">${rec.confidence || 65}% Match</div>
+                                        <div style="font-size: 14px; color: var(--text-muted);">
+                                            ${rec.price ? `₹${rec.price.toLocaleString()}` : 'Custom'}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- Assessment Details -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="neu-card" style="padding: 20px;">
+                            <h3 style="color: var(--accent-primary); margin-bottom: 16px;">🎯 Goals & Requirements</h3>
+                            <div style="display: grid; gap: 8px;">
+                                <div><strong>Goals:</strong> ${Array.isArray(assessment.goals) ? assessment.goals.join(', ') : (assessment.goals || 'Not specified')}</div>
+                                <div><strong>Digital Status:</strong> ${assessment.digital_status || 'Not specified'}</div>
+                                <div><strong>Budget:</strong> ${assessment.budget || 'Not specified'}</div>
+                                <div><strong>Challenge:</strong> ${assessment.challenge || 'Not specified'}</div>
+                                <div><strong>Timeline:</strong> ${assessment.timeline || 'Not specified'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="neu-card" style="padding: 20px;">
+                            <h3 style="color: var(--accent-primary); margin-bottom: 16px;">📊 Lead Status</h3>
+                            <div style="display: grid; gap: 8px;">
+                                <div><strong>Status:</strong> 
+                                    <span style="background: var(--success); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                        ${getStatusLabel(assessment.status)}
+                                    </span>
+                                </div>
+                                <div><strong>Created:</strong> ${new Date(assessment.created_at).toLocaleDateString()}</div>
+                                <div><strong>Last Activity:</strong> ${assessment.last_activity ? new Date(assessment.last_activity).toLocaleDateString() : 'Initial submission'}</div>
+                                <div><strong>Source:</strong> ${assessment.utm_source || 'Direct'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cross-Reference with Franchise Lead -->
+                    ${matchingLead ? `
+                    <div class="neu-card" style="padding: 20px; border: 2px solid var(--warning);">
+                        <h3 style="color: var(--warning); margin-bottom: 16px;">🔗 Also a Franchise Lead!</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <div><strong>Franchise Interest:</strong> ${matchingLead.interested_in_business || 'General'}</div>
+                                <div><strong>Lead Score:</strong> ${matchingLead.lead_score || 0}%</div>
+                            </div>
+                            <div>
+                                <div><strong>Investment Range:</strong> ${matchingLead.investment_range || 'Not specified'}</div>
+                                <div><strong>Franchise Status:</strong> ${getStatusLabel(matchingLead.status)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 16px; border-top: 1px solid rgba(102, 126, 234, 0.1);">
+                        <button class="neu-button" onclick="copyContactInfo('${assessment.mobile_number}', '${assessment.email}')">
+                            📋 Copy Contact
+                        </button>
+                        <button class="neu-button primary" onclick="initiateFollowUp('${assessment.id}')">
+                            📞 Schedule Follow-up
+                        </button>
+                        <button class="neu-button primary" onclick="markAsContacted('${assessment.id}')">
+                            ✅ Mark as Contacted
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Helper functions for assessment modal actions
+        function copyContactInfo(mobile, email) {
+            const contactInfo = `${mobile}${email && email !== 'Not provided' ? `\n${email}` : ''}`;
+            navigator.clipboard.writeText(contactInfo).then(() => {
+                // You could show a toast notification here
+                console.log('Contact info copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy contact info:', err);
+            });
+        }
+
+        function initiateFollowUp(assessmentId) {
+            // Placeholder for follow-up scheduling functionality
+            console.log('Initiating follow-up for assessment:', assessmentId);
+            alert('Follow-up scheduling feature coming soon!');
+        }
+
+        function markAsContacted(assessmentId) {
+            // Update assessment status to 'contacted'
+            console.log('Marking assessment as contacted:', assessmentId);
+            
+            // Find and update the assessment
+            const assessment = allAssessments.find(a => a.id === assessmentId);
+            if (assessment) {
+                assessment.status = 'contacted';
+                assessment.last_activity = new Date().toISOString();
+                
+                // Refresh the assessments display
+                displayAssessments();
+                
+                // Close the modal
+                closeAssessmentModal();
+                
+                console.log('Assessment marked as contacted');
+            }
+        }
+
         // Load notes for a specific lead
         async function loadLeadNotes(leadId) {
             const container = document.getElementById(`notes-timeline-${leadId}`);
@@ -3537,10 +3775,20 @@
             }
         });
 
+        // Assessment modal event listeners
+        document.getElementById('assessment-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'assessment-modal') {
+                closeAssessmentModal();
+            }
+        });
+
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && document.getElementById('lead-modal').classList.contains('active')) {
                 closeModal();
+            }
+            if (e.key === 'Escape' && document.getElementById('assessment-modal').classList.contains('active')) {
+                closeAssessmentModal();
             }
             if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
                 e.preventDefault();
