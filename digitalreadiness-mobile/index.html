@@ -874,10 +874,369 @@
                 right: 10px;
             }
         }
+
+        /* DESKTOP RESPONSIVE DESIGN */
+        @media (min-width: 768px) {
+            body {
+                background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+                position: relative;
+                overflow-x: hidden;
+            }
+
+            /* Desktop background effects */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(118, 75, 162, 0.08) 0%, transparent 50%);
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            /* Desktop container wrapper */
+            .desktop-wrapper {
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                min-height: 100vh;
+                padding: 20px;
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Center the mobile container */
+            .mobile-container {
+                max-width: 420px;
+                width: 100%;
+                padding: 20px;
+                position: relative;
+                z-index: 2;
+            }
+
+            /* Desktop progress indicator */
+            .desktop-progress {
+                position: fixed;
+                top: 30px;
+                left: 30px;
+                right: 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(20px);
+                border-radius: 50px;
+                padding: 12px 24px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                z-index: 100;
+            }
+
+            .desktop-logo {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 600;
+                font-size: 18px;
+                color: white;
+            }
+
+            .desktop-logo img {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+            }
+
+            .desktop-progress-bar {
+                flex: 1;
+                max-width: 300px;
+                margin: 0 30px;
+                height: 8px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .desktop-progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #667eea 0%, #f093fb 100%);
+                border-radius: 4px;
+                transition: width 0.3s ease;
+                width: 0%;
+            }
+
+            .desktop-progress-text {
+                font-size: 14px;
+                color: rgba(255, 255, 255, 0.8);
+                font-weight: 500;
+            }
+
+            /* Side ambient elements */
+            .desktop-ambient-left,
+            .desktop-ambient-right {
+                position: fixed;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 200px;
+                z-index: 1;
+            }
+
+            .desktop-ambient-left {
+                left: 30px;
+            }
+
+            .desktop-ambient-right {
+                right: 30px;
+            }
+
+            /* Trust badges */
+            .desktop-trust-badges {
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 20px;
+                background: rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(20px);
+                border-radius: 50px;
+                padding: 12px 24px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                z-index: 100;
+            }
+
+            .trust-badge {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 12px;
+            }
+
+            .trust-badge-icon {
+                font-size: 16px;
+            }
+
+            /* Social proof side panel */
+            .desktop-social-proof {
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(20px);
+                border-radius: 16px;
+                padding: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                margin-bottom: 20px;
+            }
+
+            .social-proof-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: rgba(255, 255, 255, 0.9);
+                margin-bottom: 12px;
+                text-align: center;
+            }
+
+            .social-stat {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            .social-stat-number {
+                font-weight: 600;
+                color: #667eea;
+            }
+
+            /* Floating particles animation */
+            .desktop-particle {
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background: rgba(102, 126, 234, 0.6);
+                border-radius: 50%;
+                animation: float 8s infinite linear;
+            }
+
+            @keyframes float {
+                0% {
+                    transform: translateY(100vh) rotate(0deg);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 1;
+                }
+                90% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100px) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+
+            /* Enhanced mobile profile for desktop */
+            .mobile-profile {
+                margin-top: 60px; /* Account for desktop header */
+            }
+        }
+
+        /* Large desktop optimizations */
+        @media (min-width: 1200px) {
+            .desktop-ambient-left {
+                left: 60px;
+                width: 250px;
+            }
+
+            .desktop-ambient-right {
+                right: 60px;
+                width: 250px;
+            }
+
+            .mobile-container {
+                max-width: 450px;
+            }
+        }
+
+        /* Ultra-wide desktop */
+        @media (min-width: 1600px) {
+            .desktop-ambient-left {
+                left: 120px;
+                width: 300px;
+            }
+
+            .desktop-ambient-right {
+                right: 120px;
+                width: 300px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="mobile-container">
+    <!-- Desktop Progress Header -->
+    <div class="desktop-progress" style="display: none;">
+        <div class="desktop-logo">
+            <img src="../logo.png" alt="Topiko">
+            Digital Readiness Assessment
+        </div>
+        <div class="desktop-progress-bar">
+            <div class="desktop-progress-fill" id="desktopProgressFill"></div>
+        </div>
+        <div class="desktop-progress-text" id="desktopProgressText">0% Complete</div>
+    </div>
+
+    <!-- Desktop Ambient Left -->
+    <div class="desktop-ambient-left" style="display: none;">
+        <div class="desktop-social-proof">
+            <div class="social-proof-title">🎯 Live Assessment Data</div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">👥</span>
+                <span class="social-stat-number" id="liveUserCount">1,247</span>
+                <span>assessments today</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">⭐</span>
+                <span class="social-stat-number">4.9/5</span>
+                <span>average rating</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">🚀</span>
+                <span class="social-stat-number">89%</span>
+                <span>found perfect match</span>
+            </div>
+        </div>
+        
+        <div class="desktop-social-proof">
+            <div class="social-proof-title">💼 Trusted by Businesses</div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">🏪</span>
+                <span>Retail Stores</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">🍽️</span>
+                <span>Restaurants</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">💄</span>
+                <span>Beauty Salons</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">🎓</span>
+                <span>Education Centers</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Ambient Right -->
+    <div class="desktop-ambient-right" style="display: none;">
+        <div class="desktop-social-proof">
+            <div class="social-proof-title">📈 Success Stories</div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">📊</span>
+                <span class="social-stat-number">300%</span>
+                <span>avg. lead increase</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">💰</span>
+                <span class="social-stat-number">₹2L+</span>
+                <span>monthly revenue boost</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">⚡</span>
+                <span class="social-stat-number">48hrs</span>
+                <span>average setup time</span>
+            </div>
+        </div>
+
+        <div class="desktop-social-proof">
+            <div class="social-proof-title">🔒 Secure & Reliable</div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">🛡️</span>
+                <span>SSL Encrypted</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">☁️</span>
+                <span>Cloud Backup</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">📞</span>
+                <span>24/7 Support</span>
+            </div>
+            <div class="social-stat">
+                <span class="trust-badge-icon">🇮🇳</span>
+                <span>Made in India</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Trust Badges -->
+    <div class="desktop-trust-badges" style="display: none;">
+        <div class="trust-badge">
+            <span class="trust-badge-icon">🔒</span>
+            <span>100% Secure</span>
+        </div>
+        <div class="trust-badge">
+            <span class="trust-badge-icon">⚡</span>
+            <span>Instant Results</span>
+        </div>
+        <div class="trust-badge">
+            <span class="trust-badge-icon">🆓</span>
+            <span>Completely Free</span>
+        </div>
+        <div class="trust-badge">
+            <span class="trust-badge-icon">🎯</span>
+            <span>Personalized</span>
+        </div>
+    </div>
+
+    <!-- Desktop Wrapper -->
+    <div class="desktop-wrapper">
+        <div class="mobile-container">
         <!-- Social Proof Messages -->
         <div id="socialProof" class="social-proof" style="display: none;"></div>
         
@@ -3771,6 +4130,103 @@ We have all the information needed to help you get started!`);
         function downloadPlan() {
             alert('Your detailed plan will be emailed to you within 30 minutes. Our team will also call to discuss implementation.');
         }
+
+        // Desktop enhancements
+        function initializeDesktopEnhancements() {
+            if (window.innerWidth >= 768) {
+                // Show desktop elements
+                document.querySelector('.desktop-progress').style.display = 'flex';
+                document.querySelector('.desktop-ambient-left').style.display = 'block';
+                document.querySelector('.desktop-ambient-right').style.display = 'block';
+                document.querySelector('.desktop-trust-badges').style.display = 'flex';
+                
+                // Initialize live counter animation
+                animateLiveCounter();
+                
+                // Create floating particles
+                createFloatingParticles();
+                
+                // Update desktop progress
+                updateDesktopProgress();
+            }
+        }
+
+        function animateLiveCounter() {
+            const counter = document.getElementById('liveUserCount');
+            if (!counter) return;
+            
+            setInterval(() => {
+                const current = parseInt(counter.textContent.replace(',', ''));
+                const newCount = current + Math.floor(Math.random() * 3);
+                counter.textContent = newCount.toLocaleString();
+            }, 15000); // Update every 15 seconds
+        }
+
+        function createFloatingParticles() {
+            const particleCount = 12;
+            const body = document.body;
+            
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'desktop-particle';
+                    particle.style.left = Math.random() * window.innerWidth + 'px';
+                    particle.style.animationDelay = Math.random() * 8 + 's';
+                    body.appendChild(particle);
+                    
+                    // Remove particle after animation
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 8000);
+                }, i * 2000); // Stagger particle creation
+            }
+        }
+
+        function updateDesktopProgress() {
+            const progressFill = document.getElementById('desktopProgressFill');
+            const progressText = document.getElementById('desktopProgressText');
+            
+            if (!progressFill || !progressText) return;
+            
+            // Calculate progress based on current screen
+            const totalScreens = 6; // Including results and plan screens
+            const progressPercentage = Math.round((currentScreen / totalScreens) * 100);
+            
+            progressFill.style.width = progressPercentage + '%';
+            progressText.textContent = progressPercentage + '% Complete';
+        }
+
+        // Enhanced screen navigation for desktop
+        const originalShowScreen = showScreen;
+        showScreen = function(screenId) {
+            originalShowScreen(screenId);
+            if (window.innerWidth >= 768) {
+                updateDesktopProgress();
+            }
+        };
+
+        // Initialize desktop enhancements on load and resize
+        window.addEventListener('load', initializeDesktopEnhancements);
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                initializeDesktopEnhancements();
+            } else {
+                // Hide desktop elements on mobile
+                document.querySelector('.desktop-progress').style.display = 'none';
+                document.querySelector('.desktop-ambient-left').style.display = 'none';
+                document.querySelector('.desktop-ambient-right').style.display = 'none';
+                document.querySelector('.desktop-trust-badges').style.display = 'none';
+            }
+        });
+
+        // Continuous particle generation for desktop
+        if (window.innerWidth >= 768) {
+            setInterval(createFloatingParticles, 20000); // Create new batch every 20 seconds
+        }
     </script>
+    </div> <!-- Close mobile-container -->
+    </div> <!-- Close desktop-wrapper -->
 </body>
 </html>
