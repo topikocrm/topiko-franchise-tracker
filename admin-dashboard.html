@@ -1604,6 +1604,48 @@
             return '#718096';
         }
 
+        // Helper functions for audit data display
+        function getAnswerStatusColor(answer) {
+            const lowerAnswer = String(answer).toLowerCase();
+            if (['yes', 'have it', 'ready', 'good', 'excellent', 'high'].includes(lowerAnswer)) {
+                return '#48bb78'; // Green for positive
+            }
+            if (['no', 'none', 'never', 'poor', 'low'].includes(lowerAnswer)) {
+                return '#f56565'; // Red for negative
+            }
+            if (['unsure', 'maybe', 'considering', 'medium', 'moderate'].includes(lowerAnswer)) {
+                return '#ed8936'; // Orange for neutral/unsure
+            }
+            return '#667eea'; // Blue for other answers
+        }
+
+        function formatAuditAnswer(answer) {
+            const lowerAnswer = String(answer).toLowerCase();
+            
+            // Format common answers nicely
+            const answerMap = {
+                'yes': '✅ Yes',
+                'no': '❌ No', 
+                'unsure': '🤔 Unsure',
+                'maybe': '🤔 Maybe',
+                'have_it': '✅ Have it',
+                'need_help': '🆘 Need help',
+                'social_media': '📱 Social Media',
+                'word_of_mouth': '💬 Word of Mouth',
+                'google_ads': '🎯 Google Ads',
+                'facebook_ads': '📘 Facebook Ads',
+                'email_marketing': '📧 Email Marketing',
+                'none': '❌ None',
+                'basic': '📊 Basic',
+                'advanced': '🚀 Advanced',
+                'professional': '💼 Professional'
+            };
+            
+            return answerMap[lowerAnswer] || 
+                   answerMap[answer] || 
+                   answer.charAt(0).toUpperCase() + answer.slice(1).replace(/_/g, ' ');
+        }
+
         function getStatusLabel(status) {
             const labels = {
                 new: 'New',
@@ -2972,17 +3014,32 @@
                             <div style="font-weight: 600; color: var(--success);">✅ Detailed audit completed</div>
                             <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">Product-specific questions answered for targeted recommendations</div>
                         </div>
-                        <div style="display: grid; gap: 12px;">
-                            ${Object.entries(assessment.audit_data || {}).map(([questionId, answer]) => `
-                                <div style="padding: 12px; background: var(--card-bg); border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.1);">
-                                    <div style="font-weight: 500; color: var(--text-primary); margin-bottom: 4px; text-transform: capitalize;">
-                                        ${questionId.replace(/_/g, ' ')}
+                        <div style="display: grid; gap: 16px;">
+                            ${Object.entries(assessment.audit_data || {}).map(([questionId, answer]) => {
+                                const answerData = typeof answer === 'object' ? answer : { answer: answer };
+                                const question = answerData.question || questionId.replace(/_/g, ' ');
+                                const category = answerData.category || 'General';
+                                const answerValue = answerData.answer || answer;
+                                
+                                return `
+                                <div style="padding: 16px; background: var(--card-bg); border-radius: 12px; border: 1px solid rgba(102, 126, 234, 0.1); box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                        <div style="font-weight: 600; color: var(--text-primary); font-size: 15px; line-height: 1.4;">
+                                            ${question}
+                                        </div>
+                                        <span style="background: rgba(102, 126, 234, 0.1); color: var(--accent-primary); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; white-space: nowrap; margin-left: 12px;">
+                                            ${category}
+                                        </span>
                                     </div>
-                                    <div style="color: var(--text-secondary); font-size: 14px;">
-                                        ${typeof answer === 'object' ? JSON.stringify(answer) : answer}
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 6px; height: 6px; background: ${getAnswerStatusColor(answerValue)}; border-radius: 50%; flex-shrink: 0;"></div>
+                                        <div style="color: var(--text-secondary); font-size: 14px; font-weight: 500;">
+                                            ${formatAuditAnswer(answerValue)}
+                                        </div>
                                     </div>
                                 </div>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                     ` : assessment.audit_completed === false ? `
