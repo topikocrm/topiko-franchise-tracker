@@ -2964,6 +2964,37 @@
                     </div>
                     ` : ''}
 
+                    <!-- Audit Section -->
+                    ${assessment.audit_completed && assessment.audit_data ? `
+                    <div class="neu-card" style="padding: 24px;">
+                        <h3 style="color: var(--accent-primary); margin-bottom: 16px;">🔍 Professional Audit Results</h3>
+                        <div style="background: rgba(72, 187, 120, 0.1); padding: 12px; border-radius: 8px; border-left: 4px solid var(--success); margin-bottom: 16px;">
+                            <div style="font-weight: 600; color: var(--success);">✅ Detailed audit completed</div>
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">Product-specific questions answered for targeted recommendations</div>
+                        </div>
+                        <div style="display: grid; gap: 12px;">
+                            ${Object.entries(assessment.audit_data || {}).map(([questionId, answer]) => `
+                                <div style="padding: 12px; background: var(--card-bg); border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.1);">
+                                    <div style="font-weight: 500; color: var(--text-primary); margin-bottom: 4px; text-transform: capitalize;">
+                                        ${questionId.replace(/_/g, ' ')}
+                                    </div>
+                                    <div style="color: var(--text-secondary); font-size: 14px;">
+                                        ${typeof answer === 'object' ? JSON.stringify(answer) : answer}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : assessment.audit_completed === false ? `
+                    <div class="neu-card" style="padding: 24px;">
+                        <h3 style="color: var(--accent-primary); margin-bottom: 16px;">🔍 Assessment Status</h3>
+                        <div style="background: rgba(237, 137, 54, 0.1); padding: 12px; border-radius: 8px; border-left: 4px solid var(--warning);">
+                            <div style="font-weight: 600; color: var(--warning);">⏳ Basic assessment only</div>
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">Customer completed initial assessment but skipped detailed audit questions</div>
+                        </div>
+                    </div>
+                    ` : ''}
+
                     <!-- Action Buttons -->
                     <div style="display: flex; gap: 12px; justify-content: flex-end; padding-top: 16px; border-top: 1px solid rgba(102, 126, 234, 0.1);">
                         <button class="neu-button" onclick="copyContactInfo('${assessment.mobile_number}', '${assessment.email}')">
