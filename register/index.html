@@ -1127,6 +1127,14 @@
             }
         }
         
+        /* FORCE HIDE DESKTOP ELEMENTS - ALWAYS SHOW MOBILE VIEW */
+        .desktop-progress,
+        .desktop-ambient-left, 
+        .desktop-ambient-right,
+        .desktop-trust-badges {
+            display: none !important;
+        }
+        
         /* DESKTOP CENTERING - MOVED TO END TO OVERRIDE MOBILE STYLES */
         @media screen and (min-width: 768px) {
             html, body {
