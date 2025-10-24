@@ -2485,6 +2485,8 @@
                 document.getElementById('otpBtn').disabled = true;
                 
                 try {
+                    console.log('Sending OTP to:', mobile, 'OTP:', formData.actualOTP);
+                    
                     const response = await fetch('/api/send-otp', {
                         method: 'POST',
                         headers: {
@@ -2497,7 +2499,10 @@
                         })
                     });
                     
+                    console.log('Response status:', response.status);
+                    
                     const result = await response.json();
+                    console.log('API Response:', result);
                     
                     if (result.success) {
                         document.getElementById('otpSection').style.display = 'block';
@@ -2507,14 +2512,26 @@
                         document.getElementById('otpStatus').textContent = 'Verification code sent to your mobile';
                         document.getElementById('chatMessage3').textContent = 'Verification code sent! Please check your mobile.';
                     } else {
-                        document.getElementById('otpStatus').textContent = 'Failed to send OTP. Please try again.';
-                        document.getElementById('otpBtn').textContent = 'Send OTP';
-                        document.getElementById('otpBtn').disabled = false;
+                        console.error('OTP Send Failed:', result);
+                        // Show OTP section with fallback
+                        document.getElementById('otpSection').style.display = 'block';
+                        formData.actualOTP = '1111'; // Fallback OTP
+                        formData.otpSent = true;
+                        updateProgress();
+                        document.getElementById('otpStatus').textContent = `SMS service temporarily unavailable. Use 1111 as verification code.`;
+                        document.getElementById('otpBtn').textContent = 'View My Results';
+                        document.getElementById('chatMessage3').textContent = 'SMS service issue. Use 1111 to continue.';
                     }
                 } catch (error) {
-                    document.getElementById('otpStatus').textContent = 'Network error. Please try again.';
-                    document.getElementById('otpBtn').textContent = 'Send OTP';
-                    document.getElementById('otpBtn').disabled = false;
+                    console.error('OTP Network Error:', error);
+                    // Show OTP section with fallback for network errors too
+                    document.getElementById('otpSection').style.display = 'block';
+                    formData.actualOTP = '1111'; // Fallback OTP
+                    formData.otpSent = true;
+                    updateProgress();
+                    document.getElementById('otpStatus').textContent = 'Network issue detected. Use 1111 as verification code.';
+                    document.getElementById('otpBtn').textContent = 'View My Results';
+                    document.getElementById('chatMessage3').textContent = 'Network issue. Use 1111 to continue.';
                 }
             } else if (formData.otpVerified) {
                 // Show results
