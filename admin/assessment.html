@@ -30,36 +30,6 @@
             overflow-x: hidden;
         }
 
-        /* DESKTOP CENTERING - FORCE OVERRIDE */
-        @media screen and (min-width: 768px) {
-            html, body {
-                display: flex !important;
-                justify-content: center !important;
-                align-items: flex-start !important;
-                min-height: 100vh !important;
-                padding: 40px 20px !important;
-                box-sizing: border-box !important;
-            }
-            
-            html .mobile-container,
-            body .mobile-container,
-            .mobile-container {
-                max-width: 420px !important;
-                width: 420px !important;
-                margin: 0 auto !important;
-                flex-shrink: 0 !important;
-                position: relative !important;
-            }
-            
-            /* Override any conflicting styles */
-            * {
-                max-width: none !important;
-            }
-            
-            .mobile-container * {
-                max-width: 100% !important;
-            }
-        }
 
         /* MOBILE CONTAINER - TIGHT SPACING */
         .mobile-container {
@@ -1154,6 +1124,37 @@
             .desktop-ambient-right {
                 right: 120px;
                 width: 300px;
+            }
+        }
+        
+        /* DESKTOP CENTERING - MOVED TO END TO OVERRIDE MOBILE STYLES */
+        @media screen and (min-width: 768px) {
+            html, body {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: flex-start !important;
+                min-height: 100vh !important;
+                padding: 40px 20px !important;
+                box-sizing: border-box !important;
+            }
+            
+            html .mobile-container,
+            body .mobile-container,
+            .mobile-container {
+                max-width: 420px !important;
+                width: 420px !important;
+                margin: 0 auto !important;
+                flex-shrink: 0 !important;
+                position: relative !important;
+            }
+            
+            /* Override any conflicting styles */
+            * {
+                max-width: none !important;
+            }
+            
+            .mobile-container * {
+                max-width: 100% !important;
             }
         }
     </style>
