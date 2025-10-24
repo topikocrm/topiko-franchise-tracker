@@ -25,6 +25,10 @@
       "dest": "/growth-audit.html"
     },
     {
+      "src": "/start-here",
+      "dest": "/start-here.html"
+    },
+    {
       "src": "/api/send-otp",
       "dest": "/api/send-otp.js"
     },
