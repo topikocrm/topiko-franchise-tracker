@@ -21,22 +21,57 @@ export default async function handler(req, res) {
     };
 
     try {
-        // Send SMS via MagicText API - EXACT SAME AS WORKING PROJECT
-        console.log('Sending to MagicText:', JSON.stringify(postData));
+        // Try multiple approaches to match your working PHP code
+        let response;
+        let responseText;
         
-        const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(postData)
-        });
+        // First try: JSON with proper headers (like your PHP cURL)
+        try {
+            console.log('Trying JSON with cURL-like headers...');
+            console.log('Sending to MagicText:', JSON.stringify(postData));
+            
+            response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'User-Agent': 'Topiko-SMS-API/1.0'
+                },
+                body: JSON.stringify(postData)
+            });
+            
+            responseText = await response.text();
+            console.log('JSON Response:', response.status, responseText);
+            
+            if (!response.ok || responseText.includes('error') || responseText.includes('Error')) {
+                throw new Error('JSON method failed');
+            }
+        } catch (jsonError) {
+            console.log('JSON failed, trying form-encoded like some APIs prefer...');
+            
+            // Second try: Form-encoded data (some SMS APIs prefer this)
+            const formData = new URLSearchParams();
+            formData.append('apikey', '3NwCuamS0SnyYDUw');
+            formData.append('senderid', 'TOPIKO');
+            formData.append('number', mobile);
+            formData.append('message', message);
+            formData.append('format', 'json');
+            
+            response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                },
+                body: formData.toString()
+            });
+            
+            responseText = await response.text();
+            console.log('Form Response:', response.status, responseText);
+        }
 
-        console.log('MagicText Response Status:', response.status, response.statusText);
-        
-        // Get the actual response from MagicText
-        const responseText = await response.text();
-        console.log('MagicText Response Body:', responseText);
+        console.log('Final MagicText Response Status:', response.status, response.statusText);
+        console.log('Final MagicText Response Body:', responseText);
 
         if (response.ok) {
             // Try to parse the response to see what MagicText actually said
