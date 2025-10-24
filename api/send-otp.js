@@ -36,56 +36,73 @@ export default async function handler(req, res) {
     console.log('VERSION 2.0 - Sending JSON to MagicText:', JSON.stringify(postData));
 
     try {
-        // Send SMS via API - EXACTLY as working version
-        const response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'  // ✅ JSON content type
-            },
-            body: JSON.stringify(postData)  // ✅ Stringify the object
-        });
+        // Send SMS via API - Try HTTPS first, fallback to HTTP
+        let response;
+        try {
+            console.log('Trying HTTPS endpoint...');
+            response = await fetch('https://msg.magictext.in/V2/http-api-post.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData)
+            });
+        } catch (httpsError) {
+            console.log('HTTPS failed, trying HTTP:', httpsError.message);
+            response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData)
+            });
+        }
 
+        console.log('Response status:', response.status, response.statusText);
+        
         if (response.ok) {
             const result = await response.text();
             console.log('SMS API Response:', result);
             
             try {
                 const jsonResult = JSON.parse(result);
+                console.log('Parsed JSON Response:', jsonResult);
                 
-                // Check for success response like in working version
-                if (jsonResult.status === 'OK' || jsonResult.message === 'message Submitted successfully') {
+                // Check for success response
+                if (jsonResult.status === 'OK' || jsonResult.message === 'message Submitted successfully' || jsonResult.status === 'Success') {
                     return res.status(200).json({
                         success: true,
                         message: 'OTP sent successfully',
-                        otp: otp,  // Return OTP for verification
+                        otp: otp,
                         smsResponse: jsonResult
                     });
                 }
                 
                 // Handle API errors
-                if (jsonResult.status === 'AZQ01' || jsonResult.message) {
-                    console.error('MagicText Error:', jsonResult.message);
-                    return res.status(500).json({
-                        success: false,
-                        error: jsonResult.message || 'Failed to send SMS',
-                        details: result
-                    });
-                }
+                console.error('MagicText API Error:', jsonResult);
+                return res.status(500).json({
+                    success: false,
+                    error: jsonResult.message || jsonResult.status || 'SMS API returned error',
+                    details: jsonResult
+                });
+                
             } catch (parseError) {
-                // Response is not JSON, but might still be successful
-                console.log('Non-JSON response:', result);
+                // Response is not JSON, treat as success if status is OK
+                console.log('Non-JSON response (treating as success):', result);
+                return res.status(200).json({
+                    success: true,
+                    message: 'OTP sent successfully',
+                    otp: otp,
+                    rawResponse: result
+                });
             }
-            
-            return res.status(200).json({
-                success: true,
-                message: 'OTP sent successfully',
-                otp: otp
-            });
         } else {
-            console.error('SMS API Error:', response.status, response.statusText);
+            const errorText = await response.text();
+            console.error('SMS API HTTP Error:', response.status, response.statusText, errorText);
             return res.status(500).json({
-                error: 'Failed to send OTP',
-                details: `API returned ${response.status}`
+                success: false,
+                error: `HTTP ${response.status}: ${response.statusText}`,
+                details: errorText
             });
         }
     } catch (error) {
