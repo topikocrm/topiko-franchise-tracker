@@ -594,6 +594,28 @@
             position: relative !important;
             left: auto !important;
         }
+        
+        /* Hide screen6 content completely unless screen6 is active */
+        #screen6:not(.active) {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            left: -9999px !important;
+        }
+        
+        /* Hide screen6 chat message and content on all other screens */
+        #chatMessage6, #detailedPlanContent, #screen6 .plan-container {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        
+        #screen6.active #chatMessage6, 
+        #screen6.active #detailedPlanContent, 
+        #screen6.active .plan-container {
+            display: block !important;
+            visibility: visible !important;
+        }
 
         .plan-btn {
             flex: 1;
