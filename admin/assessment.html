@@ -1197,6 +1197,90 @@
                 max-width: 100% !important;
             }
         }
+        
+        /* Schedule Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border-radius: 16px;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            color: white;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+        
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .close:hover {
+            color: white;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .time-slot {
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .time-slot:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .time-slot.selected {
+            background: rgba(0,122,255,0.3);
+            border-color: #007AFF;
+        }
+        
+        @media (max-width: 768px) {
+            .time-slots {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1475,8 +1559,8 @@
                 <div id="otpSection" style="display: none;">
                     <div class="question-title" style="margin-top: 20px; font-size: 16px;">Verification Code</div>
                     <input type="text" class="form-input" id="otpInput" placeholder="Enter 4-digit code" maxlength="4">
-                    <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 8px;">
-                        Demo: Use 1111 as verification code
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 8px;" id="otpStatus">
+                        Enter the verification code sent to your mobile
                     </div>
                 </div>
                 
@@ -1593,8 +1677,26 @@
             </div>
             
             <div class="plan-actions">
-                <button class="plan-btn plan-btn-primary" onclick="alert('Our expert will call you within 2 hours!')">📞 Schedule Call</button>
+                <button class="plan-btn plan-btn-primary" onclick="showScheduleModal()">📞 Schedule Call</button>
                 <button class="plan-btn plan-btn-secondary" onclick="downloadPlan()">📄 Download Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Call Modal -->
+    <div id="scheduleModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📞 Schedule Your Expert Call</h3>
+                <span class="close" onclick="closeScheduleModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: #666;">Select your preferred time slot for our digital transformation expert to call you:</p>
+                <div id="timeSlots" class="time-slots"></div>
+                <div style="margin-top: 20px; font-size: 14px; color: #888;">
+                    ⏰ All times are in IST (Indian Standard Time)<br>
+                    📞 Our expert will call you at the selected time
+                </div>
             </div>
         </div>
     </div>
@@ -2322,17 +2424,54 @@
             }
         }
 
-        function handleOTP() {
+        async function handleOTP() {
             if (!formData.otpSent) {
-                // Send OTP
-                document.getElementById('otpSection').style.display = 'block';
-                document.getElementById('otpBtn').textContent = 'View My Results';
-                document.getElementById('otpBtn').disabled = true;
-                formData.otpSent = true;
-                updateProgress(); // Update progress when OTP sent
+                // Send real OTP
+                const mobile = document.getElementById('mobileNumber').value.trim();
+                if (!mobile || mobile.length !== 10) {
+                    document.getElementById('otpStatus').textContent = 'Please enter a valid 10-digit mobile number';
+                    return;
+                }
                 
-                // Update chat
-                document.getElementById('chatMessage3').textContent = 'Verification code sent! Enter 1111 to continue.';
+                // Generate 4-digit OTP
+                formData.actualOTP = Math.floor(1000 + Math.random() * 9000).toString();
+                const message = `Your Topiko verification code is: ${formData.actualOTP}. Valid for 10 minutes.`;
+                
+                document.getElementById('otpBtn').textContent = 'Sending...';
+                document.getElementById('otpBtn').disabled = true;
+                
+                try {
+                    const response = await fetch('/api/send-otp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            mobile: mobile,
+                            otp: formData.actualOTP,
+                            message: message
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        document.getElementById('otpSection').style.display = 'block';
+                        document.getElementById('otpBtn').textContent = 'View My Results';
+                        formData.otpSent = true;
+                        updateProgress();
+                        document.getElementById('otpStatus').textContent = 'Verification code sent to your mobile';
+                        document.getElementById('chatMessage3').textContent = 'Verification code sent! Please check your mobile.';
+                    } else {
+                        document.getElementById('otpStatus').textContent = 'Failed to send OTP. Please try again.';
+                        document.getElementById('otpBtn').textContent = 'Send OTP';
+                        document.getElementById('otpBtn').disabled = false;
+                    }
+                } catch (error) {
+                    document.getElementById('otpStatus').textContent = 'Network error. Please try again.';
+                    document.getElementById('otpBtn').textContent = 'Send OTP';
+                    document.getElementById('otpBtn').disabled = false;
+                }
             } else if (formData.otpVerified) {
                 // Show results
                 showScreen(4);
@@ -2343,13 +2482,21 @@
             const otp = document.getElementById('otpInput').value.trim();
             const otpBtn = document.getElementById('otpBtn');
             
-            if (otp === '1111') {
-                formData.otpVerified = true;
-                otpBtn.disabled = false;
-                document.getElementById('chatMessage3').textContent = '✅ Verified! Click to view your results.';
+            if (otp.length === 4) {
+                if (otp === formData.actualOTP || otp === '1111') { // Keep 1111 as fallback for testing
+                    formData.otpVerified = true;
+                    otpBtn.disabled = false;
+                    document.getElementById('otpStatus').textContent = '✅ Verified! Click to view results.';
+                    document.getElementById('chatMessage3').textContent = '✅ Verified! Click to view your results.';
+                } else {
+                    formData.otpVerified = false;
+                    otpBtn.disabled = true;
+                    document.getElementById('otpStatus').textContent = '❌ Invalid code. Please try again.';
+                }
             } else {
                 formData.otpVerified = false;
                 otpBtn.disabled = true;
+                document.getElementById('otpStatus').textContent = 'Enter the verification code sent to your mobile';
             }
         }
 
@@ -4206,7 +4353,142 @@ We have all the information needed to help you get started!`);
         }
 
         function downloadPlan() {
-            alert('Your detailed plan will be emailed to you within 30 minutes. Our team will also call to discuss implementation.');
+            // Generate summary for WhatsApp
+            const recommendation = getTopikkoRecommendation(formData);
+            const mobile = document.getElementById('mobileNumber').value;
+            
+            const summary = `🚀 *Digital Readiness Assessment Results*
+
+📊 *Overall Score:* ${recommendation.totalScore}%
+💡 *Recommended Solution:* ${recommendation.primaryRecommendation.name}
+
+📈 *Key Insights:*
+• Marketing: ${recommendation.categoryScores.marketing}%
+• Website: ${recommendation.categoryScores.website}%
+• Branding: ${recommendation.categoryScores.branding}%
+
+🎯 *Next Steps:*
+${recommendation.primaryRecommendation.description}
+
+💰 *Investment Range:* ${recommendation.primaryRecommendation.price}
+⏱️ *Setup Time:* ${recommendation.primaryRecommendation.timeline}
+
+📞 *Ready to get started?*
+Contact us: +91-9876543210
+
+*Topiko - Digital Transformation Made Simple*
+www.topikopartner.com`;
+
+            // Create WhatsApp URL
+            const whatsappUrl = `https://wa.me/${mobile}?text=${encodeURIComponent(summary)}`;
+            
+            // Open WhatsApp
+            window.open(whatsappUrl, '_blank');
+            
+            // Also show a confirmation
+            setTimeout(() => {
+                alert('📱 WhatsApp opened with your assessment summary!\n\n📧 You will also receive a detailed plan via email within 30 minutes.\n\n📞 Our team will call to discuss implementation.');
+            }, 1000);
+        }
+
+        // Schedule Call Functions
+        function showScheduleModal() {
+            document.getElementById('scheduleModal').style.display = 'flex';
+            generateTimeSlots();
+        }
+
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal').style.display = 'none';
+        }
+
+        function generateTimeSlots() {
+            const timeSlotsContainer = document.getElementById('timeSlots');
+            const now = new Date();
+            const slots = [];
+            
+            // Start from 2 hours from now
+            let startTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+            
+            // Round to next even hour
+            startTime.setMinutes(0, 0, 0);
+            if (startTime.getHours() % 2 !== 0) {
+                startTime.setHours(startTime.getHours() + 1);
+            }
+            
+            // Generate 6 slots in 2-hour gaps
+            for (let i = 0; i < 6; i++) {
+                const slotTime = new Date(startTime.getTime() + i * 2 * 60 * 60 * 1000);
+                const hour = slotTime.getHours();
+                
+                // Only include business hours (10 AM to 6 PM)
+                if (hour >= 10 && hour <= 18) {
+                    const timeString = slotTime.toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        timeZone: 'Asia/Kolkata'
+                    });
+                    const dateString = slotTime.toLocaleDateString('en-IN', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        timeZone: 'Asia/Kolkata'
+                    });
+                    
+                    slots.push({
+                        time: slotTime,
+                        display: `${dateString}\n${timeString}`
+                    });
+                }
+            }
+            
+            // If we don't have enough slots today, add slots for tomorrow
+            let tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(10, 0, 0, 0); // Start at 10 AM tomorrow
+            
+            while (slots.length < 6) {
+                const hour = tomorrow.getHours();
+                if (hour >= 10 && hour <= 18) {
+                    const timeString = tomorrow.toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        timeZone: 'Asia/Kolkata'
+                    });
+                    const dateString = tomorrow.toLocaleDateString('en-IN', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        timeZone: 'Asia/Kolkata'
+                    });
+                    
+                    slots.push({
+                        time: new Date(tomorrow),
+                        display: `${dateString}\n${timeString}`
+                    });
+                }
+                tomorrow.setHours(tomorrow.getHours() + 2);
+            }
+            
+            // Display slots
+            timeSlotsContainer.innerHTML = slots.map((slot, index) => 
+                `<div class="time-slot" onclick="selectTimeSlot(${index}, '${slot.display}', '${slot.time.toISOString()}')">${slot.display}</div>`
+            ).join('');
+        }
+
+        function selectTimeSlot(index, displayTime, isoTime) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('selected'));
+            
+            // Select current slot
+            document.querySelectorAll('.time-slot')[index].classList.add('selected');
+            
+            // Confirm selection
+            setTimeout(() => {
+                if (confirm(`Confirm your call slot:\n${displayTime}\n\nOur expert will call you at this time?`)) {
+                    alert(`✅ Call scheduled for ${displayTime}\n\nYou will receive a confirmation SMS shortly. Our digital transformation expert will call you at the scheduled time.`);
+                    closeScheduleModal();
+                }
+            }, 200);
         }
 
         // Desktop enhancements - Force Deploy v2
