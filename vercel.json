@@ -17,6 +17,10 @@
       "dest": "/desktop-simple.html"
     },
     {
+      "src": "/assessment",
+      "dest": "/desktop-simple.html"
+    },
+    {
       "src": "/api/send-otp",
       "dest": "/api/send-otp.js"
     },
