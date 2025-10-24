@@ -2433,7 +2433,23 @@
                     return;
                 }
                 
-                // Generate 4-digit OTP
+                // Check for bypass numbers
+                const bypassNumbers = ['8858868889', '5010000000'];
+                const isBypassNumber = bypassNumbers.includes(mobile);
+                
+                if (isBypassNumber) {
+                    // For bypass numbers, use demo mode
+                    formData.actualOTP = '1111';
+                    document.getElementById('otpSection').style.display = 'block';
+                    document.getElementById('otpBtn').textContent = 'View My Results';
+                    formData.otpSent = true;
+                    updateProgress();
+                    document.getElementById('otpStatus').textContent = 'Demo mode: Use 1111 as verification code';
+                    document.getElementById('chatMessage3').textContent = 'Demo mode activated! Enter 1111 to continue.';
+                    return;
+                }
+                
+                // Generate 4-digit OTP for regular numbers
                 formData.actualOTP = Math.floor(1000 + Math.random() * 9000).toString();
                 const message = `Your Topiko verification code is: ${formData.actualOTP}. Valid for 10 minutes.`;
                 
