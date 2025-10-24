@@ -14,7 +14,7 @@
     },
     {
       "src": "/desktop",
-      "dest": "/desktop-readiness.html"
+      "dest": "/desktop-simple.html"
     },
     {
       "src": "/api/send-otp",
