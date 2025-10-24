@@ -4173,10 +4173,11 @@ We have all the information needed to help you get started!`);
         function initializeDesktopEnhancements() {
             if (window.innerWidth >= 768) {
                 // Show desktop elements
-                document.querySelector('.desktop-progress').style.display = 'flex';
-                document.querySelector('.desktop-ambient-left').style.display = 'block';
-                document.querySelector('.desktop-ambient-right').style.display = 'block';
-                document.querySelector('.desktop-trust-badges').style.display = 'flex';
+                // Keep mobile view on desktop - no desktop-specific elements
+                document.querySelector('.desktop-progress').style.display = 'none';
+                document.querySelector('.desktop-ambient-left').style.display = 'none';
+                document.querySelector('.desktop-ambient-right').style.display = 'none';
+                document.querySelector('.desktop-trust-badges').style.display = 'none';
                 
                 // Initialize live counter animation
                 animateLiveCounter();
