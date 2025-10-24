@@ -561,12 +561,38 @@
             margin-bottom: 0;
         }
 
-        .plan-actions {
+        #screen6 .plan-actions {
             display: flex;
             gap: 12px;
             margin-top: 24px;
             padding-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Hide plan-actions on all other screens - STRONG OVERRIDE */
+        .screen:not(#screen6) .plan-actions,
+        .plan-actions:not(#screen6 .plan-actions) {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        
+        /* Ensure buttons only show on screen6 - AGGRESSIVE FIX */
+        .plan-btn {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            left: -9999px !important;
+        }
+        
+        #screen6.active .plan-btn {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            left: auto !important;
         }
 
         .plan-btn {
@@ -613,7 +639,7 @@
                 min-width: 100%;
             }
             
-            .plan-actions {
+            #screen6 .plan-actions {
                 flex-direction: column;
             }
             
