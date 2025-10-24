@@ -1142,8 +1142,17 @@
             flex-direction: column !important;
         }
         
-        /* ENSURE LANDING SCREEN IS VISIBLE */
-        #landingScreen {
+        /* ENSURE SCREENS WORK PROPERLY - ONLY ACTIVE SCREEN VISIBLE */
+        .screen {
+            display: none !important;
+        }
+        
+        .screen.active {
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        
+        #landingScreen.active {
             display: flex !important;
             flex-direction: column !important;
         }
