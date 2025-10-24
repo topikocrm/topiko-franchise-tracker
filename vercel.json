@@ -5,6 +5,10 @@
       "dest": "/register/index.html"
     },
     {
+      "src": "/franchise-register",
+      "dest": "/franchise-register/index.html"
+    },
+    {
       "src": "/digitalvalidation",
       "dest": "/digitalvalidation/index.html"
     },
