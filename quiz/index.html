@@ -1165,12 +1165,14 @@
                 align-items: flex-start !important;
                 min-height: 100vh !important;
                 max-height: 100vh !important;
-                padding: 0 20px !important;
-                box-sizing: border-box !important;
-                overflow-x: hidden !important;
-                overflow-y: auto !important;
+                padding: 0 !important;
                 margin: 0 !important;
-                scrollbar-gutter: stable !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
+                width: 100vw !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
             }
             
             html .mobile-container,
@@ -1178,15 +1180,16 @@
             .mobile-container {
                 max-width: 420px !important;
                 width: 420px !important;
-                margin: 0 auto !important;
+                margin: 0 !important;
                 flex-shrink: 0 !important;
                 position: relative !important;
-                min-height: auto !important;
+                min-height: 100vh !important;
                 max-height: 100vh !important;
-                padding: 8px !important;
+                padding: 20px 16px !important;
                 overflow-y: auto !important;
                 scrollbar-width: none !important; /* Firefox */
                 -ms-overflow-style: none !important; /* IE/Edge */
+                box-sizing: border-box !important;
             }
             
             /* Hide scrollbar for Chrome/Safari */
@@ -1194,20 +1197,9 @@
                 display: none !important;
             }
             
-            /* Prevent layout shifts */
-            html {
-                scrollbar-gutter: stable both-edges !important;
-            }
-            
-            /* Smooth scrolling and prevent jumps */
-            .screen {
+            /* Smooth scrolling within container */
+            .mobile-container {
                 scroll-behavior: smooth !important;
-            }
-            
-            /* Ensure consistent viewport */
-            body {
-                width: 100vw !important;
-                max-width: 100vw !important;
             }
             
             /* Reduce screen padding for compact layout */
