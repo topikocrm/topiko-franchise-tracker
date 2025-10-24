@@ -1583,13 +1583,9 @@
             return 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
 
-        // Auto-redirect desktop users to main version
+        // Desktop users get responsive layout (no redirect needed)
         function checkDevice() {
-            if (window.innerWidth > 768) {
-                window.location.href = '../digitalreadiness/';
-                return false;
-            }
-            return true;
+            return true; // Always return true, responsive CSS handles desktop
         }
         
         // Check on load and resize
