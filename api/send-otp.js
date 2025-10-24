@@ -11,64 +11,44 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid mobile number' });
     }
 
-    // Prepare SMS API data - EXACT SAME FORMAT AS WORKING PROJECT
+    // Prepare SMS API data - EXACT SAME FORMAT AS YOUR WORKING PHP
     const postData = {
-        apikey: '3NwCuamS0SnyYDUw',
-        senderid: 'TOPIKO',
-        number: mobile,
-        message: message,
-        format: 'json'
+        "apikey": "3NwCuamS0SnyYDUw",
+        "senderid": "TOPIKO", 
+        "number": mobile,
+        "message": message,
+        "format": "json"
     };
+    
+    // Generate exact same message format as your PHP
+    const exactMessage = `${otp} is your registration OTP for Topiko. Do not share this OTP with anyone. Contact 885 886 8889 for any help.`;
+    
+    // Override with exact PHP message format
+    postData.message = exactMessage;
 
     try {
         // Try multiple approaches to match your working PHP code
         let response;
         let responseText;
         
-        // First try: JSON with proper headers (like your PHP cURL)
-        try {
-            console.log('Trying JSON with cURL-like headers...');
-            console.log('Sending to MagicText:', JSON.stringify(postData));
-            
-            response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'User-Agent': 'Topiko-SMS-API/1.0'
-                },
-                body: JSON.stringify(postData)
-            });
-            
-            responseText = await response.text();
-            console.log('JSON Response:', response.status, responseText);
-            
-            if (!response.ok || responseText.includes('error') || responseText.includes('Error')) {
-                throw new Error('JSON method failed');
-            }
-        } catch (jsonError) {
-            console.log('JSON failed, trying form-encoded like some APIs prefer...');
-            
-            // Second try: Form-encoded data (some SMS APIs prefer this)
-            const formData = new URLSearchParams();
-            formData.append('apikey', '3NwCuamS0SnyYDUw');
-            formData.append('senderid', 'TOPIKO');
-            formData.append('number', mobile);
-            formData.append('message', message);
-            formData.append('format', 'json');
-            
-            response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                },
-                body: formData.toString()
-            });
-            
-            responseText = await response.text();
-            console.log('Form Response:', response.status, responseText);
-        }
+        // Try to exactly mimic your working PHP cURL implementation
+        console.log('Sending to MagicText (exact PHP format):', JSON.stringify(postData));
+        
+        // Use exact same approach as PHP: JSON body with cURL-equivalent headers
+        response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': JSON.stringify(postData).length.toString(),
+                'Accept': '*/*',
+                'Connection': 'keep-alive'
+            },
+            body: JSON.stringify(postData),
+            // Mimic cURL SSL settings
+            agent: false
+        });
+        
+        responseText = await response.text();
 
         console.log('Final MagicText Response Status:', response.status, response.statusText);
         console.log('Final MagicText Response Body:', responseText);
