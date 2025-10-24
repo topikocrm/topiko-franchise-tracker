@@ -29,6 +29,10 @@
       "dest": "/start-here.html"
     },
     {
+      "src": "/quiz",
+      "dest": "/quiz/index.html"
+    },
+    {
       "src": "/api/send-otp",
       "dest": "/api/send-otp.js"
     },
