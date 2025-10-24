@@ -24,14 +24,14 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid mobile number' });
     }
 
-    // Try both form data and JSON formats
-    const formData = new URLSearchParams({
-        apikey: '3NwCuamS0SnyYDUw',
-        senderid: 'TOPIKO',
-        number: mobile,
-        message: message,
-        format: 'json'
-    });
+    // Build form data manually (URLSearchParams can be unreliable in serverless)
+    const formBody = [
+        'apikey=3NwCuamS0SnyYDUw',
+        'senderid=TOPIKO',
+        `number=${encodeURIComponent(mobile)}`,
+        `message=${encodeURIComponent(message)}`,
+        'format=json'
+    ].join('&');
 
     const jsonData = {
         apikey: '3NwCuamS0SnyYDUw',
@@ -41,7 +41,8 @@ export default async function handler(req, res) {
         format: 'json'
     };
 
-    console.log('Sending to MagicText - Mobile:', mobile, 'Message:', message);
+    console.log('Sending to MagicText - Mobile:', mobile);
+    console.log('Form body:', formBody);
 
     try {
         let response;
@@ -54,7 +55,7 @@ export default async function handler(req, res) {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: formData.toString()
+                body: formBody
             });
             
             if (!response.ok) {
@@ -80,7 +81,7 @@ export default async function handler(req, res) {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: formData.toString()
+                    body: formBody
                 });
             }
         }

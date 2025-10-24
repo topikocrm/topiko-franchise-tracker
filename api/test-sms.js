@@ -8,16 +8,16 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
 
-    // Test with form data format (most common for SMS APIs)
-    const testFormData = new URLSearchParams({
-        apikey: '3NwCuamS0SnyYDUw',
-        senderid: 'TOPIKO',
-        number: '9876543210', // Test number
-        message: 'Test message from Topiko API',
-        format: 'json'
-    });
+    // Build form data manually
+    const testFormBody = [
+        'apikey=3NwCuamS0SnyYDUw',
+        'senderid=TOPIKO',
+        'number=9876543210',
+        'message=Test+message+from+Topiko+API',
+        'format=json'
+    ].join('&');
 
-    console.log('Testing MagicText API with form data:', testFormData.toString());
+    console.log('Testing MagicText API with form data:', testFormBody);
 
     try {
         // Try form data format first
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: testFormData.toString()
+                body: testFormBody
             });
         } catch (httpsError) {
             console.log('HTTPS failed, trying HTTP:', httpsError.message);
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: testFormData.toString()
+                body: testFormBody
             });
         }
 
