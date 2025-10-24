@@ -565,8 +565,9 @@
             display: flex;
             gap: 12px;
             margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 0;
+            justify-content: center;
+            align-items: center;
         }
         
         /* Hide plan-actions on all other screens - STRONG OVERRIDE */
@@ -618,10 +619,11 @@
         }
 
         .plan-btn {
-            flex: 1;
-            padding: 16px 20px;
-            border-radius: 12px;
-            font-size: 14px;
+            flex: 0 0 auto;
+            width: 140px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -4496,11 +4498,18 @@ We have all the information needed to help you get started!`);
         }
 
         function downloadPlan() {
-            // Generate summary for WhatsApp
-            const recommendation = getTopikkoRecommendation(formData);
-            const mobile = document.getElementById('mobileNumber').value;
-            
-            const summary = `🚀 *Digital Readiness Assessment Results*
+            try {
+                // Generate summary for WhatsApp
+                const recommendation = getTopikkoRecommendation(formData);
+                const mobileEl = document.getElementById('mobileNumber');
+                const mobile = mobileEl ? mobileEl.value.trim() : formData.mobileNumber;
+                
+                if (!mobile) {
+                    alert('❌ Mobile number not found. Please complete the assessment first.');
+                    return;
+                }
+                
+                const summary = `🚀 *Digital Readiness Assessment Results*
 
 📊 *Overall Score:* ${recommendation.totalScore}%
 💡 *Recommended Solution:* ${recommendation.primaryRecommendation.name}
@@ -4517,21 +4526,28 @@ ${recommendation.primaryRecommendation.description}
 ⏱️ *Setup Time:* ${recommendation.primaryRecommendation.timeline}
 
 📞 *Ready to get started?*
-Contact us: +91-9876543210
+Contact us: +91-885-886-8889
 
 *Topiko - Digital Transformation Made Simple*
 www.topikopartner.com`;
 
-            // Create WhatsApp URL
-            const whatsappUrl = `https://wa.me/${mobile}?text=${encodeURIComponent(summary)}`;
-            
-            // Open WhatsApp
-            window.open(whatsappUrl, '_blank');
-            
-            // Also show a confirmation
-            setTimeout(() => {
-                alert('📱 WhatsApp opened with your assessment summary!\n\n📧 You will also receive a detailed plan via email within 30 minutes.\n\n📞 Our team will call to discuss implementation.');
-            }, 1000);
+                // Create WhatsApp URL with country code
+                const mobileWithCode = mobile.startsWith('91') ? mobile : `91${mobile}`;
+                const whatsappUrl = `https://wa.me/${mobileWithCode}?text=${encodeURIComponent(summary)}`;
+                
+                console.log('Opening WhatsApp URL:', whatsappUrl);
+                
+                // Open WhatsApp
+                window.open(whatsappUrl, '_blank');
+                
+                // Show confirmation
+                setTimeout(() => {
+                    alert('📱 WhatsApp opened with your assessment summary!\n\n📧 You will also receive a detailed plan via email within 30 minutes.\n\n📞 Our team will call to discuss implementation.');
+                }, 1000);
+            } catch (error) {
+                console.error('Download Plan Error:', error);
+                alert('❌ Unable to open WhatsApp. Please ensure you have WhatsApp installed or contact us directly at +91-885-886-8889');
+            }
         }
 
         // Schedule Call Functions
@@ -4558,19 +4574,21 @@ www.topikopartner.com`;
                 startTime.setHours(startTime.getHours() + 1);
             }
             
-            // Generate 6 slots in 2-hour gaps
-            for (let i = 0; i < 6; i++) {
-                const slotTime = new Date(startTime.getTime() + i * 2 * 60 * 60 * 1000);
-                const hour = slotTime.getHours();
+            // Generate slots until we have 6 valid business hour slots
+            let currentTime = new Date(startTime);
+            let attempts = 0;
+            
+            while (slots.length < 6 && attempts < 20) { // Safety limit
+                const hour = currentTime.getHours();
                 
                 // Only include business hours (10 AM to 6 PM)
                 if (hour >= 10 && hour <= 18) {
-                    const timeString = slotTime.toLocaleTimeString('en-IN', {
+                    const timeString = currentTime.toLocaleTimeString('en-IN', {
                         hour: '2-digit',
                         minute: '2-digit',
                         timeZone: 'Asia/Kolkata'
                     });
-                    const dateString = slotTime.toLocaleDateString('en-IN', {
+                    const dateString = currentTime.toLocaleDateString('en-IN', {
                         weekday: 'short',
                         month: 'short',
                         day: 'numeric',
@@ -4578,38 +4596,21 @@ www.topikopartner.com`;
                     });
                     
                     slots.push({
-                        time: slotTime,
-                        display: `${dateString}\n${timeString}`
+                        time: new Date(currentTime), // Create new Date object
+                        display: `${dateString} ${timeString}`
                     });
                 }
-            }
-            
-            // If we don't have enough slots today, add slots for tomorrow
-            let tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(10, 0, 0, 0); // Start at 10 AM tomorrow
-            
-            while (slots.length < 6) {
-                const hour = tomorrow.getHours();
-                if (hour >= 10 && hour <= 18) {
-                    const timeString = tomorrow.toLocaleTimeString('en-IN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        timeZone: 'Asia/Kolkata'
-                    });
-                    const dateString = tomorrow.toLocaleDateString('en-IN', {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                        timeZone: 'Asia/Kolkata'
-                    });
-                    
-                    slots.push({
-                        time: new Date(tomorrow),
-                        display: `${dateString}\n${timeString}`
-                    });
+                
+                // Move to next 2-hour slot
+                currentTime.setHours(currentTime.getHours() + 2);
+                
+                // If we go past business hours, move to next day at 10 AM
+                if (currentTime.getHours() > 18) {
+                    currentTime.setDate(currentTime.getDate() + 1);
+                    currentTime.setHours(10, 0, 0, 0);
                 }
-                tomorrow.setHours(tomorrow.getHours() + 2);
+                
+                attempts++;
             }
             
             // Display slots
