@@ -2,7 +2,10 @@
   "routes": [
     {
       "src": "/register",
-      "dest": "/register/index.html"
+      "status": 301,
+      "headers": {
+        "Location": "https://topiko.online/register"
+      }
     },
     {
       "src": "/franchise-register",
