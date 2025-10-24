@@ -24,38 +24,65 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid mobile number' });
     }
 
-    // EXACT format that works - using JSON!
-    const postData = {
-        apikey: '3NwCuamS0SnyYDUw',  // ✅ HARDCODED, not a variable
+    // Try both form data and JSON formats
+    const formData = new URLSearchParams({
+        apikey: '3NwCuamS0SnyYDUw',
+        senderid: 'TOPIKO',
+        number: mobile,
+        message: message,
+        format: 'json'
+    });
+
+    const jsonData = {
+        apikey: '3NwCuamS0SnyYDUw',
         senderid: 'TOPIKO',
         number: mobile,
         message: message,
         format: 'json'
     };
 
-    console.log('VERSION 2.0 - Sending JSON to MagicText:', JSON.stringify(postData));
+    console.log('Sending to MagicText - Mobile:', mobile, 'Message:', message);
 
     try {
-        // Send SMS via API - Try HTTPS first, fallback to HTTP
         let response;
+        
+        // Try form data first (most common for SMS APIs)
         try {
-            console.log('Trying HTTPS endpoint...');
+            console.log('Trying form data format...');
+            response = await fetch('https://msg.magictext.in/V2/http-api-post.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+        } catch (formError) {
+            console.log('Form data failed, trying JSON:', formError.message);
+            
+            // Try JSON format
             response = await fetch('https://msg.magictext.in/V2/http-api-post.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(postData)
+                body: JSON.stringify(jsonData)
             });
-        } catch (httpsError) {
-            console.log('HTTPS failed, trying HTTP:', httpsError.message);
-            response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(postData)
-            });
+            
+            if (!response.ok) {
+                // Try HTTP as last resort
+                console.log('HTTPS JSON failed, trying HTTP form data...');
+                response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData.toString()
+                });
+            }
         }
 
         console.log('Response status:', response.status, response.statusText);

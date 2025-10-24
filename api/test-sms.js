@@ -8,37 +8,37 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
 
-    // Simple test endpoint to check MagicText API status
-    const testData = {
+    // Test with form data format (most common for SMS APIs)
+    const testFormData = new URLSearchParams({
         apikey: '3NwCuamS0SnyYDUw',
         senderid: 'TOPIKO',
         number: '9876543210', // Test number
         message: 'Test message from Topiko API',
         format: 'json'
-    };
+    });
 
-    console.log('Testing MagicText API with:', testData);
+    console.log('Testing MagicText API with form data:', testFormData.toString());
 
     try {
-        // Try HTTPS first
+        // Try form data format first
         let response;
         try {
-            console.log('Testing HTTPS endpoint...');
+            console.log('Testing HTTPS with form data...');
             response = await fetch('https://msg.magictext.in/V2/http-api-post.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: JSON.stringify(testData)
+                body: testFormData.toString()
             });
         } catch (httpsError) {
             console.log('HTTPS failed, trying HTTP:', httpsError.message);
             response = await fetch('http://msg.magictext.in/V2/http-api-post.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: JSON.stringify(testData)
+                body: testFormData.toString()
             });
         }
 
