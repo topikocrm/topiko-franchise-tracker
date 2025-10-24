@@ -4237,20 +4237,20 @@ We have all the information needed to help you get started!`);
             progressText.textContent = progressPercentage + '% Complete';
         }
 
-        // Enhanced screen navigation for desktop
-        const originalShowScreen = showScreen;
-        showScreen = function(screenId) {
-            originalShowScreen(screenId);
-            if (window.innerWidth >= 768) {
-                updateDesktopProgress();
-            }
-        };
+        // Enhanced screen navigation for desktop - DISABLED
+        // const originalShowScreen = showScreen;
+        // showScreen = function(screenId) {
+        //     originalShowScreen(screenId);
+        //     if (window.innerWidth >= 768) {
+        //         updateDesktopProgress();
+        //     }
+        // };
 
-        // Initialize desktop enhancements on load and resize
-        window.addEventListener('load', initializeDesktopEnhancements);
+        // Initialize desktop enhancements on load and resize - DISABLED
+        // window.addEventListener('load', initializeDesktopEnhancements);
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 768) {
-                initializeDesktopEnhancements();
+                // initializeDesktopEnhancements(); // Disabled to show mobile view
             } else {
                 // Hide desktop elements on mobile
                 document.querySelector('.desktop-progress').style.display = 'none';
