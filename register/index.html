@@ -1164,10 +1164,13 @@
                 justify-content: center !important;
                 align-items: flex-start !important;
                 min-height: 100vh !important;
+                max-height: 100vh !important;
                 padding: 0 20px !important;
                 box-sizing: border-box !important;
                 overflow-x: hidden !important;
+                overflow-y: auto !important;
                 margin: 0 !important;
+                scrollbar-gutter: stable !important;
             }
             
             html .mobile-container,
@@ -1179,7 +1182,32 @@
                 flex-shrink: 0 !important;
                 position: relative !important;
                 min-height: auto !important;
+                max-height: 100vh !important;
                 padding: 8px !important;
+                overflow-y: auto !important;
+                scrollbar-width: none !important; /* Firefox */
+                -ms-overflow-style: none !important; /* IE/Edge */
+            }
+            
+            /* Hide scrollbar for Chrome/Safari */
+            .mobile-container::-webkit-scrollbar {
+                display: none !important;
+            }
+            
+            /* Prevent layout shifts */
+            html {
+                scrollbar-gutter: stable both-edges !important;
+            }
+            
+            /* Smooth scrolling and prevent jumps */
+            .screen {
+                scroll-behavior: smooth !important;
+            }
+            
+            /* Ensure consistent viewport */
+            body {
+                width: 100vw !important;
+                max-width: 100vw !important;
             }
             
             /* Reduce screen padding for compact layout */
