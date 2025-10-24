@@ -2534,9 +2534,27 @@
         function handleOTPInput() {
             const otp = document.getElementById('otpInput').value.trim();
             const otpBtn = document.getElementById('otpBtn');
+            const mobile = document.getElementById('mobileNumber').value.trim();
+            
+            console.log('OTP Validation:', {
+                enteredOTP: otp,
+                expectedOTP: formData.actualOTP,
+                mobile: mobile,
+                isBypassNumber: ['8858868889', '5010000000'].includes(mobile)
+            });
             
             if (otp.length === 4) {
-                if (otp === formData.actualOTP || otp === '1111') { // Keep 1111 as fallback for testing
+                // Check for bypass numbers
+                const bypassNumbers = ['8858868889', '5010000000'];
+                const isBypassNumber = bypassNumbers.includes(mobile);
+                
+                // Only allow 1111 for bypass numbers or when actualOTP is set to 1111 (SMS failures)
+                const isValidOTP = (otp === formData.actualOTP) || 
+                                 (otp === '1111' && (isBypassNumber || formData.actualOTP === '1111'));
+                
+                console.log('OTP Check Result:', { isValidOTP, isBypassNumber, actualOTP: formData.actualOTP });
+                
+                if (isValidOTP) {
                     formData.otpVerified = true;
                     otpBtn.disabled = false;
                     document.getElementById('otpStatus').textContent = '✅ Verified! Click to view results.';
