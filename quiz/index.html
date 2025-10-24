@@ -4387,6 +4387,62 @@ We have all the information needed to help you get started!`);
                 const referrer = document.referrer || '';
                 const userAgent = navigator.userAgent || '';
                 
+                // Enhanced tracking data
+                const landingPage = window.location.href;
+                const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const language = navigator.language || navigator.userLanguage;
+                const screenResolution = `${screen.width}x${screen.height}`;
+                const viewportSize = `${window.innerWidth}x${window.innerHeight}`;
+                
+                // Detect traffic source
+                function getTrafficSource() {
+                    const utmSource = urlParams.get('utm_source');
+                    if (utmSource) return utmSource;
+                    
+                    const ref = referrer.toLowerCase();
+                    if (!ref) return 'direct';
+                    if (ref.includes('google')) return 'google';
+                    if (ref.includes('facebook')) return 'facebook';
+                    if (ref.includes('instagram')) return 'instagram';
+                    if (ref.includes('linkedin')) return 'linkedin';
+                    if (ref.includes('twitter')) return 'twitter';
+                    if (ref.includes('youtube')) return 'youtube';
+                    if (ref.includes('whatsapp')) return 'whatsapp';
+                    if (ref.includes('.com') || ref.includes('.in')) return 'referral';
+                    return 'other';
+                }
+                
+                // Device detection
+                function getDeviceType() {
+                    const ua = userAgent.toLowerCase();
+                    if (/tablet|ipad/.test(ua)) return 'tablet';
+                    if (/mobile|iphone|android/.test(ua)) return 'mobile';
+                    return 'desktop';
+                }
+                
+                // Browser detection
+                function getBrowser() {
+                    const ua = userAgent.toLowerCase();
+                    if (ua.includes('chrome')) return 'chrome';
+                    if (ua.includes('firefox')) return 'firefox';
+                    if (ua.includes('safari')) return 'safari';
+                    if (ua.includes('edge')) return 'edge';
+                    if (ua.includes('opera')) return 'opera';
+                    return 'other';
+                }
+                
+                // Source category for analytics
+                function getSourceCategory(source) {
+                    const socialPlatforms = ['facebook', 'instagram', 'linkedin', 'twitter', 'youtube', 'whatsapp'];
+                    const searchEngines = ['google', 'bing', 'yahoo'];
+                    
+                    if (socialPlatforms.includes(source)) return 'social';
+                    if (searchEngines.includes(source)) return 'search';
+                    if (source === 'direct') return 'direct';
+                    if (source === 'referral') return 'referral';
+                    return 'other';
+                }
+                
                 const assessmentData = {
                     full_name: formData.fullName,
                     business_name: formData.businessName,
@@ -4411,8 +4467,38 @@ We have all the information needed to help you get started!`);
                     referrer: referrer,
                     user_agent: userAgent,
                     session_id: sessionId,
-                    status: 'new'
+                    status: 'new',
+                    // Enhanced tracking parameters
+                    traffic_source: getTrafficSource(),
+                    landing_page: landingPage,
+                    device_type: getDeviceType(),
+                    browser: getBrowser(),
+                    screen_resolution: screenResolution,
+                    viewport_size: viewportSize,
+                    timezone: timeZone,
+                    language: language,
+                    page_title: document.title,
+                    // Additional UTM and tracking
+                    utm_id: urlParams.get('utm_id'),
+                    gclid: urlParams.get('gclid'), // Google Ads click ID
+                    fbclid: urlParams.get('fbclid'), // Facebook click ID
+                    // Custom tracking parameters
+                    source_category: getSourceCategory(getTrafficSource()),
+                    is_mobile: getDeviceType() === 'mobile',
+                    timestamp: new Date().toISOString()
                 };
+                
+                // Log tracking data for debugging
+                console.log('📊 Enhanced Tracking Data:', {
+                    traffic_source: assessmentData.traffic_source,
+                    device_type: assessmentData.device_type,
+                    browser: assessmentData.browser,
+                    source_category: assessmentData.source_category,
+                    utm_source: assessmentData.utm_source,
+                    utm_campaign: assessmentData.utm_campaign,
+                    referrer: assessmentData.referrer,
+                    landing_page: assessmentData.landing_page
+                });
                 
                 const { data, error } = await supabase
                     .from('digital_readiness_assessments')
