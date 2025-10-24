@@ -1157,15 +1157,16 @@
             flex-direction: column !important;
         }
         
-        /* DESKTOP CENTERING - MOVED TO END TO OVERRIDE MOBILE STYLES */
+        /* DESKTOP CENTERING - COMPACT LAYOUT */
         @media screen and (min-width: 768px) {
             html, body {
                 display: flex !important;
                 justify-content: center !important;
-                align-items: flex-start !important;
+                align-items: center !important;
                 min-height: 100vh !important;
-                padding: 40px 20px !important;
+                padding: 20px !important;
                 box-sizing: border-box !important;
+                overflow-x: hidden !important;
             }
             
             html .mobile-container,
@@ -1176,6 +1177,14 @@
                 margin: 0 auto !important;
                 flex-shrink: 0 !important;
                 position: relative !important;
+                min-height: auto !important;
+                padding: 16px !important;
+            }
+            
+            /* Reduce screen padding for compact layout */
+            .screen {
+                padding: 0 !important;
+                min-height: auto !important;
             }
             
             /* Override any conflicting styles */
