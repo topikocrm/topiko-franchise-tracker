@@ -33,6 +33,10 @@
       "dest": "/quiz/index.html"
     },
     {
+      "src": "/test",
+      "dest": "/test-page.html"
+    },
+    {
       "src": "/api/send-otp",
       "dest": "/api/send-otp.js"
     },
