@@ -2226,13 +2226,19 @@
             
             // Screen-specific initialization
             if (screenNumber === 2) {
+                // Update assessment status when user starts actual assessment
+                await updateAssessmentStatus('assessment_started');
                 loadQuestion(0);
                 setTimeout(() => showProgressiveInsight(1), 1500); // Show insight after profile completion
                 setTimeout(() => showRecommendationPreview(), 2000); // Show recommendation preview
             } else if (screenNumber === 3) {
+                // Update status when user reaches contact info
+                await updateAssessmentStatus('contact_info');
                 setTimeout(() => showProgressiveInsight(2), 1000); // Show insight after goals completion
                 updateRecommendationPreview(); // Update preview
             } else if (screenNumber === 4) {
+                // Update status when user completes assessment
+                await updateAssessmentStatus('completed');
                 generateResults();
                 setTimeout(() => showProgressiveInsight(3), 2000); // Show insight after results
                 hideRecommendationPreview(); // Hide preview on results
@@ -4393,6 +4399,28 @@ We have all the information needed to help you get started!`);
             }
         }
         
+        async function updateAssessmentStatus(newStatus) {
+            if (!supabase || !assessmentId) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('digital_readiness_assessments')
+                    .update({ 
+                        status: newStatus,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', assessmentId);
+                
+                if (error) {
+                    console.error('Error updating assessment status:', error);
+                } else {
+                    console.log(`✅ Status updated to: ${newStatus}`);
+                }
+            } catch (error) {
+                console.error('❌ Error in updateAssessmentStatus:', error);
+            }
+        }
+        
         async function createAssessment() {
             if (!supabase || !formData.fullName || !formData.businessName) {
                 console.log('⚠️ Supabase not available or missing required data, running in offline mode');
@@ -4485,7 +4513,7 @@ We have all the information needed to help you get started!`);
                     referrer: referrer,
                     user_agent: userAgent,
                     session_id: sessionId,
-                    status: 'new',
+                    status: 'basic_info_completed',
                     // Enhanced tracking parameters
                     traffic_source: getTrafficSource(),
                     landing_page: landingPage,
