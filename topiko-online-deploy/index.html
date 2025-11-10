@@ -1536,15 +1536,12 @@
                 
                 <!-- Welcome Message -->
                 <div class="landing-content">
-                    <h1 class="landing-title">Take Control of Your Digital Presence</h1>
-                    <p class="landing-subtitle">See what digital tools fit your business - personalized plan in 2 minutes, completely free</p>
+                    <h1 class="landing-title">Every business grows differently. Let's find what works best for yours</h1>
+                    <p class="landing-subtitle">We'll help you discover the right digital steps for your business — simple, practical, and built around your goals</p>
                     <div class="landing-benefits">
-                        <div class="benefit-item">✓ Free personalized plan</div>
-                        <div class="benefit-item">✓ Ready in 2 minutes</div>
-                        <div class="benefit-item">✓ Expert consultation included</div>
-                        <div class="benefit-item">✓ 10,000+ businesses</div>
-                        <div class="benefit-item">✓ No credit card</div>
-                        <div class="benefit-item">✓ Zero risk</div>
+                        <div class="benefit-item">✓ Simple questions, clear results</div>
+                        <div class="benefit-item">✓ Quick 2-minute process</div>
+                        <div class="benefit-item">✓ Trusted by thousands of small businesses</div>
                     </div>
                     <div class="landing-urgency">Takes 2 minutes • Free plan • 10,000+ users • No spam, ever 🔒</div>
                 </div>
@@ -1656,12 +1653,12 @@
             </div>
         </div>
 
-        <!-- Screen 3: Contact & Verification -->
+        <!-- Screen 3: Plan Ready - Phone Number Collection -->
         <div id="screen3" class="screen">
-            <div class="chat-message" id="chatMessage3">Almost there! We need your mobile number to share your personalized recommendations.</div>
+            <div class="chat-message">Great! We got your plan ready. Enter your phone number to receive your plan.</div>
             
             <div class="question-card">
-                <div class="question-title">Contact Information</div>
+                <div class="question-title">Get Your Personalized Plan</div>
                 
                 <div class="question-title" style="margin-top: 20px; font-size: 16px;">Mobile Number *</div>
                 <input type="tel" class="form-input" id="mobileNumber" placeholder="Enter 10-digit mobile number" maxlength="10">
@@ -1682,8 +1679,14 @@
                 <!-- Progressive Insight Container -->
                 <div id="insightContainer3" class="insight-container" style="display: none;">
                     <div class="insight-content">
-                        <div class="insight-icon">🎯</div>
-                        <div class="insight-text" id="insightText3"></div>
+                        <div class="insight-header">
+                            <div class="insight-logo">🚀</div>
+                            <div class="insight-text">
+                                <div class="insight-title">AI Analysis Complete</div>
+                                <div class="insight-description" id="previewText3">Preparing your custom digital strategy...</div>
+                            </div>
+                        </div>
+                        <div class="insight-recommendations" id="recommendations3"></div>
                     </div>
                 </div>
             </div>
@@ -1938,6 +1941,16 @@
                     { value: 'yes', label: 'Yes, need logo/branding', icon: '🎨' },
                     { value: 'improve', label: 'Want to improve existing', icon: '✨' },
                     { value: 'no', label: 'Happy with current branding', icon: '✅' }
+                ]
+            },
+            {
+                id: 'decisionMaker',
+                question: 'Are you the decision maker for digital investments?',
+                type: 'radio',
+                options: [
+                    { value: 'yes', label: 'Yes, I make all decisions', icon: '✅' },
+                    { value: 'influence', label: 'I influence the decision', icon: '🤝' },
+                    { value: 'no', label: 'Someone else decides', icon: '👥' }
                 ]
             }
         ];
@@ -2263,7 +2276,7 @@
                 const questionProgress = currentQuestionIndex / questions.length;
                 progress = 25 + (questionProgress * 50);
             } else if (currentScreen === 3) {
-                // Screen 3 - contact (75% to 90%)
+                // Screen 3 - phone collection (75%)
                 progress = 75;
             } else if (currentScreen === 4) {
                 // Screen 4 - results (100%)
@@ -2561,7 +2574,7 @@
                     formData.otpSent = true;
                     updateProgress();
                     document.getElementById('otpStatus').textContent = 'Demo mode: Use 1111 as verification code';
-                    document.getElementById('chatMessage3').textContent = 'Demo mode activated! Enter 1111 to continue.';
+                    document.querySelector('#screen3 .chat-message').textContent = 'Demo mode activated! Enter 1111 to continue.';
                     return;
                 }
                 
@@ -2598,7 +2611,7 @@
                         formData.otpSent = true;
                         updateProgress();
                         document.getElementById('otpStatus').textContent = 'Verification code sent to your mobile';
-                        document.getElementById('chatMessage3').textContent = 'Verification code sent! Please check your mobile.';
+                        document.querySelector('#screen3 .chat-message').textContent = 'Verification code sent! Please check your mobile.';
                     } else {
                         console.error('OTP Send Failed:', result);
                         // Show OTP section with fallback
@@ -2608,7 +2621,7 @@
                         updateProgress();
                         document.getElementById('otpStatus').textContent = `SMS service temporarily unavailable. Use 1111 as verification code.`;
                         document.getElementById('otpBtn').textContent = 'View My Results';
-                        document.getElementById('chatMessage3').textContent = 'SMS service issue. Use 1111 to continue.';
+                        document.querySelector('#screen3 .chat-message').textContent = 'SMS service issue. Use 1111 to continue.';
                     }
                 } catch (error) {
                     console.error('OTP Network Error:', error);
@@ -2619,7 +2632,7 @@
                     updateProgress();
                     document.getElementById('otpStatus').textContent = 'Network issue detected. Use 1111 as verification code.';
                     document.getElementById('otpBtn').textContent = 'View My Results';
-                    document.getElementById('chatMessage3').textContent = 'Network issue. Use 1111 to continue.';
+                    document.querySelector('#screen3 .chat-message').textContent = 'Network issue. Use 1111 to continue.';
                 }
             } else if (formData.otpVerified) {
                 // Show results
@@ -2654,7 +2667,7 @@
                     formData.otpVerified = true;
                     otpBtn.disabled = false;
                     document.getElementById('otpStatus').textContent = '✅ Verified! Click to view results.';
-                    document.getElementById('chatMessage3').textContent = '✅ Verified! Click to view your results.';
+                    document.querySelector('#screen3 .chat-message').textContent = '✅ Verified! Click to view your results.';
                 } else {
                     formData.otpVerified = false;
                     otpBtn.disabled = true;
@@ -4296,6 +4309,8 @@ We have all the information needed to help you get started!`);
                         previewText.textContent = "Understanding your business objectives...";
                     }
                 } else if (currentScreen === 3) {
+                    previewText.textContent = "Preparing your personalized plan...";
+                } else if (currentScreen >= 4) {
                     previewText.textContent = "Finalizing your custom solution stack...";
                 }
             }
