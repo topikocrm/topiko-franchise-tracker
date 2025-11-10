@@ -2,6 +2,7 @@
   "buildCommand": "",
   "outputDirectory": ".",
   "installCommand": "",
+  "framework": null,
   "routes": [
     {
       "src": "/register",
